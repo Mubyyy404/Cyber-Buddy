@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Heals Academy | Advanced E-Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --dark-bg: #1e1e1e;
+    --dark-text: #f0f0f0;
+    --light-bg: #f9f9f9;
+    --light-text: #333;
+    --accent-color: #28a745;
+    --header-height: 70px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin:0; padding:0;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+    scroll-behavior: smooth;
+}
+
+header {
+    position: fixed;
+    top:0; left:0; width:100%;
+    background: var(--dark-bg);
+    color: var(--dark-text);
+    z-index: 1000;
+    padding: 1rem 0;
+    transition: background 0.3s;
+}
+
+header.sticky {
+    background: #111;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+}
+
+.container {
+    max-width: 1200px;
+    margin:0 auto;
+    padding: 0 20px;
+}
+
+nav {
+    display:flex; justify-content:space-between; align-items:center;
+}
+
+.logo a {
+    color: var(--dark-text);
+    font-size:1.5rem; font-weight:700; text-decoration:none;
+}
+
+.nav-links {
+    list-style:none; display:flex; gap:20px;
+}
+
+.nav-links a {
+    color: var(--dark-text);
+    text-decoration:none;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--primary-color); }
+
+.cta-button {
+    background-color: var(--primary-color);
+    color:white; padding:10px 20px;
+    border-radius:5px; text-decoration:none;
+    transition: 0.3s;
+}
+
+.cta-button:hover { background-color:#0056b3; }
+
+.menu-toggle { display:none; font-size:1.5rem; cursor:pointer; }
+
+@media(max-width:768px){
+    .nav-links {
+        flex-direction:column;
+        position:absolute;
+        top:60px; left:0;
+        width:100%;
+        background: var(--dark-bg);
+        padding:20px 0;
+        display:none;
+    }
+    .nav-links.active { display:flex; }
+    .menu-toggle { display:block; }
+}
+
+/* Hero Section */
+.hero {
+    height:100vh;
+    background: url('https://imarticus.org/blog/wp-content/uploads/2021/12/begbew.jpeg') no-repeat center center/cover;
+    position:relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-attachment: fixed; /* Parallax scrolling effect */
+    background-size: cover;
+}
+
+.hero::after {
+    content:'';
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.2), rgba(0,0,0,0));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    width:90%;
+    max-width:800px;
+    opacity:0;
+    transform: translateY(50px);
+    animation: fadeInUp 1.5s forwards 0.5s;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+
+.hero-content .cta-button { animation: pulse 2s infinite; }
+
+@keyframes pulse {
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+}
+@keyframes fadeInUp {
+    to { opacity:1; transform:translateY(0);}
+}
+
+section[id] { scroll-margin-top: var(--header-height); }
+
+/* Courses Section */
+.courses {
+    padding:100px 0;
+    text-align:center;
+    position: relative;
+    overflow: hidden;
+}
+
+.courses video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.courses::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Darker overlay for techy contrast */
+    z-index: -1;
+}
+
+.course-list {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap:30px; margin-top:50px;
+}
+
+.course-card {
+    background-color: rgba(30, 30, 30, 0.9); /* Semi-transparent for techy look */
+    color: var(--dark-text);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor:pointer;
+    transform-style: preserve-3d;
+}
+
+.course-card img { width:100%; height:200px; object-fit:cover; transition: transform 0.5s ease; }
+.course-card:hover img { transform: scale(1.1) rotate(1deg); }
+.course-info { padding:20px; }
+.course-info h3 { color: var(--primary-color); margin-top:0; }
+.course-info .price { font-weight:700; font-size:1.5rem; color: var(--accent-color); margin-top:10px; }
+.course-info a.cta-button { margin-top:10px; display:inline-block; }
+
+/* Testimonials */
+.testimonials {
+    background: var(--dark-bg);
+    color: var(--dark-text);
+    padding:100px 0; text-align:center;
+}
+
+.testimonial-carousel {
+    display:flex; overflow-x:auto;
+    scroll-snap-type: x mandatory; padding:20px 0; gap:20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.testimonial-item {
+    flex:0 0 80%; max-width:600px;
+    scroll-snap-align:center;
+    background:#333; padding:30px; border-radius:10px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2); text-align:left;
+    opacity:0; transform: translateY(50px);
+}
+
+.testimonial-item p { font-style:italic; margin-bottom:15px; }
+.testimonial-author { font-weight:600; color: var(--primary-color); }
+
+/* Achievements Section */
+.achievements {
+    padding:100px 0;
+    text-align:center;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievements video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.achievements::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Darker overlay for techy contrast */
+    z-index: -1;
+}
+
+.achievement-carousel {
+    display:flex; overflow-x:auto;
+    scroll-snap-type: x mandatory; padding:20px 0; gap:20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.achievement-item {
+    flex:0 0 80%; max-width:400px;
+    scroll-snap-align:center;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent for techy look */
+    padding:20px; border-radius:10px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    text-align:center;
+    opacity:0; transform: translateY(50px);
+}
+
+.achievement-item img {
+    width:100%; height:200px; object-fit:cover;
+    border-radius:8px; margin-bottom:15px;
+}
+
+.achievement-item p { margin-bottom:10px; font-size:1rem; }
+.achievement-title { font-weight:600; color: var(--primary-color); }
+
+/* About Section */
+.about {
+    padding:100px 0;
+    text-align:center;
+    position: relative;
+    overflow: hidden;
+}
+
+.about video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.about::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Darker overlay for techy contrast */
+    z-index: -1;
+}
+
+.counters { display:flex; justify-content:center; gap:50px; margin-top:50px; }
+.counter { font-size:2rem; font-weight:700; color:var(--primary-color); }
+.counter-label { font-size:1rem; font-weight:400; color: var(--dark-text); margin-top:5px; }
+@media(max-width:768px){ .counters { flex-direction:column; gap:20px; } }
+
+/* Footer */
+footer { background:#0d0d0d; color:var(--dark-text); padding:40px 0; text-align:center; }
+.social-links a { color:var(--dark-text); font-size:1.5rem; margin:0 10px; transition:0.3s;}
+.social-links a:hover { color: var(--primary-color); }
+
+/* Back to Top */
+#backToTop {
+    position:fixed; bottom:40px; right:40px;
+    background: var(--primary-color); color:white;
+    border:none; padding:12px; border-radius:50%;
+    cursor:pointer; font-size:18px; display:none;
+    z-index:1000;
+}
+
+/* Dark Mode */
+.dark-mode {
+    background: var(--dark-bg); color: var(--dark-text);
+}
+.dark-mode header, .dark-mode footer { background:#111; }
+.dark-mode .course-card { background: rgba(34, 34, 34, 0.9); }
+.dark-mode .testimonial-item { background:#222; }
+.dark-mode .achievement-item { background: rgba(51, 51, 51, 0.9); }
+.dark-mode .counter-label { color: var(--dark-text); }
+
+/* Scroll Animation */
+[data-animate] { opacity:0; transform: translateY(50px); transition: all 0.8s ease-out; }
+[data-animate].active { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo"><a href="#">Cyber Heals Academy</a></div>
+            <div class="menu-toggle" id="mobile-menu"><i class="fas fa-bars"></i></div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#courses">Courses</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#achievements">Achievements</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="certificate.html">Certificates</a></li>
+                <li><a href="#" class="cta-button">Sign Up / Login</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 id="typing"></h1>
+            <p>Learn from industry experts with hands-on, project-based courses. Unlock your potential in cybersecurity.</p>
+            <a href="#courses" class="cta-button">Explore Courses</a>
+	    <a href="https://mubyyy404.github.io/vuln-practice-lab/" class="cta-button">Access our lab</a>
+        </div>
+    </section>
+
+    <section class="courses" id="courses">
+        <video autoplay muted loop playsinline>
+            <source src="https://cdn.pixabay.com/video/2024/08/10/201735-975627050_tiny.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="container">
+            <h2 data-animate>Our Popular Courses</h2>
+            <div class="course-list">
+                <div class="course-card" data-animate>
+                    <img src="https://picsum.photos/300/200?random=1" alt="Course Image">
+                    <div class="course-info">
+                        <h3>Ethical Hacking 101</h3>
+                        <p>Master the fundamentals of penetration testing and ethical hacking techniques.</p>
+                        <span class="price">₹4,999</span>
+                        <a href="#" class="cta-button">Buy Now</a>
+                    </div>
+                </div>
+                <div class="course-card" data-animate>
+                    <img src="https://picsum.photos/300/200?random=2" alt="Course Image">
+                    <div class="course-info">
+                        <h3>Cyber Forensics</h3>
+                        <p>Learn how to investigate digital crimes and recover crucial evidence.</p>
+                        <span class="price">₹6,499</span>
+                        <a href="#" class="cta-button">Buy Now</a>
+                    </div>
+                </div>
+                <div class="course-card" data-animate>
+                    <img src="https://picsum.photos/300/200?random=3" alt="Course Image">
+                    <div class="course-info">
+                        <h3>Network Security</h3>
+                        <p>Protect networks from threats by implementing robust security protocols.</p>
+                        <span class="price">₹5,999</span>
+                        <a href="#" class="cta-button">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 data-animate>What Our Students Say</h2>
+            <div class="testimonial-carousel">
+                <div class="testimonial-item" data-animate>
+                    <p>"The Ethical Hacking course was a game-changer for my career. The instructors are amazing and the content is top-notch."</p>
+                    <span class="testimonial-author">- Arjun S.</span>
+                </div>
+                <div class="testimonial-item" data-animate>
+                    <p>"I landed my first job as a Security Analyst thanks to the hands-on projects from Cyber Heals Academy."</p>
+                    <span class="testimonial-author">- Priya K.</span>
+                </div>
+                <div class="testimonial-item" data-animate>
+                    <p>"The community and support here are incredible. I’d recommend this platform to anyone serious about cybersecurity."</p>
+                    <span class="testimonial-author">- Rahul M.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="achievements" id="achievements">
+        <video autoplay muted loop playsinline>
+            <source src="https://cdn.pixabay.com/video/2024/08/10/201735-975627050_tiny.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="container">
+            <h2 data-animate>Our Achievements</h2>
+            <div class="achievement-carousel">
+                <div class="achievement-item" data-animate>
+                    <img src="https://picsum.photos/300/200?random=4" alt="Achievement Image">
+                    <p class="achievement-title">Best Cybersecurity Academy 2024</p>
+                    <p>Awarded for excellence in delivering top-tier cybersecurity education.</p>
+                </div>
+                <div class="achievement-item" data-animate>
+                    <img src="https://picsum.photos/300/200?random=5" alt="Achievement Image">
+                    <p class="achievement-title">Certified Training Partner</p>
+                    <p>Recognized as a trusted partner by leading cybersecurity organizations.</p>
+                </div>
+                <div class="achievement-item" data-animate>
+                    <img src="https://picsum.photos/300/200?random=6" alt="Achievement Image">
+                    <p class="achievement-title">Global Impact Award</p>
+                    <p>Honored for empowering thousands of students worldwide.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <video autoplay muted loop playsinline>
+            <source src="https://cdn.pixabay.com/video/2024/08/10/201735-975627050_tiny.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="container">
+            <h2 data-animate>About Us</h2>
+            <p data-animate>Cyber Heals Academy provides high-quality, accessible cybersecurity education. We bridge the skills gap and empower future professionals.</p>
+            <div class="counters" data-animate>
+                <div>
+                    <div class="counter" data-count="1200">0</div>
+                    <div class="counter-label">Students Enrolled</div>
+                </div>
+                <div>
+                    <div class="counter" data-count="50">0</div>
+                    <div class="counter-label">Courses Offered</div>
+                </div>
+                <div>
+                    <div class="counter" data-count="25">0</div>
+                    <div class="counter-label">Expert Instructors</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; <span id="year"></span> Cyber Heals Academy. All Rights Reserved.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+    </div>
+</footer>
+
+<button id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+// Mobile Menu
+const mobileMenu = document.getElementById('mobile-menu');
+const navLinks = document.getElementById('nav-links');
+mobileMenu.addEventListener('click', () => navLinks.classList.toggle('active'));
+
+// Sticky Header & Back to Top
+window.addEventListener('scroll', () => {
+    document.querySelector('header').classList.toggle('sticky', window.scrollY > 50);
+    document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
+});
+document.getElementById('backToTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+// Dark Mode Toggle
+document.addEventListener('keydown', e => { if(e.key==='d') document.body.classList.toggle('dark-mode'); });
+
+// Typing effect
+const typingText = "Achieve Your Cybersecurity Career Goals";
+let index = 0;
+function typeEffect() {
+    if(index <= typingText.length) {
+        document.getElementById('typing').innerText = typingText.slice(0,index);
+        index++;
+        setTimeout(typeEffect,80);
+    }
+}
+typeEffect();
+
+// Smooth scroll for anchor links with header offset
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if(targetElement) {
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+            window.scrollTo({top: targetPosition, behavior: 'smooth'});
+        }
+    });
+});
+
+// Scroll animation and counters
+const animElements = document.querySelectorAll('[data-animate]');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting) {
+            entry.target.classList.add('active');
+            if(entry.target.classList.contains('counters')) {
+                const counters = entry.target.querySelectorAll('.counter');
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-count');
+                    let count = 0;
+                    const increment = target / 100;
+                    const updateCount = () => {
+                        if(count < target){
+                            count += increment;
+                            counter.innerText = Math.ceil(count);
+                            setTimeout(updateCount, 20);
+                        } else counter.innerText = target;
+                    };
+                    updateCount();
+                });
+            }
+        }
+    });
+}, {threshold:0.3});
+animElements.forEach(el => observer.observe(el));
+
+// Auto slide testimonials
+const testimonialCarousel = document.querySelector('.testimonial-carousel');
+let testimonialScrollAmount = 0;
+setInterval(() => {
+    if(testimonialScrollAmount >= testimonialCarousel.scrollWidth - testimonialCarousel.clientWidth) testimonialScrollAmount = 0;
+    else testimonialScrollAmount += testimonialCarousel.clientWidth;
+    testimonialCarousel.scrollTo({left:testimonialScrollAmount, behavior:'smooth'});
+}, 5000);
+
+// Auto slide achievements
+const achievementCarousel = document.querySelector('.achievement-carousel');
+let achievementScrollAmount = 0;
+setInterval(() => {
+    if(achievementScrollAmount >= achievementCarousel.scrollWidth - achievementCarousel.clientWidth) achievementScrollAmount = 0;
+    else achievementScrollAmount += achievementCarousel.clientWidth;
+    achievementCarousel.scrollTo({left:achievementScrollAmount, behavior:'smooth'});
+}, 5000);
+
+// Footer year
+document.getElementById('year').innerText = new Date().getFullYear();
+</script>
+
+</body>
+</html>
