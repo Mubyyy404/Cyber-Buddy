@@ -44,6 +44,7 @@
       background: #4fd1c5;
       font-weight: bold;
       cursor: pointer;
+      margin: 5px;
     }
     button:hover { background: #3bb3ad; }
     canvas {
@@ -73,6 +74,17 @@
   <script>
     let certCounter = 1;
     let currentCertId = "";
+    const canvas = document.getElementById("certCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Preload certificate template
+    const certTemplate = new Image();
+    certTemplate.src = "Certificate.png"; // Make sure it's in same folder
+
+    certTemplate.onload = () => {
+      // Draw blank template at start
+      ctx.drawImage(certTemplate, 0, 0, canvas.width, canvas.height);
+    };
 
     function generateCertificate() {
       const name = document.getElementById("nameInput").value.trim();
@@ -85,40 +97,36 @@
       currentCertId = `CBA-2025-${String(certCounter).padStart(3,"0")}`;
       certCounter++;
 
-      const canvas = document.getElementById("certCanvas");
-      const ctx = canvas.getContext("2d");
+      // Clear canvas and redraw background
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(certTemplate, 0, 0, canvas.width, canvas.height);
 
-      // Load template image
-      const img = new Image();
-      img.src = "Certificate.png"; // certificate template file
+      // Add Name
+      ctx.font = "bold 36px Arial";
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.fillText(name, canvas.width / 2, 380); // Adjust Y to match template
 
-      img.onload = function() {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Add Certificate ID
+      ctx.font = "bold 20px Arial";
+      ctx.fillStyle = "red";
+      ctx.textAlign = "right";
+      ctx.fillText(currentCertId, canvas.width - 50, canvas.height - 30);
 
-        // Add Name
-        ctx.font = "bold 36px Arial";
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText(name, canvas.width/2, 380); // adjust Y for correct placement
-
-        // Add Certificate ID
-        ctx.font = "bold 20px Arial";
-        ctx.fillStyle = "red";
-        ctx.textAlign = "right";
-        ctx.fillText(currentCertId, canvas.width - 50, canvas.height - 30);
-
-        // Save to localStorage (for verification page)
-        let records = JSON.parse(localStorage.getItem("certificates") || "{}");
-        records[currentCertId] = name;
-        localStorage.setItem("certificates", JSON.stringify(records));
-      }
+      // Save to localStorage
+      let records = JSON.parse(localStorage.getItem("certificates") || "{}");
+      records[currentCertId] = name;
+      localStorage.setItem("certificates", JSON.stringify(records));
     }
 
     function downloadCertificate() {
-      const canvas = document.getElementById("certCanvas");
+      if (!currentCertId) {
+        alert("Please generate a certificate first.");
+        return;
+      }
       const link = document.createElement("a");
       link.download = currentCertId + ".png";
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL("image/png");
       link.click();
     }
   </script>
