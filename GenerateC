@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cyber Buddy Academy | Certificate Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg,#0a1a3d,#1b2a47);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    header img {
+      height: 60px;
+      margin-right: 15px;
+    }
+    .box {
+      background: #0d2551;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(79,209,197,0.6);
+    }
+    input {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      width: 70%;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      background: #4fd1c5;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #3bb3ad; }
+    canvas {
+      margin-top: 20px;
+      border: 2px solid #4fd1c5;
+      border-radius: 10px;
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="mylogo.png" alt="Logo">
+    <h1>Cyber Buddy Academy</h1>
+  </header>
+
+  <div class="box">
+    <h2>Generate Your Certificate</h2>
+    <input type="text" id="nameInput" placeholder="Enter Your Full Name">
+    <br>
+    <button onclick="generateCertificate()">Generate</button>
+    <button onclick="downloadCertificate()">Download</button>
+    <br>
+    <canvas id="certCanvas" width="1000" height="750"></canvas>
+  </div>
+
+  <script>
+    let certCounter = 1;
+    let currentCertId = "";
+
+    function generateCertificate() {
+      const name = document.getElementById("nameInput").value.trim();
+      if (!name) {
+        alert("Please enter a name");
+        return;
+      }
+
+      // Certificate ID
+      currentCertId = `CBA-2025-${String(certCounter).padStart(3,"0")}`;
+      certCounter++;
+
+      const canvas = document.getElementById("certCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // Load template image
+      const img = new Image();
+      img.src = "Certificate.png"; // certificate template file
+
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Add Name
+        ctx.font = "bold 36px Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText(name, canvas.width/2, 380); // adjust Y for correct placement
+
+        // Add Certificate ID
+        ctx.font = "bold 20px Arial";
+        ctx.fillStyle = "red";
+        ctx.textAlign = "right";
+        ctx.fillText(currentCertId, canvas.width - 50, canvas.height - 30);
+
+        // Save to localStorage (for verification page)
+        let records = JSON.parse(localStorage.getItem("certificates") || "{}");
+        records[currentCertId] = name;
+        localStorage.setItem("certificates", JSON.stringify(records));
+      }
+    }
+
+    function downloadCertificate() {
+      const canvas = document.getElementById("certCanvas");
+      const link = document.createElement("a");
+      link.download = currentCertId + ".png";
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
