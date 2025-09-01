@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Buddy Webinar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    /* General Body */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg,#0a1a3d,#1b2a47);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    /* Header */
+    .logo {
+      width: 160px;
+      margin-bottom: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .title {
+      font-size: 3em;
+      font-weight: 700;
+      color: #4fd1c5;
+      text-align: center;
+      margin-bottom: 10px;
+      animation: fadeIn 1.5s ease forwards;
+    }
+
+    .subtitle {
+      font-size: 1.5em;
+      color: #f0c808;
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    /* Countdown */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 50px;
+      font-family: 'Poppins', sans-serif;
+      animation: fadeIn 2.5s ease forwards;
+    }
+
+    .time-block {
+      background: #0d2551;
+      padding: 20px 15px;
+      border-radius: 15px;
+      min-width: 80px;
+      box-shadow: 0 0 20px rgba(79,209,197,0.6);
+      position: relative;
+      overflow: hidden;
+      perspective: 600px;
+    }
+
+    .time-number {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #4fd1c5;
+      display: block;
+      animation: flip 0.7s ease forwards;
+    }
+
+    .time-label {
+      font-size: 0.95em;
+      color: #f0c808;
+      margin-top: 5px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .colon {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #fff;
+      align-self: center;
+    }
+
+    /* Info & Speaker Section */
+    .info-section {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .info-block, .speaker-section {
+      flex: 1;
+      min-width: 300px;
+      background: #0d2551;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.5);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: slideIn 1s forwards;
+    }
+
+    .info-block:hover, .speaker-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 35px rgba(79,209,197,0.6);
+    }
+
+    .info-block p {
+      font-size: 1.1em;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-block i {
+      font-size: 1.4em;
+      color: #f0c808;
+      margin-right: 10px;
+    }
+
+    .highlight {
+      color: #f0c808;
+      font-weight: 600;
+      margin-right: 5px;
+    }
+
+    .register-btn {
+      display: block;
+      margin: 25px auto 0;
+      background: #4fd1c5;
+      color: #142850;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.2em;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 5px 15px rgba(79,209,197,0.4);
+      transition: 0.3s ease-in-out;
+    }
+
+    .register-btn:hover {
+      background: #3bb3ad;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(79,209,197,0.6);
+    }
+
+    /* Speaker Section */
+    .speaker-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 5px solid #f0c808;
+      box-shadow: 0 0 25px rgba(240,200,8,0.5);
+    }
+
+    .speaker-name {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .speaker-role {
+      font-size: 1.2em;
+      color: #4fd1c5;
+      margin-bottom: 15px;
+    }
+
+    .speaker-bio {
+      font-size: 1em;
+      line-height: 1.6;
+      max-width: 300px;
+      color: #ccc;
+      margin: auto;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 60px;
+      font-size: 0.95em;
+      color: #aaa;
+      padding: 20px 0;
+      border-top: 1px solid #223c6b;
+      text-align: center;
+    }
+
+    /* Animations */
+    @keyframes flip {
+      0% { transform: rotateX(90deg); opacity:0; }
+      100% { transform: rotateX(0deg); opacity:1; }
+    }
+
+    @keyframes fadeIn {
+      0% {opacity:0;}
+      100% {opacity:1;}
+    }
+
+    @keyframes slideIn {
+      0% {opacity:0; transform:translateY(50px);}
+      100% {opacity:1; transform:translateY(0);}
+    }
+
+    @media(max-width: 900px){
+      .info-section {
+        flex-direction: column;
+        align-items: center;
+      }
+      .speaker-bio {
+        max-width: 100%;
+      }
+      .countdown {
+        flex-wrap: wrap;
+      }
+      .colon {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo and Header -->
+    <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo" class="logo">
+    <div class="title">INTRODUCTION TO CYBERSECURITY</div>
+    <div class="subtitle">A FREE Webinar by Cyber Buddy Academy</div>
+
+    <!-- Animated Countdown Clock -->
+    <div class="countdown">
+      <div class="time-block">
+        <div class="time-number" id="days">00</div>
+        <div class="time-label">Days</div>
+      </div>
+      <div class="colon">:</div>
+      <div class="time-block">
+        <div class="time-number" id="hours">00</div>
+        <div class="time-label">Hours</div>
+      </div>
+      <div class="colon">:</div>
+      <div class="time-block">
+        <div class="time-number" id="minutes">00</div>
+        <div class="time-label">Minutes</div>
+      </div>
+      <div class="colon">:</div>
+      <div class="time-block">
+        <div class="time-number" id="seconds">00</div>
+        <div class="time-label">Seconds</div>
+      </div>
+    </div>
+
+    <!-- Info and Speaker Section -->
+    <div class="info-section">
+      <div class="info-block">
+        <p><i class="fas fa-calendar-alt"></i><span class="highlight">Date:</span> Tuesday, 02 September 2025</p>
+        <p><i class="fas fa-clock"></i><span class="highlight">Time:</span> 08:00 PM IST</p>
+        <p><i class="fas fa-globe"></i><span class="highlight">Mode:</span> Online (Microsoft Teams)</p>
+        <button class="register-btn" onclick="window.location.href='https://docs.google.com/forms/u/7/d/1aIdvR0sO4dWiAYKR02b2DgAGIXAmmrIjG8kGDpM4uD4/edit?usp=drivesdk&ouid=109149027902394317273&chromeless=1'">Register Now !!</button>
+      </div>
+
+      <div class="speaker-section">
+        <img src="https://media.licdn.com/dms/image/v2/D5603AQGnN8xsR092GA/profile-displayphoto-shrink_400_400/B56ZX1OPh3GQAg-/0/1743575913533?e=1759363200&v=beta&t=TIH-u9GY2AqSaaQcPSsmHeKD2g9H_zKXALShCGwEF5M" alt="Speaker Photo" class="speaker-photo">
+        <div class="speaker-name">Mohamed Mubeen</div>
+        <div class="speaker-role">Founder & CEO, Cyber Buddy</div>
+        <p class="speaker-bio">Hi folks, I'm Mohamed Mubeen, and I’m here to educate students who are beginners in cybersecurity, as well as those from other domains who wish to learn about this field.</p>
+        <button class="register-btn" style="margin-top:20px;" onclick="window.location.href='https://www.linkedin.com/in/mohamed-mubeen-8028b3287/'">About ME</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Questions? Contact us!</p>
+      <p>📧 Cyberbuddyyy@gmail.com | 📞 +91 93610 73217</p>
+      <p>&copy; 2025 Cyber Buddy Academy. All rights reserved.</p>
+    </div>
+  </div>
+
+  <script>
+    const webinarDate = new Date("Sep 2, 2025 20:00:00").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = webinarDate - now;
+
+      if(distance < 0){
+        document.querySelector(".countdown").innerHTML = "<div style='font-size:2em; color:#f0c808;'>🚀 Webinar Started!</div>";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000*60*60*24));
+      const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((distance % (1000*60)) / 1000);
+
+      // Animate flipping effect by changing number with class animation
+      ['days','hours','minutes','seconds'].forEach(unit=>{
+        const el = document.getElementById(unit);
+        if(el.innerText !== String(eval(unit)).padStart(2,'0')){
+          el.innerText = String(eval(unit)).padStart(2,'0');
+          el.style.animation = 'flip 0.5s ease forwards';
+          setTimeout(()=>{el.style.animation=''},500);
+        }
+      });
+    }
+
+    setInterval(updateCountdown,1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
