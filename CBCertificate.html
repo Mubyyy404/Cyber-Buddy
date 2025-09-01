@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Buddy Academy | Certificate Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-blue: #0a1a3d;
+            --container-bg: #112240;
+            --light-cyan: #00ffea;
+            --teal: #4fd1c5;
+            --orange: #ffb400;
+            --font-main: 'Orbitron', sans-serif;
+            --font-sub: 'Montserrat', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sub);
+            background: var(--dark-blue);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: var(--font-main);
+            color: var(--light-cyan);
+            text-shadow: 0 0 5px var(--light-cyan);
+            margin-bottom: 20px;
+        }
+
+        .box {
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 0 25px rgba(79, 209, 197, 0.6);
+        }
+
+        .box h2 {
+            font-family: var(--font-main);
+            color: var(--teal);
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid var(--teal);
+            background: #0a1a3d;
+            color: white;
+            width: 80%;
+            font-size: 16px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--orange);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: var(--teal);
+            color: var(--container-bg);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button.download-btn {
+            background: var(--orange);
+            color: var(--container-bg);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        canvas {
+            margin-top: 20px;
+            border: 2px solid var(--teal);
+            border-radius: 10px;
+            max-width: 100%;
+            box-shadow: 0 0 15px rgba(79, 209, 197, 0.4);
+            background: #0d1e3d; /* Placeholder bg for initial canvas */
+        }
+        
+        .certificate-container {
+            width: 1000px;
+            max-width: 100%;
+        }
+
+        .certificate-loading {
+            min-height: 750px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            color: var(--teal);
+        }
+        
+        @media (max-width: 768px) {
+            .box {
+                padding: 20px;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .certificate-container {
+                min-width: unset;
+                width: 100%;
+                overflow-x: auto;
+            }
+            canvas {
+                min-width: 750px; /* Ensure canvas is still readable */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Cyber Buddy Academy</h1>
+    <div class="box">
+        <h2>Generate Your Certificate</h2>
+        <input type="text" id="nameInput" placeholder="Enter Your Full Name">
+        <div class="button-group">
+            <button onclick="generateCertificate()">Generate</button>
+            <button class="download-btn" onclick="downloadCertificate()">Download</button>
+        </div>
+    </div>
+    
+    <div class="certificate-container">
+        <div class="certificate-loading" id="loadingMessage">
+            Loading certificate template...
+        </div>
+        <canvas id="certCanvas" width="1000" height="750" style="display:none;"></canvas>
+    </div>
+
+    <script>
+        let certificateImageLoaded = false;
+        const certImage = new Image();
+        certImage.crossOrigin = "anonymous"; 
+        certImage.src = "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/Certificate%20of%20Participation.png"; // Use local file in same folder
+
+        certImage.onload = function() {
+            certificateImageLoaded = true;
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('certCanvas').style.display = 'block';
+            console.log("Certificate template image loaded successfully.");
+        };
+
+        certImage.onerror = function() {
+            document.getElementById('loadingMessage').innerText = "Failed to load certificate template. Please check the image file.";
+        };
+
+        let currentName = "";
+
+        function generateCertificate() {
+            if (!certificateImageLoaded) {
+                alert("The certificate template is still loading. Please wait a moment.");
+                return;
+            }
+            const name = document.getElementById("nameInput").value.trim();
+            if (!name) {
+                alert("Please enter your name!");
+                return;
+            }
+            currentName = name;
+
+            const canvas = document.getElementById("certCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // Clear and redraw template
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(certImage, 0, 0, canvas.width, canvas.height);
+
+            // Add the name text
+            ctx.font = "bold 42px Montserrat";
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(name, canvas.width / 2, 360); // adjust Y as per template
+        }
+
+        function downloadCertificate() {
+            if (!currentName) {
+                alert("Please generate your certificate first!");
+                return;
+            }
+            const canvas = document.getElementById("certCanvas");
+
+            canvas.toBlob(function(blob) {
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = currentName.replace(/\s+/g, "_") + "_certificate.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            }, "image/png");
+        }
+    </script>
+</body>
+</html>
