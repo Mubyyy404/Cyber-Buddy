@@ -166,13 +166,17 @@
     <script>
         let certificateImageLoaded = false;
         const certImage = new Image();
-        certImage.src = "Certificate.png"; // Your certificate template image
+        certImage.src = "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/Certificate.png.png";
 
         certImage.onload = function() {
             certificateImageLoaded = true;
             document.getElementById('loadingMessage').style.display = 'none';
             document.getElementById('certCanvas').style.display = 'block';
             console.log("Certificate template image loaded successfully.");
+        };
+
+        certImage.onerror = function() {
+            document.getElementById('loadingMessage').innerText = "Failed to load certificate template. Please check the image URL.";
         };
 
         let currentName = "";
@@ -196,9 +200,8 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(certImage, 0, 0, canvas.width, canvas.height);
 
-            // Add the name to the canvas, matching the style of the template
-            // Using a slightly larger font to fill the space
-            ctx.font = "bold 42px Montserrat"; // Adjusted font size and weight
+            // Add the name to the canvas
+            ctx.font = "bold 42px Montserrat";
             ctx.fillStyle = "#ffffff";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
