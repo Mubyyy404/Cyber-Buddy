@@ -64,6 +64,16 @@
     }
     @keyframes typing { from { width: 0; } to { width: 100%; } }
     @keyframes blink-caret { 50% { border-color: transparent; } }
+    .hero-text {
+      animation: fade-in-up 1s ease-out forwards;
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-text { animation: none; }
+    }
     .glass-card {
       background: var(--bg-panel);
       border: 1px solid var(--glass-border);
@@ -112,15 +122,16 @@
     body.light-mode .text-slate-400 { color: #9ca3af; }
     body.light-mode #mobile-menu a { color: var(--text-dark); }
     body.light-mode #mobile-menu a:hover { background: rgba(0,0,0,0.05); }
-    nav a { 
+    body.light-mode footer a { color: var(--text-dark); }
+    nav a, footer a { 
       position: relative; 
       transition: all 0.2s ease; 
       font-family: 'Poppins', sans-serif; 
       font-weight: 600; 
       color: var(--text-light); 
     }
-    nav a:hover { color: var(--accent); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
-    nav a::after { 
+    nav a:hover, footer a:hover { color: var(--accent); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
+    nav a::after, footer a::after { 
       content: ''; 
       position: absolute; 
       bottom: -2px; 
@@ -130,10 +141,23 @@
       background: var(--accent); 
       transition: width 0.2s ease; 
     }
-    nav a:hover::after { width: 100%; }
+    nav a:hover::after, footer a:hover::after { width: 100%; }
     .counter { transition: all 0.2s ease; }
     @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 12px rgba(6,182,212,0.5); } 50% { box-shadow: 0 0 20px rgba(6,182,212,0.7); } }
     .counter.animating { animation: pulse-glow 1.5s ease-in-out infinite; }
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
@@ -187,8 +211,8 @@
     <video autoplay muted loop playsinline class="w-full h-full object-cover">
       <source src="https://player.vimeo.com/progressive_redirect/playback/827539139/rendition/720p/file.mp4?loc=external&signature=5b9b6f2e1f8e6d5a1a0e7a7a7e7e7a7a7e7e7a7a7e7e7a7a7e7e7a7a7e7e7a7a" type="video/mp4">
     </video>
-    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center z-10">
-      <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight typewriter break-words">Empowering the Next Generation of Cyber Defenders</h1>
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center z-10 hero-text">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-snug typewriter break-words">Empowering the Next Generation of Cyber Defenders</h1>
       <p class="mt-8 text-lg sm:text-xl md:text-2xl max-w-4xl mx-auto">Hands-on training in ethical hacking, network defense, and digital forensics.</p>
       <div class="mt-12 flex justify-center gap-6">
         <a href="#courses" class="px-8 py-4 rounded-lg font-semibold text-lg bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 shadow-lg hover:from-sky-300 hover:to-cyan-300 transition">Explore Courses</a>
@@ -249,6 +273,11 @@
         <img src="https://images.unsplash.com/photo-1549692520-acc6669e2f0c?auto=format&fit=crop&w=800&q=80" alt="Cybersecurity Training Lab" class="w-full h-full object-cover">
       </div>
     </div>
+    <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <div class="glass-card rounded-lg overflow-hidden shadow-lg video-container">
+        <iframe loading="lazy" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="BlueCyber Academy Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
   </section>
 
   <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
@@ -290,8 +319,8 @@
 
   <!-- CONTACT -->
   <section id="contact" class="py-24 bg-slate-900/40">
-    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
-      <div class="glass-card form p-10 rounded-lg h-[32rem] flex flex-col">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div class="glass-card form p-10 rounded-lg min-h-[32rem] flex flex-col">
         <h3 class="text-3xl font-bold glow">Get in Touch</h3>
         <p class="mt-4 text-slate-300">Questions? Partnerships? Tell us about your goals and we'll help you choose the right learning path.</p>
         <form id="contact-form" class="mt-8 space-y-6 flex-grow">
@@ -311,7 +340,7 @@
           <p id="form-message" class="text-center text-sm text-cyan-200 mt-4"></p>
         </form>
       </div>
-      <div class="space-y-8">
+      <div class="flex flex-col space-y-8">
         <div class="glass-card p-8 rounded-lg shadow-lg">
           <h4 class="font-bold text-lg">Our Location</h4>
           <p class="mt-3 text-slate-300">BlueCyber Academy • 123 Cybersecurity Drive, Tech City</p>
@@ -325,15 +354,24 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="py-12 bg-black/60">
+  <footer class="py-16 bg-gradient-to-b from-black/80 to-black/60 backdrop-blur-md">
     <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="flex justify-center gap-8 mb-8">
-        <a href="#" class="text-cyan-400 hover:scale-110 transition" aria-label="Facebook"><i class="fab fa-facebook-f fa-lg"></i></a>
-        <a href="#" class="text-cyan-400 hover:scale-110 transition" aria-label="YouTube"><i class="fab fa-youtube fa-lg"></i></a>
-        <a href="#" class="text-cyan-400 hover:scale-110 transition" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
-        <a href="#" class="text-cyan-400 hover:scale-110 transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-lg"></i></a>
+      <div class="mb-8 hidden md:flex justify-center gap-8">
+        <a href="#home" class="hover:text-cyan-400 transition">Home</a>
+        <a href="#courses" class="hover:text-cyan-400 transition">Courses</a>
+        <a href="#labs" class="hover:text-cyan-400 transition">Labs</a>
+        <a href="#about" class="hover:text-cyan-400 transition">About</a>
+        <a href="#stats" class="hover:text-cyan-400 transition">Stats</a>
+        <a href="#testimonials" class="hover:text-cyan-400 transition">Testimonials</a>
+        <a href="#contact" class="hover:text-cyan-400 transition">Contact</a>
       </div>
-      <p class="text-sm text-slate-400">© <span id="year">2025</span> BlueCyber Academy. All rights reserved.</p>
+      <div class="flex justify-center gap-10 mb-10">
+        <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="Facebook"><i class="fab fa-facebook-f fa-2x"></i></a>
+        <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="YouTube"><i class="fab fa-youtube fa-2x"></i></a>
+        <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
+        <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-2x"></i></a>
+      </div>
+      <p class="text-base text-slate-300 glow">© <span id="year">2025</span> BlueCyber Academy. All rights reserved.</p>
     </div>
   </footer>
 
