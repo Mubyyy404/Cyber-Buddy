@@ -33,6 +33,9 @@
       box-sizing: border-box;
       transition: background 0.3s ease, color 0.3s ease;
       scroll-behavior: smooth;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     * { box-sizing: border-box; }
     .bg-overlay { position: fixed; inset: 0; z-index: -10; background: var(--bg-dark); pointer-events: none; }
@@ -439,6 +442,10 @@
     body.light-mode #popup-close:hover {
       background: rgba(255,255,255,0.7);
     }
+    footer {
+      margin-top: auto;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -476,7 +483,7 @@
           <div class="font-bold text-xl glow">BlueCyber Academy</div>
         </div>
         <div class="hidden md:flex items-center gap-12">
-          <a href="https://mubyyy404.github.io/vuln-practice-lab/" class="hover:text-cyan-400 transition text-base">Home</a>
+          <a href="#home" class="hover:text-cyan-400 transition text-base">Home</a>
           <a href="#courses" class="hover:text-cyan-400 transition text-base">Courses</a>
           <a href="#labs" class="hover:text-cyan-400 transition text-base">Labs</a>
           <a href="#about" class="hover:text-cyan-400 transition text-base">About</a>
@@ -709,7 +716,7 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="py-16 bg-gradient-to-b from-black/80 to-black/60 backdrop-blur-md" role="contentinfo">
+  <footer class="py-16 bg-gradient-to-b from-black/80 to-black/60 backdrop-blur-md w-full" role="contentinfo">
     <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <div class="flex flex-col items-center gap-6">
         <div class="flex justify-center gap-10">
@@ -791,7 +798,7 @@
       ctaLink: '#contact'
     };
     function showPopup() {
-      if (!popupConfig.enabled || localStorage.getItem('bca-popup-dismissed')) return;
+      if (!popupConfig.enabled) return;
       const overlay = $('#popup-overlay');
       const img = $('#popup-img');
       $('#popup-title').textContent = popupConfig.title;
@@ -810,7 +817,6 @@
     }
     function closePopup() {
       $('#popup-overlay').classList.remove('show');
-      localStorage.setItem('bca-popup-dismissed', 'true');
     }
     $('#popup-close').addEventListener('click', closePopup);
     $('#popup-overlay').addEventListener('click', (e) => {
@@ -1161,4 +1167,3 @@
   </script>
 </body>
 </html>
-```
