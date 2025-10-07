@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register | BlueCyber Academy</title>
+  <meta name="description" content="Create a new account at BlueCyber Academy to start your cybersecurity training." />
+  <meta name="keywords" content="cybersecurity register, bluecyber academy register" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+
+  <style>
+    :root {
+      --accent: #06b6d4;
+      --accent-700: #0891b2;
+      --bg-dark: #0b1220;
+      --bg-panel: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.06);
+      --text-light: #e6f6f8;
+      --text-dark: #0b1220;
+    }
+    html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      transition: background 0.3s ease, color 0.3s ease;
+      scroll-behavior: smooth;
+    }
+    * { box-sizing: border-box; }
+    .bg-overlay { position: fixed; inset: 0; z-index: -10; background: var(--bg-dark); pointer-events: none; }
+    .bg-overlay canvas { width: 100%; height: 100%; display: block; }
+    .glass-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--glass-border);
+      backdrop-filter: blur(6px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+    .glass-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 16px rgba(6,182,212,0.15);
+    }
+    .glow { text-shadow: 0 4px 26px rgba(6,182,212,0.12); color: var(--accent); }
+    .form-input {
+      background: var(--bg-panel);
+      border: 2px solid rgba(6,182,212,0.3);
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      line-height: 1.5;
+      padding: 0.75rem 1rem;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(6,182,212,0.4);
+    }
+    .form-input::placeholder {
+      color: rgba(229,246,248,0.6);
+      font-size: 1rem;
+    }
+    .form-loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--accent);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pulse-cta {
+      animation: pulse-cta 2s ease-in-out infinite;
+    }
+    @keyframes pulse-cta {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(6,182,212,0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(6,182,212,0.5); }
+    }
+    .pulse-cta:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(6,182,212,0.6);
+    }
+    body.light-mode { background: #f8fafc; color: var(--text-dark); }
+    body.light-mode .glass-card { background: rgba(255,255,255,0.95); border-color: rgba(11,18,32,0.2); }
+    body.light-mode .form-input { background: rgba(255,255,255,0.95); color: var(--text-dark); border-color: rgba(11,18,32,0.2); }
+    body.light-mode .form-input:focus { border-color: var(--accent-700); box-shadow: 0 0 12px rgba(8,145,178,0.4); }
+    body.light-mode .form-input::placeholder { color: rgba(11,18,32,0.6); }
+    body.light-mode .text-slate-300 { color: #4b5563; }
+    body.light-mode .glow { color: var(--accent-700); }
+    nav a { 
+      position: relative; 
+      transition: all 0.2s ease; 
+      font-family: 'Poppins', sans-serif; 
+      font-weight: 600; 
+      color: var(--text-light); 
+    }
+    nav a:hover { color: var(--accent); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
+    body.light-mode nav a { color: var(--text-dark); }
+    body.light-mode nav a:hover { color: var(--accent-700); text-shadow: 0 0 8px rgba(8,145,178,0.5); }
+    nav a::after { 
+      content: ''; 
+      position: absolute; 
+      bottom: -2px; 
+      left: 0; 
+      width: 0; 
+      height: 2px; 
+      background: var(--accent); 
+      transition: width 0.2s ease; 
+    }
+    body.light-mode nav a::after { background: var(--accent-700); }
+    nav a:hover::after { width: 100%; }
+
+    /* Mobile-specific styles */
+    @media (max-width: 640px) {
+      .glass-card {
+        padding: 2rem;
+      }
+      .form-input {
+        font-size: 1.1rem;
+        padding: 0.875rem 1.25rem;
+      }
+      .form-input::placeholder {
+        font-size: 1.1rem;
+      }
+      label {
+        font-size: 1rem;
+      }
+      h2 {
+        font-size: 2rem;
+      }
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+      .text-sm {
+        font-size: 0.95rem;
+      }
+      #nav .w-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+      #nav .text-xl {
+        font-size: 1.25rem;
+      }
+      #nav .p-3 {
+        padding: 0.75rem;
+      }
+      #nav .w-6 {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+      #mobile-menu {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Motion background canvas -->
+  <div class="bg-overlay" aria-hidden="true">
+    <canvas id="motionBackground"></canvas>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav" class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-sm transition-all" role="navigation">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
+      <div class="flex items-center justify-between w-full">
+        <div class="flex items-center gap-4">
+          <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="BlueCyber Logo" class="w-12 h-12 rounded-md" loading="lazy">
+          <div class="font-bold text-xl glow">BlueCyber Academy</div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button id="theme-toggle" class="p-3 rounded-full bg-white/6 hover:bg-white/10" aria-label="Toggle theme" title="Toggle theme">
+            <svg id="theme-icon" class="w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+          <button id="mobile-menu-btn" class="md:hidden p-3 rounded-md bg-white/6 hover:bg-white/10" aria-label="Open menu">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden bg-black/50 backdrop-blur-sm">
+      <div class="px-6 pt-3 pb-6 space-y-3">
+        <!-- No navigation links -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- REGISTER FORM -->
+  <section id="register" class="min-h-screen flex items-center justify-center py-12 sm:py-16" role="region" aria-label="Register">
+    <div class="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass-card p-8 sm:p-10 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-center glow">Create an Account</h2>
+        <p class="mt-4 text-center text-slate-300">Join BlueCyber Academy to start your cybersecurity training journey.</p>
+        <form id="register-form" action="https://formspree.io/f/your-form-id" method="POST" class="mt-8 space-y-6">
+          <div>
+            <label class="text-sm block mb-2" for="register-name">Full Name</label>
+            <input id="register-name" name="name" type="text" required class="form-input w-full rounded" placeholder="Enter your full name" />
+          </div>
+          <div>
+            <label class="text-sm block mb-2" for="register-email">Email</label>
+            <input id="register-email" name="email" type="email" required class="form-input w-full rounded" placeholder="Enter your email" />
+          </div>
+          <div>
+            <label class="text-sm block mb-2" for="register-password">Password</label>
+            <input id="register-password" name="password" type="password" required class="form-input w-full rounded" placeholder="Create a password" />
+          </div>
+          <div>
+            <label class="text-sm block mb-2" for="register-confirm-password">Confirm Password</label>
+            <input id="register-confirm-password" name="confirm-password" type="password" required class="form-input w-full rounded" placeholder="Confirm your password" />
+          </div>
+          <div>
+            <label class="text-sm text-slate-300">
+              <input type="checkbox" class="mr-2 accent-cyan-400" required /> I agree to the <a href="#" class="text-cyan-400 hover:text-cyan-300">Terms of Service</a> and <a href="#" class="text-cyan-400 hover:text-cyan-300">Privacy Policy</a>
+            </label>
+          </div>
+          <button type="submit" id="register-submit" class="w-full py-4 rounded bg-gradient-to-r from-sky-400 to-cyan-400 font-semibold text-lg text-slate-900 hover:from-sky-300 hover:to-cyan-300 pulse-cta">Register</button>
+          <p id="form-message" class="text-center text-sm text-cyan-200 mt-4"></p>
+          <p class="text-center text-slate-300 mt-4">Already have an account? <a href="login.html" class="text-cyan-400 hover:text-cyan-300">Log in here</a></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPTS -->
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    // Theme toggle
+    const themeToggle = $('#theme-toggle');
+    const body = document.body;
+    const themeIcon = $('#theme-icon');
+    function setTheme(light) {
+      if (light) {
+        body.classList.add('light-mode');
+        localStorage.setItem('bca-theme', 'light');
+        themeIcon.innerHTML = '<path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 7a5 5 0 100 10 5 5 0 000-10z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>';
+      } else {
+        body.classList.remove('light-mode');
+        localStorage.setItem('bca-theme', 'dark');
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>';
+      }
+    }
+    setTheme(localStorage.getItem('bca-theme') === 'light');
+    themeToggle.addEventListener('click', () => setTheme(!body.classList.contains('light-mode')));
+
+    // Mobile menu
+    const mobileBtn = $('#mobile-menu-btn');
+    const mobileMenu = $('#mobile-menu');
+    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+    // Motion background
+    const canvas = $('#motionBackground');
+    const ctx = canvas.getContext('2d');
+    let fontSize = 14;
+    let drops = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      fontSize = Math.max(12, Math.min(18, Math.floor(window.innerWidth / 120)));
+      const columns = Math.floor(canvas.width / fontSize);
+      drops = new Array(columns).fill(1);
+      ctx.font = `${fontSize}px monospace`;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    function drawBinary() {
+      ctx.fillStyle = 'rgba(11,18,32,0.12)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#06b6d4';
+      for (let i = 0; i < drops.length; i++) {
+        const text = Math.random() > 0.5 ? '0' : '1';
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+        ctx.fillText(text, x, y);
+        if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+      requestAnimationFrame(drawBinary);
+    }
+    requestAnimationFrame(drawBinary);
+
+    // Register form
+    $('#register-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const submitBtn = $('#register-submit');
+      const formMsg = $('#form-message');
+      const name = $('#register-name').value.trim();
+      const email = $('#register-email').value.trim();
+      const password = $('#register-password').value.trim();
+      const confirmPassword = $('#register-confirm-password').value.trim();
+      const termsAgreed = $('#register-form input[type="checkbox"]').checked;
+
+      if (!name || !email || !password || !confirmPassword || !termsAgreed) {
+        formMsg.textContent = 'Please fill out all fields and agree to the terms.';
+        formMsg.style.color = 'tomato';
+        return;
+      }
+      if (password !== confirmPassword) {
+        formMsg.textContent = 'Passwords do not match.';
+        formMsg.style.color = 'tomato';
+        return;
+      }
+      if (password.length < 8) {
+        formMsg.textContent = 'Password must be at least 8 characters long.';
+        formMsg.style.color = 'tomato';
+        return;
+      }
+
+      submitBtn.classList.add('form-loading');
+      submitBtn.disabled = true;
+      // Simulate registration submission
+      setTimeout(() => {
+        formMsg.style.color = 'var(--accent)';
+        formMsg.textContent = 'Registration successful! Redirecting to login...';
+        $('#register-form').reset();
+        submitBtn.classList.remove('form-loading');
+        submitBtn.disabled = false;
+        setTimeout(() => {
+          formMsg.textContent = '';
+          window.location.href = 'login.html';
+        }, 2000);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
