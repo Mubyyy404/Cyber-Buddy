@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cyber Buddy Academy | Premier Cybersecurity Training</title>
+  <meta name="description" content="Cyber Buddy Academy provides hands-on cybersecurity training, ethical hacking, and digital forensics." />
+  <meta name="keywords" content="cybersecurity training, ethical hacking, network defense, digital forensics" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+
+  <style>
+    :root {
+      --accent: #06b6d4;
+      --accent-700: #0891b2;
+      --bg-dark: #0b1220;
+      --bg-panel: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.06);
+      --text-light: #e6f6f8;
+      --text-dark: #0b1220;
+    }
+    html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      transition: background 0.3s ease, color 0.3s ease;
+      scroll-behavior: smooth;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    * { box-sizing: border-box; }
+    .bg-overlay { position: fixed; inset: 0; z-index: -10; background: var(--bg-dark); pointer-events: none; }
+    .bg-overlay canvas { width: 100%; height: 100%; display: block; }
+    .hero-bg {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+    .hero-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .typewriter { 
+      overflow: visible; 
+      border-right: 0.12em solid var(--accent); 
+      white-space: normal; 
+      animation: typing 3.2s steps(40,end), blink-caret .8s step-end infinite; 
+      max-width: 100%; 
+      display: inline-block;
+      word-break: break-word;
+    }
+    @keyframes typing { from { width: 0; } to { width: 100%; } }
+    @keyframes blink-caret { 50% { border-color: transparent; } }
+    .hero-text {
+      animation: fade-in-up 1s ease-out forwards;
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-text { animation: none; }
+    }
+    .glass-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(6px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+    .glass-card.course:hover {
+      transform: scale(1.03);
+    }
+    .glass-card.form {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(6,182,212,0.3);
+      box-shadow: 0 6px 16px rgba(6,182,212,0.15);
+    }
+    .glow { text-shadow: 0 4px 26px rgba(6,182,212,0.12); color: var(--accent); }
+    .dots { display: flex; gap: 12px; justify-content: center; align-items: center; }
+    .dot { width: 12px; height: 12px; border-radius: 999px; background: rgba(255,255,255,0.25); cursor: pointer; transition: all .24s; }
+    .dot.active { background: var(--accent); transform: scale(1.2); }
+    #scroll-to-top, #enroll-now-btn { 
+      display: grid; 
+      place-items: center; 
+      position: fixed; 
+      right: 24px; 
+      z-index: 60; 
+      width: 56px; 
+      height: 56px; 
+      border-radius: 9999px; 
+      background: var(--accent); 
+      color: #042028; 
+      box-shadow: 0 8px 24px rgba(2,6,23,0.5); 
+      transition: opacity .25s, transform .25s; 
+      opacity: 0; 
+      pointer-events: none; 
+    }
+    #scroll-to-top { bottom: 24px; }
+    #enroll-now-btn { bottom: 96px; }
+    #scroll-to-top.visible, #enroll-now-btn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    img, iframe, video { display: block; max-width: 100%; height: auto; }
+    a:focus, button:focus, input:focus, textarea:focus { outline: 3px solid rgba(6,182,212,0.18); outline-offset: 2px; }
+    body.light-mode { background: #f8fafc; color: var(--text-dark); }
+    body.light-mode .glass-card { background: rgba(255,255,255,0.9); border-color: rgba(11,18,32,0.1); box-shadow: 0 4px 12px rgba(11,18,32,0.1); }
+    body.light-mode .glass-card.form { background: rgba(255,255,255,0.95); border: 2px solid rgba(6,182,212,0.3); box-shadow: 0 6px 16px rgba(11,18,32,0.15); }
+    body.light-mode #nav { background: rgba(248,250,252,0.9); color: var(--text-dark); }
+    body.light-mode .hero-bg { background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)); }
+    body.light-mode .typewriter { border-right-color: var(--text-dark); }
+    body.light-mode .hero-bg h1, body.light-mode .hero-bg p { color: var(--text-dark); }
+    body.light-mode nav a, body.light-mode footer a { color: var(--text-dark); }
+    body.light-mode .text-slate-300 { color: #4b5563; }
+    body.light-mode .text-slate-200 { color: #6b7280; }
+    body.light-mode .text-slate-400 { color: #9ca3af; }
+    body.light-mode .text-cyan-400 { color: var(--accent-700); }
+    body.light-mode #mobile-menu a { color: var(--text-dark); }
+    body.light-mode #mobile-menu a:hover { background: rgba(0,0,0,0.05); }
+    nav a, footer a { 
+      position: relative; 
+      transition: all 0.2s ease; 
+      font-family: 'Poppins', sans-serif; 
+      font-weight: 600; 
+      color: var(--text-light); 
+    }
+    nav a:hover, footer a:hover { color: var(--accent); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
+    body.light-mode nav a:hover, body.light-mode footer a:hover { color: var(--accent-700); text-shadow: 0 0 8px rgba(8,145,178,0.5); }
+    nav a::after, footer a::after { 
+      content: ''; 
+      position: absolute; 
+      bottom: -2px; 
+      left: 0; 
+      width: 0; 
+      height: 2px; 
+      background: var(--accent); 
+      transition: width 0.2s ease; 
+    }
+    body.light-mode nav a::after, body.light-mode footer a::after { background: var(--accent-700); }
+    nav a:hover::after, footer a:hover::after { width: 100%; }
+    .counter { transition: all 0.2s ease; }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 12px rgba(6,182,212,0.5); } 50% { box-shadow: 0 0 20px rgba(6,182,212,0.7); } }
+    .counter.animating { animation: pulse-glow 1.5s ease-in-out infinite; }
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .form-loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--accent);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pulse-cta {
+      animation: pulse-cta 2s ease-in-out infinite;
+    }
+    @keyframes pulse-cta {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(6,182,212,0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(6,182,212,0.5); }
+    }
+    .pulse-cta:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(6,182,212,0.6);
+    }
+    .filter-btn {
+      transition: all 0.2s ease;
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      color: #042028;
+    }
+    .course-tooltip {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-panel);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(6px);
+      padding: 12px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 300px;
+      text-align: left;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 10;
+    }
+    body.light-mode .course-tooltip { background: rgba(255,255,255,0.9); border-color: rgba(11,18,32,0.1); }
+    .glass-card.course:hover .course-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    body.light-mode .faq-item { border-bottom: 1px solid rgba(11,18,32,0.1); }
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+    .faq-question {
+      cursor: pointer;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s ease;
+    }
+    .faq-question:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    body.light-mode .faq-question:hover { background: rgba(0,0,0,0.05); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 16px;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .faq-item.active .faq-answer {
+      padding: 16px;
+    }
+    .faq-toggle {
+      transition: transform 0.3s ease;
+    }
+    .faq-item.active .faq-toggle {
+      transform: rotate(180deg);
+    }
+    #nav.scrolled {
+      padding: 8px 0;
+      background: rgba(0,0,0,0.7);
+    }
+    body.light-mode #nav.scrolled { background: rgba(248,250,252,0.9); }
+    #nav.scrolled .w-full {
+      height: 56px;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      width: 0;
+      height: 4px;
+      background: var(--accent);
+      z-index: 50;
+      transition: width 0.2s ease;
+    }
+    body.light-mode #progress-bar {
+      background: var(--accent-700);
+    }
+    .search-container {
+      position: relative;
+      max-width: 400px;
+      width: 100%;
+      margin: 0 auto 16px;
+    }
+    #course-search {
+      background: var(--bg-panel);
+      border: 2px solid var(--glass-border);
+      padding: 12px 40px 12px 16px;
+      border-radius: 9999px;
+      color: var(--text-light);
+      width: 100%;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+    #course-search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(6,182,212,0.4);
+      transform: scale(1.02);
+    }
+    body.light-mode #course-search {
+      background: rgba(255,255,255,0.95);
+      color: var(--text-dark);
+      border-color: rgba(11,18,32,0.2);
+    }
+    .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      pointer-events: none;
+    }
+    body.light-mode .search-icon { color: var(--accent-700); }
+    #course-search-label {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      font-size: 16px;
+    }
+    #course-search:focus + #course-search-label,
+    #course-search:not(:placeholder-shown) + #course-search-label {
+      top: -10px;
+      left: 12px;
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--bg-dark);
+      padding: 0 4px;
+    }
+    body.light-mode #course-search-label {
+      color: var(--text-dark);
+    }
+    body.light-mode #course-search:focus + #course-search-label,
+    body.light-mode #course-search:not(:placeholder-shown) + #course-search-label {
+      background: #f8fafc;
+      color: var(--accent-700);
+    }
+    .form-input, .form-textarea {
+      background: var(--bg-panel);
+      border: 2px solid rgba(6,182,212,0.3);
+      color: var(--text-light);
+      transition: all 0.3s ease;
+    }
+    body.light-mode .form-input, body.light-mode .form-textarea {
+      background: rgba(255,255,255,0.95);
+      color: var(--text-dark);
+      border-color: rgba(11,18,32,0.2);
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(6,182,212,0.4);
+    }
+    body.light-mode .form-input:focus, body.light-mode .form-textarea:focus {
+      border-color: var(--accent-700);
+      box-shadow: 0 0 12px rgba(8,145,178,0.4);
+    }
+    #lab-slider {
+      max-height: 320px;
+    }
+    #lab-slider img {
+      display: block;
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+    }
+    #lab-slider .min-w-full {
+      min-height: 0;
+    }
+    @media (max-width: 640px) {
+      #lab-slider {
+        max-height: 256px;
+      }
+      #lab-slider img {
+        height: 256px;
+      }
+    }
+    @media (min-width: 640px) and (max-width: 768px) {
+      #lab-slider {
+        max-height: 288px;
+      }
+      #lab-slider img {
+        height: 288px;
+      }
+    }
+    #popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #popup-overlay.show {
+      display: flex;
+    }
+    #popup {
+      background: var(--bg-panel);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(6px);
+      max-width: 90%;
+      width: 500px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    body.light-mode #popup {
+      background: rgba(255,255,255,0.9);
+      border-color: rgba(11,18,32,0.1);
+    }
+    #popup img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    #popup-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.5);
+      color: var(--text-light);
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    #popup-close:hover {
+      background: rgba(0,0,0,0.7);
+    }
+    body.light-mode #popup-close {
+      background: rgba(255,255,255,0.5);
+      color: var(--text-dark);
+    }
+    body.light-mode #popup-close:hover {
+      background: rgba(255,255,255,0.7);
+    }
+    footer {
+      margin-top: auto;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Motion background canvas -->
+  <div class="bg-overlay" aria-hidden="true">
+    <canvas id="motionBackground"></canvas>
+  </div>
+
+  <!-- Scroll Progress Bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Popup for Webinars/Courses -->
+  <div id="popup-overlay" role="dialog" aria-labelledby="popup-title" aria-describedby="popup-desc">
+    <div id="popup" class="glass-card">
+      <button id="popup-close" aria-label="Close popup">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <img id="popup-img" src="" alt="" class="hidden">
+      <div class="p-8">
+        <h2 id="popup-title" class="text-2xl font-bold text-cyan-400"></h2>
+        <p id="popup-desc" class="mt-4 text-slate-300"></p>
+        <div class="mt-6">
+          <a id="popup-cta" href="#" class="inline-block px-8 py-3 rounded bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 font-semibold hover:from-sky-300 hover:to-cyan-300 transition pulse-cta"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav" class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-sm transition-all" role="navigation">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
+      <div class="flex items-center justify-between w-full">
+        <div class="flex items-center gap-4">
+          <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="BlueCyber Logo" class="w-12 h-12 rounded-md" loading="lazy">
+          <div class="font-bold text-xl glow">BlueCyber Academy</div>
+        </div>
+        <div class="hidden md:flex items-center gap-12">
+          <a href="#home" class="hover:text-cyan-400 transition text-base">Home</a>
+          <a href="#courses" class="hover:text-cyan-400 transition text-base">Courses</a>
+          <a href="#labs" class="hover:text-cyan-400 transition text-base">Labs</a>
+          <a href="#about" class="hover:text-cyan-400 transition text-base">About</a>
+          <a href="#faq" class="hover:text-cyan-400 transition text-base">FAQ</a>
+          <a href="#contact" class="hover:text-cyan-400 transition text-base">Contact</a>
+          <a href="login.html" class="px-6 py-2 rounded-lg bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 font-semibold hover:from-sky-300 hover:to-cyan-300 focus:ring-2 focus:ring-cyan-400 transition">Login/Register</a>
+        </div>
+        <div class="flex items-center gap-4">
+          <button id="theme-toggle" class="p-3 rounded-full bg-white/6 hover:bg-white/10" aria-label="Toggle theme" title="Toggle theme">
+            <svg id="theme-icon" class="w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+          <button id="mobile-menu-btn" class="md:hidden p-3 rounded-md bg-white/6 hover:bg-white/10" aria-label="Open menu">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden bg-black/50 backdrop-blur-sm">
+      <div class="px-6 pt-3 pb-6 space-y-3">
+        <a href="#home" class="block px-4 py-2 rounded hover:bg-white/5 text-lg">Home</a>
+        <a href="#courses" class="block px-4 py-2 rounded hover:bg-white/5 text-lg">Courses</a>
+        <a href="#labs" class="block px-4 py-2 rounded hover:bg-white/5 text-lg">Labs</a>
+        <a href="#about" class="block px-4 py-2 rounded hover:bg-white/5 text-lg">About</a>
+        <a href="#faq" class="block px-4 py-2 rounded hover:bg-white/5 text-lg">FAQ</a>
+        <a href="#contact" class="block px-4 py-2 rounded hover:bg-white/5 text-lg">Contact</a>
+        <a href="login.html" class="block px-4 py-2 rounded bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 font-semibold hover:from-sky-300 hover:to-cyan-300 focus:ring-2 focus:ring-cyan-400 transition text-center text-lg">Login/Register</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="home" class="hero-bg min-h-screen flex items-center justify-center" role="banner">
+    <video autoplay muted loop playsinline class="w-full h-full object-cover">
+      <source src="https://player.vimeo.com/progressive_redirect/playback/827539139/rendition/720p/file.mp4?loc=external&signature=5b9b6f2e1f8e6d5a1a0e7a7a7e7e7a7a7e7e7a7a7e7e7a7a7e7e7a7a7e7e7a7a" type="video/mp4">
+    </video>
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center z-10 hero-text">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-snug typewriter break-words">Empowering the Next Generation of Cyber Defenders</h1>
+      <p class="mt-8 text-lg sm:text-xl md:text-2xl max-w-4xl mx-auto">Hands-on training in ethical hacking, network defense, and digital forensics.</p>
+      <div class="mt-12 flex justify-center gap-6">
+        <a href="#courses" class="px-8 py-4 rounded-lg font-semibold text-lg bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 shadow-lg pulse-cta transition">Explore Courses</a>
+        <a href="#contact" class="px-8 py-4 rounded-lg font-semibold text-lg border border-white/12 hover:bg-white/6 pulse-cta transition">Join Our Academy</a>
+      </div>
+    </div>
+    <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 pointer-events-none"></div>
+  </header>
+
+  <!-- Glowing Divider -->
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- COURSES -->
+  <section id="courses" class="py-24" role="region" aria-label="Courses">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold text-center glow">Our Courses</h2>
+      <p class="mt-6 text-center text-slate-300 max-w-3xl mx-auto">Curated, hands-on courses built for real-world defensive and offensive skill development.</p>
+      <div class="mt-8 flex flex-col items-center gap-4">
+        <div class="search-container">
+          <input id="course-search" type="text" placeholder=" " class="form-input w-full" aria-label="Search courses by title or description">
+          <label id="course-search-label" for="course-search">Search courses...</label>
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="flex justify-center gap-4 flex-wrap">
+          <button class="filter-btn px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-semibold" data-filter="all">All</button>
+          <button class="filter-btn px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-semibold" data-filter="ethical-hacking">Ethical Hacking</button>
+          <button class="filter-btn px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-semibold" data-filter="network-security">Network Security</button>
+          <button class="filter-btn px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-semibold" data-filter="cloud-security">Cloud Security</button>
+        </div>
+      </div>
+      <div id="courses-grid" class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+    </div>
+  </section>
+
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- LABS (Slider) -->
+  <section id="labs" class="py-24 bg-slate-900/40" role="region" aria-label="Labs">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold text-center glow">Our Lab Facilities</h2>
+      <p class="mt-6 text-center text-slate-300 max-w-3xl mx-auto">Realistic, hands-on labs for pentesting, SOC ops, cloud security, and forensics.</p>
+      <div class="mt-12 relative rounded-lg shadow-xl glass-card overflow-hidden">
+        <div id="lab-slider" class="flex transition-transform duration-500 will-change-transform max-h-80 sm:max-h-64 md:max-h-72">
+        </div>
+        <button id="lab-prev" class="absolute left-6 top-1/2 -translate-y-1/2 bg-black/40 p-4 rounded-full text-cyan-400 hover:bg-black/50" aria-label="Previous lab slide">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button id="lab-next" class="absolute right-6 top-1/2 -translate-y-1/2 bg-black/40 p-4 rounded-full text-cyan-400 hover:bg-black/50" aria-label="Next lab slide">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div id="lab-dots" class="relative mt-8 dots"></div>
+    </div>
+  </section>
+
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- ABOUT -->
+  <section id="about" class="py-24 pt-0" role="region" aria-label="About">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-4xl font-bold glow mt-0">About BlueCyber Academy</h2>
+        <p class="mt-6 text-slate-300">BlueCyber Academy provides world-class cybersecurity education through real-world simulations, live projects, and global certifications. Our mission is to build the cyber defenders of tomorrow.</p>
+        <ul class="mt-8 space-y-4 text-slate-200">
+          <li class="flex items-start gap-4"><span class="text-cyan-400 font-bold">✔</span> Expert-led training programs</li>
+          <li class="flex items-start gap-4"><span class="text-cyan-400 font-bold">✔</span> Immersive, hands-on labs</li>
+          <li class="flex items-start gap-4"><span class="text-cyan-400 font-bold">✔</span> Career support and guidance</li>
+          <li class="flex items-start gap-4"><span class="text-cyan-400 font-bold">✔</span> Industry-recognized certifications</li>
+        </ul>
+      </div>
+      <div class="h-[28rem] rounded-lg overflow-hidden shadow-lg glass-card">
+        <img src="https://images.unsplash.com/photo-1549692520-acc6669e2f0c?auto=format&fit=crop&w=800&q=80" alt="Cybersecurity Training Lab" class="w-full h-full object-cover">
+      </div>
+    </div>
+    <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <div class="glass-card rounded-lg overflow-hidden shadow-lg video-container">
+        <iframe loading="lazy" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="BlueCyber Academy Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-24 bg-slate-900/40" role="region" aria-label="Frequently Asked Questions">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold text-center glow">Frequently Asked Questions</h2>
+      <p class="mt-6 text-center text-slate-300 max-w-3xl mx-auto">Find answers to common questions about our courses and training programs.</p>
+      <div class="mt-12 glass-card p-6 rounded-lg shadow-lg">
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3 class="text-lg font-semibold">What prerequisites are needed for your courses?</h3>
+            <svg class="faq-toggle w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="faq-answer text-slate-300">Our courses cater to all levels. Beginners need basic computer skills, while advanced courses may require networking or programming knowledge. Check individual course pages for details.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3 class="text-lg font-semibold">Are certifications included with the courses?</h3>
+            <svg class="faq-toggle w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="faq-answer text-slate-300">Yes, most courses include preparation for industry-recognized certifications, such as CEH or CompTIA Security+. Completion certificates are also provided.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3 class="text-lg font-semibold">Can I access labs remotely?</h3>
+            <svg class="faq-toggle w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="faq-answer text-slate-300">Absolutely! Our labs are cloud-based, allowing secure remote access from anywhere with an internet connection.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- STATS / COUNTERS -->
+  <section id="stats" class="py-24 bg-slate-900/40" role="region" aria-label="Stats">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-4xl font-bold glow">Our Achievements</h2>
+      <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-12">
+        <div class="glass-card p-10 rounded-lg">
+          <div class="text-5xl font-extrabold text-cyan-400 counter" data-target="5000">0</div>
+          <div class="mt-4 text-slate-300 text-lg">Students Trained</div>
+        </div>
+        <div class="glass-card p-10 rounded-lg">
+          <div class="text-5xl font-extrabold text-cyan-400 counter" data-target="100">0</div>
+          <div class="mt-4 text-slate-300 text-lg">Ethical Hacking Labs</div>
+        </div>
+        <div class="glass-card p-10 rounded-lg">
+          <div class="text-5xl font-extrabold text-cyan-400 counter" data-target="10000">0</div>
+          <div class="mt-4 text-slate-300 text-lg">Certified Trainers</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="py-24" role="region" aria-label="Testimonials">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold text-center glow">What Our Students Say</h2>
+      <div class="mt-12 relative overflow-hidden rounded-lg glass-card p-8">
+        <div id="testimonials-slider" class="flex transition-transform duration-500"></div>
+        <button id="testimonial-prev" class="absolute left-6 top-1/2 -translate-y-1/2 bg-black/40 p-4 rounded-full text-cyan-400 hover:bg-black/50" aria-label="Previous testimonial">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button id="testimonial-next" class="absolute right-6 top-1/2 -translate-y-1/2 bg-black/40 p-4 rounded-full text-cyan-400 hover:bg-black/50" aria-label="Next testimonial">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div id="testimonial-dots" class="relative mt-8 dots"></div>
+    </div>
+  </section>
+
+  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-24 bg-slate-900/40" role="region" aria-label="Contact">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div class="glass-card form p-10 rounded-lg min-h-[32rem] flex flex-col">
+        <h3 class="text-3xl font-bold glow">Get in Touch</h3>
+        <p class="mt-4 text-slate-300">Questions? Partnerships? Tell us about your goals and we'll help you choose the right learning path.</p>
+        <form id="contact-form" action="https://formspree.io/f/your-form-id" method="POST" class="mt-8 space-y-6 flex-grow">
+          <div>
+            <label class="text-sm block mb-2" for="contact-name">Name</label>
+            <input id="contact-name" name="name" required class="form-input w-full p-4 rounded" />
+          </div>
+          <div>
+            <label class="text-sm block mb-2" for="contact-email">Email</label>
+            <input id="contact-email" name="email" type="email" required class="form-input w-full p-4 rounded" />
+          </div>
+          <div class="flex-grow">
+            <label class="text-sm block mb-2" for="contact-message">Message</label>
+            <textarea id="contact-message" name="message" rows="5" required class="form-textarea w-full p-4 rounded h-full"></textarea>
+          </div>
+          <button type="submit" id="contact-submit" class="w-full py-4 rounded bg-gradient-to-r from-sky-400 to-cyan-400 font-semibold text-lg text-slate-900 hover:from-sky-300 hover:to-cyan-300">Send Message</button>
+          <p id="form-message" class="text-center text-sm text-cyan-200 mt-4"></p>
+        </form>
+      </div>
+      <div class="flex flex-col space-y-8">
+        <div class="glass-card p-8 rounded-lg shadow-lg">
+          <h4 class="font-bold text-lg">Our Location</h4>
+          <p class="mt-3 text-slate-300">BlueCyber Academy • 123 Cybersecurity Drive, Tech City</p>
+          <p class="mt-2 text-slate-300">Email: info@bluecyberacademy.com • Phone: +1 (123) 456-7890</p>
+        </div>
+        <div class="h-[28rem] rounded-lg overflow-hidden shadow-lg glass-card">
+          <iframe loading="lazy" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.241264558916!2d-73.98622068458947!3d40.748440979328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2us!4v1635789234567" class="w-full h-full" style="border:0" allowfullscreen="" title="BlueCyber Academy Location" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-16 bg-gradient-to-b from-black/80 to-black/60 backdrop-blur-md w-full" role="contentinfo">
+    <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="flex flex-col items-center gap-6">
+        <div class="flex justify-center gap-10">
+          <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="Facebook"><i class="fab fa-facebook-f fa-2x"></i></a>
+          <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="YouTube"><i class="fab fa-youtube fa-2x"></i></a>
+          <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
+          <a href="#" class="text-cyan-400 hover:scale-125 hover:text-shadow-lg transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-2x"></i></a>
+        </div>
+        <div class="flex gap-6">
+          <a href="#" class="text-slate-300 hover:text-cyan-400">Privacy Policy</a>
+          <a href="#" class="text-slate-300 hover:text-cyan-400">Terms of Service</a>
+        </div>
+        <p class="text-base text-slate-300 glow">© <span id="year">2025</span> BlueCyber Academy. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to top -->
+  <button id="scroll-to-top" aria-label="Scroll to top" title="Scroll to top">
+    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7 7 7"/></svg>
+  </button>
+
+  <!-- Enroll Now Button -->
+  <button id="enroll-now-btn" aria-label="Enroll Now" title="Enroll Now">
+    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+  </button>
+
+  <!-- SCRIPTS -->
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Smooth scrolling polyfill for older browsers
+    function smoothScrollTo(target, duration = 800) {
+      const start = window.scrollY;
+      const end = target.getBoundingClientRect().top + window.scrollY;
+      const startTime = performance.now();
+      function scroll() {
+        const currentTime = performance.now();
+        const time = Math.min(1, (currentTime - startTime) / duration);
+        const ease = t => t * t * (3 - 2 * t); // Ease-in-out
+        window.scrollTo(0, start + (end - start) * ease(time));
+        if (time < 1) requestAnimationFrame(scroll);
+      }
+      requestAnimationFrame(scroll);
+    }
+
+    // Theme toggle
+    const themeToggle = $('#theme-toggle');
+    const body = document.body;
+    const themeIcon = $('#theme-icon');
+    function setTheme(light) {
+      if (light) {
+        body.classList.add('light-mode');
+        localStorage.setItem('bca-theme', 'light');
+        themeIcon.innerHTML = '<path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 7a5 5 0 100 10 5 5 0 000-10z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>';
+      } else {
+        body.classList.remove('light-mode');
+        localStorage.setItem('bca-theme', 'dark');
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>';
+      }
+    }
+    setTheme(localStorage.getItem('bca-theme') === 'light');
+    themeToggle.addEventListener('click', () => setTheme(!body.classList.contains('light-mode')));
+
+    // Mobile menu
+    const mobileBtn = $('#mobile-menu-btn');
+    const mobileMenu = $('#mobile-menu');
+    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+    // Popup configuration
+    const popupConfig = {
+      enabled: true, // Set to false to disable popup
+      title: 'Join Our Upcoming Webinar!',
+      description: 'Learn advanced penetration testing techniques in our live webinar on Nov 10, 2025. Register now to secure your spot!',
+      image: 'https://www.techprofree.com/wp-content/webp-express/webp-images/uploads/2024/07/A-Complete-Guide-to-Ethical-Hacking.jpg.webp',
+      ctaText: 'Register Now',
+      ctaLink: 'https://docs.google.com/spreadsheets/d/1w-bfSBNzX8TerdN_--enCiqIVVc19DtQMKGtYcvW6rw/edit?usp=sharing'
+    };
+    function showPopup() {
+      if (!popupConfig.enabled) return;
+      const overlay = $('#popup-overlay');
+      const img = $('#popup-img');
+      $('#popup-title').textContent = popupConfig.title;
+      $('#popup-desc').textContent = popupConfig.description;
+      $('#popup-cta').textContent = popupConfig.ctaText;
+      $('#popup-cta').href = popupConfig.ctaLink;
+      if (popupConfig.image) {
+        img.src = popupConfig.image;
+        img.alt = popupConfig.title;
+        img.classList.remove('hidden');
+      } else {
+        img.classList.add('hidden');
+      }
+      overlay.classList.add('show');
+      $('#popup-close').focus();
+    }
+    function closePopup() {
+      $('#popup-overlay').classList.remove('show');
+    }
+    $('#popup-close').addEventListener('click', closePopup);
+    $('#popup-overlay').addEventListener('click', (e) => {
+      if (e.target === $('#popup-overlay')) closePopup();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && $('#popup-overlay').classList.contains('show')) closePopup();
+    });
+    setTimeout(showPopup, 1000);
+
+    // Focus trap for popup accessibility
+    function trapFocus(element) {
+      const focusableEls = $$('#popup button, #popup a, #popup [tabindex]');
+      const firstFocusable = focusableEls[0];
+      const lastFocusable = focusableEls[focusableEls.length - 1];
+      element.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      });
+    }
+    if (popupConfig.enabled) {
+      trapFocus($('#popup'));
+    }
+
+    // Scroll progress bar and nav shrink
+    const nav = $('#nav');
+    const progressBar = $('#progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      progressBar.style.width = `${scrollPercent}%`;
+      nav.classList.toggle('scrolled', scrollTop > 50);
+    });
+
+    // Motion background
+    const canvas = $('#motionBackground');
+    const ctx = canvas.getContext('2d');
+    let fontSize = 14;
+    let drops = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      fontSize = Math.max(12, Math.min(18, Math.floor(window.innerWidth / 120)));
+      const columns = Math.floor(canvas.width / fontSize);
+      drops = new Array(columns).fill(1);
+      ctx.font = `${fontSize}px monospace`;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    function drawBinary() {
+      ctx.fillStyle = 'rgba(11,18,32,0.12)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#06b6d4';
+      for (let i = 0; i < drops.length; i++) {
+        const text = Math.random() > 0.5 ? '0' : '1';
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+        ctx.fillText(text, x, y);
+        if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+      requestAnimationFrame(drawBinary);
+    }
+    requestAnimationFrame(drawBinary);
+
+    // Hero fade on scroll
+    const hero = $('#home');
+    function heroLoop() {
+      const scroll = window.scrollY;
+      const heroHeight = Math.max(200, hero.offsetHeight || window.innerHeight);
+      const maxScroll = heroHeight * 0.6;
+      let opacity = 1 - (scroll / maxScroll);
+      opacity = Math.max(0.35, Math.min(1, opacity));
+      hero.style.opacity = opacity;
+      requestAnimationFrame(heroLoop);
+    }
+    requestAnimationFrame(heroLoop);
+
+    // Courses with search and filtering
+    const courses = [
+      { title: 'Certified Ethical Hacker', desc: 'Master penetration testing & exploit development.', img: 'https://images.unsplash.com/photo-1516321310764-8b9e6780c93e?auto=format&fit=crop&w=640&q=80', price: '$299', category: 'ethical-hacking', outline: ['Intro to Ethical Hacking', 'Exploitation Techniques', 'Reporting'] },
+      { title: 'Network Security Essentials', desc: 'Design and defend modern networks.', img: 'https://images.unsplash.com/photo-1563986768711-b3b663e2a54e?auto=format&fit=crop&w=640&q=80', price: '$199', category: 'network-security', outline: ['Network Fundamentals', 'Firewall Setup', 'IDS/IPS'] },
+      { title: 'Penetration Testing Pro', desc: 'Full workflow of advanced pentesting.', img: 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=640&q=80', price: '$399', category: 'ethical-hacking', outline: ['Advanced Scanning', 'Exploit Development', 'Post-Exploitation'] },
+      { title: 'Malware Analysis Fundamentals', desc: 'Static & dynamic techniques for malware.', img: 'https://images.unsplash.com/photo-1624969862709-6d41b952e91c?auto=format&fit=crop&w=640&q=80', price: '$249', category: 'ethical-hacking', outline: ['Static Analysis', 'Dynamic Analysis', 'Reverse Engineering'] },
+      { title: 'Cloud Security Expert', desc: 'Secure cloud architectures & infra.', img: 'https://images.unsplash.com/photo-1614064641936-8e46b78942b0?auto=format&fit=crop&w=640&q=80', price: '$299', category: 'cloud-security', outline: ['Cloud Architecture', 'IAM Policies', 'Threat Mitigation'] },
+      { title: 'SOC Analyst Program', desc: 'Threat detection, triage & hunting.', img: 'https://images.unsplash.com/photo-1597733336794-12d05021d4ee?auto=format&fit=crop&w=640&q=80', price: '$199', category: 'network-security', outline: ['SIEM Tools', 'Threat Hunting', 'Incident Response'] },
+    ];
+    const coursesGrid = $('#courses-grid');
+    const courseSearch = $('#course-search');
+    function renderCourses(filter = 'all', search = '') {
+      try {
+        coursesGrid.innerHTML = '';
+        const filteredCourses = courses.filter(c => {
+          const matchesFilter = filter === 'all' || c.category === filter;
+          const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) || c.desc.toLowerCase().includes(search.toLowerCase());
+          return matchesFilter && matchesSearch;
+        });
+        if (filteredCourses.length === 0) {
+          coursesGrid.innerHTML = '<p class="text-center text-slate-300 col-span-full">No courses found.</p>';
+          return;
+        }
+        filteredCourses.forEach((c, i) => {
+          const el = document.createElement('article');
+          el.className = 'glass-card course p-6 rounded-lg shadow-md relative';
+          el.innerHTML = `
+            <img loading="lazy" src="${c.img}" alt="${c.title}" class="w-full h-48 object-cover rounded-md mb-6">
+            <h3 class="text-xl font-semibold text-cyan-400">${c.title}</h3>
+            <p class="mt-3 text-slate-300">${c.desc}</p>
+            <p class="mt-3 text-cyan-400 font-semibold">Price: ${c.price}</p>
+            <div class="mt-6"><a class="inline-block px-8 py-3 rounded bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 font-semibold hover:from-sky-300 hover:to-cyan-300 transition">Enroll Now</a></div>
+            <div class="course-tooltip"><ul class="list-disc pl-5 text-slate-300 text-sm">${c.outline.map(item => `<li>${item}</li>`).join('')}</ul></div>
+          `;
+          coursesGrid.appendChild(el);
+        });
+        console.log(`Rendered ${filteredCourses.length} courses with filter "${filter}" and search "${search}"`);
+      } catch (error) {
+        console.error('Error rendering courses:', error);
+        coursesGrid.innerHTML = '<p class="text-center text-red-400 col-span-full">Error loading courses. Please try again.</p>';
+      }
+    }
+    // Initial render
+    renderCourses();
+    // Filter buttons
+    $$('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderCourses(btn.dataset.filter, courseSearch.value);
+      });
+    });
+    $$('.filter-btn')[0].classList.add('active');
+    // Search input
+    courseSearch.addEventListener('input', () => {
+      const activeFilter = $$('.filter-btn').find(b => b.classList.contains('active'))?.dataset.filter || 'all';
+      renderCourses(activeFilter, courseSearch.value);
+    });
+
+    // Lab slider
+    const labs = [
+      { img: 'https://images.unsplash.com/photo-1558499932-9609acb6f443?auto=format&fit=crop&w=1350&q=80', caption: 'Pen-Testing Lab' },
+      { img: 'https://images.unsplash.com/photo-1563986768711-b3b663e2a54e?auto=format&fit=crop&w=1350&q=80', caption: 'Network Defense Lab' },
+      { img: 'https://images.unsplash.com/photo-1614064641936-8e46b78942b0?auto=format&fit=crop&w=1350&q=80', caption: 'IoT & Cloud Lab' },
+    ];
+    const labSlider = $('#lab-slider');
+    const labDots = $('#lab-dots');
+    let labIndex = 0, labPause = false, labAutoId = null;
+    labs.forEach((l, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'min-w-full relative';
+      slide.style.flex = '0 0 100%';
+      slide.innerHTML = `
+        <img loading="lazy" src="${l.img}" alt="${l.caption}" class="w-full h-80 sm:h-64 md:h-72 object-cover" width="1350" height="320">
+        <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent text-white font-semibold text-center">${l.caption}</div>
+      `;
+      labSlider.appendChild(slide);
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dot.setAttribute('aria-label', `Go to lab slide ${i + 1}`);
+      dot.addEventListener('click', () => { labIndex = i; updateLabSlider(); resetLabAuto(); });
+      labDots.appendChild(dot);
+    });
+    function updateLabSlider() {
+      labSlider.style.transform = `translateX(-${labIndex * 100}%)`;
+      $$('#lab-dots .dot').forEach((d, i) => d.classList.toggle('active', i === labIndex));
+    }
+    updateLabSlider();
+    $('#lab-prev').addEventListener('click', () => { labIndex = (labIndex - 1 + labs.length) % labs.length; updateLabSlider(); resetLabAuto(); });
+    $('#lab-next').addEventListener('click', () => { labIndex = (labIndex + 1) % labs.length; updateLabSlider(); resetLabAuto(); });
+    labSlider.parentElement.addEventListener('mouseenter', () => labPause = true);
+    labSlider.parentElement.addEventListener('mouseleave', () => labPause = false);
+    function labAuto() {
+      if (!labPause) {
+        labIndex = (labIndex + 1) % labs.length;
+        updateLabSlider();
+      }
+      labAutoId = setTimeout(labAuto, 2000);
+    }
+    labAutoId = setTimeout(labAuto, 2000);
+    function resetLabAuto() { clearTimeout(labAutoId); labAutoId = setTimeout(labAuto, 2000); }
+
+    // Testimonials slider
+    const testimonials = [
+      { quote: 'Transformed my career in cybersecurity!', author: 'John Doe', img: 'https://picsum.photos/seed/t1/100' },
+      { quote: 'Hands-on labs were incredibly practical.', author: 'Jane Smith', img: 'https://picsum.photos/seed/t2/100' },
+      { quote: 'Best training institute for ethical hacking.', author: 'Alex Johnson', img: 'https://picsum.photos/seed/t3/100' },
+    ];
+    const tSlider = $('#testimonials-slider');
+    const tDots = $('#testimonial-dots');
+    let tIndex = 0, tPause = false, tAutoId = null;
+    testimonials.forEach((t, i) => {
+      const s = document.createElement('div');
+      s.className = 'min-w-full text-center p-8';
+      s.style.flex = '0 0 100%';
+      s.innerHTML = `
+        <img loading="lazy" src="${t.img}" alt="${t.author}" class="mx-auto w-24 h-24 rounded-full object-cover mb-6">
+        <blockquote class="italic text-slate-200 text-lg">"${t.quote}"</blockquote>
+        <p class="mt-4 font-semibold text-cyan-400">— ${t.author}</p>
+      `;
+      tSlider.appendChild(s);
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dot.setAttribute('aria-label', `Go to testimonial ${i + 1}`);
+      dot.addEventListener('click', () => { tIndex = i; updateTSlider(); resetTAuto(); });
+      tDots.appendChild(dot);
+    });
+    function updateTSlider() {
+      tSlider.style.transform = `translateX(-${tIndex * 100}%)`;
+      $$('#testimonial-dots .dot').forEach((d, i) => d.classList.toggle('active', i === tIndex));
+    }
+    updateTSlider();
+    $('#testimonial-prev').addEventListener('click', () => { tIndex = (tIndex - 1 + testimonials.length) % testimonials.length; updateTSlider(); resetTAuto(); });
+    $('#testimonial-next').addEventListener('click', () => { tIndex = (tIndex + 1) % testimonials.length; updateTSlider(); resetTAuto(); });
+    tSlider.parentElement.addEventListener('mouseenter', () => tPause = true);
+    tSlider.parentElement.addEventListener('mouseleave', () => tPause = false);
+    function tAuto() {
+      if (!tPause) {
+        tIndex = (tIndex + 1) % testimonials.length;
+        updateTSlider();
+      }
+      tAutoId = setTimeout(tAuto, 3000);
+    }
+    tAutoId = setTimeout(tAuto, 3000);
+    function resetTAuto() { clearTimeout(tAutoId); tAutoId = setTimeout(tAuto, 3000); }
+
+    // Animated counters
+    const counters = $$('.counter');
+    const counterObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          el.classList.add('animating');
+          const target = Number(el.dataset.target) || 0;
+          let current = 0;
+          const step = Math.max(1, Math.floor(target / 120));
+          function inc() {
+            current += step;
+            if (current < target) {
+              el.textContent = current + (target > 100 ? '+' : '');
+              requestAnimationFrame(inc);
+            } else {
+              el.textContent = target + (target > 100 ? '+' : '');
+              el.classList.remove('animating');
+            }
+          }
+          requestAnimationFrame(inc);
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+    counters.forEach(c => counterObserver.observe(c));
+
+    // Contact form
+    $('#contact-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const submitBtn = $('#contact-submit');
+      const formMsg = $('#form-message');
+      const name = $('#contact-name').value.trim();
+      const email = $('#contact-email').value.trim();
+      const msg = $('#contact-message').value.trim();
+      if (!name || !email || !msg) {
+        formMsg.textContent = 'Please fill out all fields.';
+        formMsg.style.color = 'tomato';
+        return;
+      }
+      submitBtn.classList.add('form-loading');
+      submitBtn.disabled = true;
+      // Simulate Formspree submission
+      setTimeout(() => {
+        formMsg.style.color = 'var(--accent)';
+        formMsg.textContent = 'Your inquiry has been submitted successfully.';
+        $('#contact-form').reset();
+        submitBtn.classList.remove('form-loading');
+        submitBtn.disabled = false;
+        setTimeout(() => formMsg.textContent = '', 5000);
+      }, 1000);
+    });
+
+    // Smooth anchor links
+    $$('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const target = a.getAttribute('href');
+        if (target && target !== '#') {
+          const el = document.querySelector(target);
+          if (el) smoothScrollTo(el);
+        }
+        if (!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+      });
+    });
+
+    // Scroll to top and enroll button
+    const scrollBtn = $('#scroll-to-top');
+    const enrollBtn = $('#enroll-now-btn');
+    window.addEventListener('scroll', () => {
+      scrollBtn.classList.toggle('visible', window.scrollY > 300);
+      enrollBtn.classList.toggle('visible', window.scrollY > $('#courses').offsetTop && window.scrollY < $('#contact').offsetTop);
+    });
+    scrollBtn.addEventListener('click', () => smoothScrollTo(document.body));
+    enrollBtn.addEventListener('click', () => smoothScrollTo(document.querySelector('#courses')));
+
+    // Section fade-in
+    const fadeEls = $$('section, .glass-card, header, footer');
+    const fadeIO = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in-visible');
+          entry.target.style.transition = 'opacity .7s ease, transform .7s ease';
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          fadeIO.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    fadeEls.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(18px)';
+      fadeIO.observe(el);
+    });
+
+    // FAQ accordion
+    $$('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.parentElement;
+        const isActive = item.classList.contains('active');
+        $$('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!isActive) {
+          item.classList.add('active');
+          const answer = item.querySelector('.faq-answer');
+          answer.style.maxHeight = `${answer.scrollHeight}px`;
+        }
+      });
+    });
+
+    // Handle window resize for FAQ answer heights
+    window.addEventListener('resize', () => {
+      $$('.faq-item.active .faq-answer').forEach(answer => {
+        answer.style.maxHeight = `${answer.scrollHeight}px`;
+      });
+    });
+  </script>
+</body>
+</html>
