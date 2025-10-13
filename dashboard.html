@@ -1,62 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Buddy Academy Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { colors: { accent: '#06b6d4' } } }
-        }
-    </script>
-    <style>
-        body { font-family: 'Poppins', sans-serif; }
-        .glow { text-shadow: 0 4px 26px rgba(6,182,212,0.12); color: var(--accent); }
-        .glass-card { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.06); backdrop-filter: blur(6px); }
-        .glass-card:hover { transform: scale(1.02); box-shadow: 0 6px 16px rgba(6,182,212,0.15); }
-        .pulse-cta { animation: pulse-cta 2s ease-in-out infinite; }
-        @keyframes pulse-cta { 0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(6,182,212,0.3); } 50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(6,182,212,0.5); } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Cyber Buddy Academy</title>
+<style>
+body { font-family: Arial; max-width: 1000px; margin: 50px auto; }
+h1 { text-align: center; margin-bottom: 30px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+.course-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #f8f8f8; transition: transform 0.2s; }
+.course-card:hover { transform: scale(1.05); }
+.course-card img { width: 100%; height: 150px; object-fit: cover; }
+.course-content { padding: 15px; }
+.course-content h3 { margin: 0 0 10px 0; }
+.course-content p { font-size: 0.9rem; color: #555; }
+.course-content a { display: inline-block; margin-top: 10px; padding: 8px 12px; background: #007bff; color: white; border-radius: 4px; text-decoration: none; }
+.course-content a:hover { background: #0056b3; }
+</style>
 </head>
-<body class="bg-[#0b1220] text-[#e6f6f8] min-h-screen">
-    <header class="bg-black/50 backdrop-blur-sm p-4 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="Cyber Buddy Academy Logo" class="w-12 h-12 rounded-md" loading="lazy">
-            <h1 class="text-2xl font-bold glow">Cyber Buddy Academy</h1>
+<body>
+<h1>Your Courses</h1>
+<div class="grid" id="coursesContainer"></div>
+
+<script type="module">
+import { auth, db, doc, getDoc } from './firebase.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+const courses = [
+  {id:'web-pentesting', name:'Web Pentesting', description:'Learn web penetration testing with hands-on labs.', image:'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png', file:'web-pentesting.html'},
+  {id:'ethical-hacking', name:'Ethical Hacking Basics', description:'Introduction to hacking ethically and legally.', image:'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png', file:'ethical-hacking.html'},
+  {id:'cyber-security-101', name:'Cyber Security 101', description:'Foundations of cyber security and safe practices.', image:'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png', file:'cyber-security-101.html'}
+];
+
+const container = document.getElementById('coursesContainer');
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  const userDoc = await getDoc(doc(db, 'users', user.uid));
+  const purchased = userDoc.data().purchasedCourses || [];
+
+  courses.forEach(course => {
+    if (purchased.includes(course.id)) {
+      const div = document.createElement('div');
+      div.classList.add('course-card');
+      div.innerHTML = `
+        <img src="${course.image}" alt="${course.name}">
+        <div class="course-content">
+          <h3>${course.name}</h3>
+          <p>${course.description}</p>
+          <a href="${course.file}?id=${course.id}">Go to Course</a>
         </div>
-        <nav class="flex gap-4">
-            <button onclick="switchTab('all-courses')" class="tab-btn px-4 py-2 hover:text-[var(--accent)] transition glow">All Courses</button>
-            <button onclick="switchTab('my-courses')" class="tab-btn px-4 py-2 hover:text-[var(--accent)] transition glow">My Courses</button>
-            <button onclick="switchTab('profile')" class="tab-btn px-4 py-2 hover:text-[var(--accent)] transition glow">Profile</button>
-            <button onclick="switchTab('support')" class="tab-btn px-4 py-2 hover:text-[var(--accent)] transition glow">Support</button>
-            <button onclick="logout()" class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 text-slate-900 font-semibold">Logout</button>
-        </nav>
-    </header>
+      `;
+      container.appendChild(div);
+    }
+  });
 
-    <div id="all-courses" class="tab-content p-6">
-        <h2 class="text-3xl font-bold glow mb-6">All Courses</h2>
-        <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </div>
-
-    <div id="my-courses" class="tab-content hidden p-6">
-        <h2 class="text-3xl font-bold glow mb-6">My Courses</h2>
-        <div id="my-courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </div>
-
-    <div id="profile" class="tab-content hidden p-6">
-        <h2 class="text-3xl font-bold glow mb-6">Profile</h2>
-        <div id="profile-info" class="glass-card p-6 rounded-lg mb-6"></div>
-        <div id="purchased-courses" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <button onclick="updateProfile()" class="bg-[var(--accent)] px-4 py-2 rounded hover:bg-[#0891b2] pulse-cta text-slate-900 font-semibold mt-4">Update Info</button>
-    </div>
-
-    <div id="support" class="tab-content hidden p-6">
-        <h2 class="text-3xl font-bold glow mb-6">Support</h2>
-        <p class="text-[#e6f6f8]/60">Contact us at support@cyberbuddyacademy.com or use the form below.</p>
-    </div>
-
-    <script src="js/dashboard.js"></script>
+  if (purchased.length === 0) {
+    container.innerHTML = "<p style='text-align:center'>You haven't purchased any courses yet.</p>";
+  }
+});
+</script>
 </body>
 </html>
