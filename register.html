@@ -3,47 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Register | Cyber Buddy Academy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-<div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-  <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+<div class="bg-gray-800 p-10 rounded-lg w-96">
+  <h2 class="text-2xl font-bold mb-4 text-center">Register</h2>
   <form id="register-form" class="space-y-4">
-    <input type="email" id="reg-email" placeholder="Email" class="w-full p-3 border rounded">
-    <input type="password" id="reg-password" placeholder="Password" class="w-full p-3 border rounded">
-    <input type="text" id="reg-course" placeholder="Course Access (optional)" class="w-full p-3 border rounded">
-    <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">Register</button>
-    <p class="text-center text-sm">Already have an account? <a href="login.html" class="text-blue-500">Login</a></p>
-    <p id="reg-message" class="text-center text-red-500"></p>
+    <input type="text" id="name" placeholder="Full Name" class="w-full p-3 rounded bg-gray-700" required>
+    <input type="email" id="email" placeholder="Email" class="w-full p-3 rounded bg-gray-700" required>
+    <input type="password" id="password" placeholder="Password" class="w-full p-3 rounded bg-gray-700" required>
+    <button type="submit" class="w-full bg-cyan-500 py-3 rounded hover:bg-cyan-600">Register</button>
+    <p class="text-center text-sm mt-2">Already have an account? <a href="login.html" class="text-cyan-400">Login</a></p>
+    <p id="register-msg" class="text-center text-red-400"></p>
   </form>
 </div>
-
-<script type="module">
-import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-
-const form = document.getElementById('register-form');
-const message = document.getElementById('reg-message');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('reg-email').value;
-  const password = document.getElementById('reg-password').value;
-  const course = document.getElementById('reg-course').value;
-
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "users", userCred.user.uid), { email, courseAccess: course });
-    message.textContent = "Registered successfully! Redirecting...";
-    message.classList.remove('text-red-500');
-    message.classList.add('text-green-500');
-    setTimeout(()=> window.location.href = "login.html", 1500);
-  } catch(err) {
-    message.textContent = err.message;
-  }
-});
-</script>
+<script type="module" src="register.js"></script>
 </body>
 </html>
