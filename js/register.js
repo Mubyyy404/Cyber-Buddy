@@ -1,30 +1,28 @@
-import { auth, db } from "./firebase.js";
+import { auth, db, setDoc, doc } from '../firebase.js';
 import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const form = document.getElementById("registerForm");
-const errorMsg = document.getElementById("errorMsg");
+const form = document.getElementById('registerForm');
+const errorMsg = document.getElementById('errorMsg');
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    const uid = userCredential.user.uid;
 
-    // Add user data to Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      name,
-      email,
-      courses: [] // initially no access
+    await setDoc(doc(db, 'users', uid), {
+      name: name,
+      email: email,
+      purchasedCourses: [] // initially empty
     });
 
-    alert("Registration successful! Redirecting to login...");
-    window.location.href = "login.html";
-  } catch (error) {
-    errorMsg.textContent = error.message;
+    window.location.href = 'login.html';
+  } catch (err) {
+    errorMsg.style.display = 'block';
+    errorMsg.textContent = err.message;
   }
 });
