@@ -1,35 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Cyber Buddy Academy</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; }
-        input, button { width: 100%; padding: 10px; margin: 5px 0; }
-        button { background: #28a745; color: white; border: none; cursor: pointer; }
-        button:hover { background: #218838; }
-        #errorMsg { color: red; display: none; margin: 10px 0; padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; }
-        #successMsg { color: green; display: none; margin: 10px 0; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; }
-        .policy { font-size: 0.9em; color: #666; margin: 10px 0; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Cyber Buddy Academy</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#0d1117; color:white; text-align:center; margin-top:50px; }
+    input, button { width:80%; padding:10px; margin:8px; border-radius:5px; border:none; }
+    input { background:#161b22; color:white; }
+    button { background:#28a745; color:white; cursor:pointer; font-weight:bold; }
+    button:hover { background:#218838; }
+    #errorMsg { color:red; margin-top:10px; }
+  </style>
 </head>
 <body>
-    <h1>Register for Cyber Buddy Academy</h1>
-    <p class="policy">Password must be at least 6 characters long. We'll use this to create your account.</p>
-    <div id="errorMsg"></div>
-    <div id="successMsg"></div>
-    <form id="registerForm">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
-        <br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" required minlength="6">
-        <br><br>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="login.html">Login here</a></p>
+  <h2>Register for Cyber Buddy Academy</h2>
+  <form id="registerForm">
+    <input type="text" id="name" placeholder="Full Name" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Register</button>
+  </form>
+  <p>Already have an account? <a href="login.html" style="color:#58a6ff;">Login</a></p>
+  <div id="errorMsg"></div>
 
-    <script type="module" src="js/register.js"></script>
+  <script type="module" src="register.js"></script>
 </body>
 </html>
