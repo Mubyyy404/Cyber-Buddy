@@ -23,7 +23,7 @@ h1 { text-align: center; margin-bottom: 30px; }
 <div class="grid" id="coursesContainer"></div>
 
 <script type="module">
-import { auth, db, doc, getDoc } from './firebase.js';
+import { auth, db, doc, getDoc } from 'js/firebase.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const courses = [
@@ -62,3 +62,4 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 </body>
 </html>
+
