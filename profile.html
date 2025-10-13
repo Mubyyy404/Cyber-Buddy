@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - Cyber Buddy Academy</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+    header { background: #007bff; color: white; padding: 10px; display: flex; align-items: center; justify-content: space-between; }
+    header img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
+    nav { display: flex; }
+    nav a, nav button { color: white; text-decoration: none; margin: 0 10px; background: none; border: none; cursor: pointer; }
+    nav button:hover, nav a:hover { text-decoration: underline; }
+    .container { max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    #profilePicLarge { width: 150px; height: 150px; border-radius: 50%; display: block; margin: 0 auto 20px; object-fit: cover; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    button:hover { background: #0056b3; }
+    #errorMsg, #successMsg { margin: 10px 0; padding: 10px; border-radius: 4px; display: none; }
+    #errorMsg { color: red; background: #f8d7da; border: 1px solid #f5c6cb; }
+    #successMsg { color: green; background: #d4edda; border: 1px solid #c3e6cb; }
+</style>
+</head>
+<body>
+<header>
+    <div>
+        <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile Pic">
+        <span id="userName">Profile</span>
+    </div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <button id="logoutBtn">Logout</button>
+    </nav>
+</header>
+<div class="container">
+    <h1>Your Profile</h1>
+    <img id="profilePicLarge" src="https://via.placeholder.com/150" alt="Profile Pic">
+    <form id="profileForm">
+        <label>Full Name:</label>
+        <input type="text" id="name" required>
+        <label>Email:</label>
+        <input type="email" id="email" readonly>
+        <label>Phone Number:</label>
+        <input type="tel" id="phone">
+        <label>Profile Picture:</label>
+        <input type="file" id="profilePicInput" accept="image/*">
+        <button type="submit">Save Changes</button>
+    </form>
+    <div id="errorMsg"></div>
+    <div id="successMsg"></div>
+</div>
+
+<script type="module" src="profile.js"></script>
+</body>
+</html>
