@@ -3,27 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Course Page</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Courses | Cyber Buddy Academy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
-<h1 class="text-3xl font-bold mb-6">Course Access</h1>
-<p id="course-name" class="text-xl mb-4"></p>
-<button id="logout-btn" class="bg-red-500 text-white p-3 rounded hover:bg-red-600">Logout</button>
+<body class="bg-gray-900 text-white min-h-screen">
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-6 text-center">Your Courses</h1>
+  <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</div>
+<script type="module">
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) {
+    window.location.href = "login.html";
+  }
 
-<script>
-const courseName = localStorage.getItem("userCourse");
-if(!courseName){
-  alert("No course access! Redirecting to login.");
-  window.location.href = "login.html";
-} else {
-  document.getElementById("course-name").textContent = "You have access to: " + courseName;
-}
+  const courses = [
+    { id: "course1", name: "Web Hacking 101" },
+    { id: "course2", name: "Advanced PenTest" },
+    { id: "course3", name: "Python for Cybersecurity" }
+  ];
 
-document.getElementById("logout-btn").addEventListener("click", () => {
-  localStorage.clear();
-  window.location.href = "login.html";
-});
+  const grid = document.getElementById("courses-grid");
+
+  courses.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "bg-gray-800 p-6 rounded shadow hover:shadow-lg cursor-pointer";
+    card.innerHTML = `<h2 class="text-xl font-bold mb-2">${c.name}</h2>`;
+    
+    if (!user.courses.includes(c.id)) {
+      card.innerHTML += `<p class="text-red-400">You do not have access</p>`;
+      card.classList.add("opacity-50 cursor-not-allowed");
+    } else {
+      card.addEventListener("click", () => {
+        window.location.href = `${c.id}.html`;
+      });
+    }
+
+    grid.appendChild(card);
+  });
 </script>
 </body>
 </html>
