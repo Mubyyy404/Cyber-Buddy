@@ -3,44 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Courses | Cyber Buddy Academy</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+<title>Courses - Cyber Buddy Academy</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap: 20px; }
+    .card { border: 1px solid #ccc; border-radius: 8px; overflow: hidden; padding: 10px; text-align: center; }
+    .card img { width: 100%; height: 150px; object-fit: cover; }
+    .card button { margin-top: 10px; padding: 8px 15px; border: none; background: #007bff; color: white; cursor: pointer; }
+    .card button:hover { background: #0056b3; }
+</style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-<div class="container mx-auto p-8">
-  <h1 class="text-3xl font-bold mb-6 text-center">Your Courses</h1>
-  <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-</div>
+<body>
+<h1>Welcome to Cyber Buddy Academy</h1>
+<div class="grid" id="courseGrid"></div>
+
 <script type="module">
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) {
-    window.location.href = "login.html";
-  }
+    import { auth } from './firebase.js';
 
-  const courses = [
-    { id: "course1", name: "Web Hacking 101" },
-    { id: "course2", name: "Advanced PenTest" },
-    { id: "course3", name: "Python for Cybersecurity" }
-  ];
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) window.location.href = "login.html"; // redirect if not logged in
 
-  const grid = document.getElementById("courses-grid");
+    // Example courses
+    const courses = [
+        { id: "web-pentesting", name: "Web Pentesting", img: "https://via.placeholder.com/250x150", desc: "Learn web penetration testing." },
+        { id: "ethical-hacking", name: "Ethical Hacking", img: "https://via.placeholder.com/250x150", desc: "Ethical hacking fundamentals." },
+        { id: "cyber-security-101", name: "Cyber Security 101", img: "https://via.placeholder.com/250x150", desc: "Basics of cyber security." }
+    ];
 
-  courses.forEach(c => {
-    const card = document.createElement("div");
-    card.className = "bg-gray-800 p-6 rounded shadow hover:shadow-lg cursor-pointer";
-    card.innerHTML = `<h2 class="text-xl font-bold mb-2">${c.name}</h2>`;
-    
-    if (!user.courses.includes(c.id)) {
-      card.innerHTML += `<p class="text-red-400">You do not have access</p>`;
-      card.classList.add("opacity-50 cursor-not-allowed");
-    } else {
-      card.addEventListener("click", () => {
-        window.location.href = `${c.id}.html`;
-      });
-    }
+    const courseGrid = document.getElementById('courseGrid');
+    courses.forEach(course => {
+        if (user.purchasedCourses.includes(course.id)) { // only show purchased courses
+            const div = document.createElement('div');
+            div.classList.add('card');
+            div.innerHTML = `
+                <img src="${course.img}" alt="${course.name}">
+                <h3>${course.name}</h3>
+                <p>${course.desc}</p>
+                <button onclick="goCourse('${course.id}')">Go to Course</button>
+            `;
+            courseGrid.appendChild(div);
+        }
+    });
 
-    grid.appendChild(card);
-  });
+    window.goCourse = (courseId) => {
+        window.location.href = courseId + ".html"; // redirect to separate course page
+    };
 </script>
 </body>
 </html>
