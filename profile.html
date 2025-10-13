@@ -16,9 +16,11 @@
     input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
     button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
     button:hover { background: #0056b3; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
     #errorMsg, #successMsg { margin: 10px 0; padding: 10px; border-radius: 4px; display: none; }
     #errorMsg { color: red; background: #f8d7da; border: 1px solid #f5c6cb; }
     #successMsg { color: green; background: #d4edda; border: 1px solid #c3e6cb; }
+    .loading { display: none; text-align: center; margin: 10px 0; }
 </style>
 </head>
 <body>
@@ -36,21 +38,22 @@
 <div class="container">
     <h1>Your Profile</h1>
     <img id="profilePicLarge" src="https://via.placeholder.com/150" alt="Profile Pic">
+    <div id="loading" class="loading">Loading...</div>
     <form id="profileForm">
         <label>Full Name:</label>
         <input type="text" id="name" required>
         <label>Email:</label>
         <input type="email" id="email" readonly>
         <label>Phone Number:</label>
-        <input type="tel" id="phone">
+        <input type="tel" id="phone" pattern="[0-9]{10,15}" placeholder="e.g., 1234567890">
         <label>Profile Picture:</label>
         <input type="file" id="profilePicInput" accept="image/*">
-        <button type="submit">Save Changes</button>
+        <button type="submit" id="saveBtn">Save Changes</button>
     </form>
     <div id="errorMsg"></div>
     <div id="successMsg"></div>
 </div>
 
-<script type="module" src="js/profile.js"></script>
+<script type="module" src="profile.js"></script>
 </body>
 </html>
