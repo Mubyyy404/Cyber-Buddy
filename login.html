@@ -3,48 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Login | Cyber Buddy Academy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-<div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-  <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+<div class="bg-gray-800 p-10 rounded-lg w-96">
+  <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
   <form id="login-form" class="space-y-4">
-    <input type="email" id="login-email" placeholder="Email" class="w-full p-3 border rounded">
-    <input type="password" id="login-password" placeholder="Password" class="w-full p-3 border rounded">
-    <button type="submit" class="w-full bg-green-500 text-white p-3 rounded hover:bg-green-600">Login</button>
-    <p class="text-center text-sm">Don't have an account? <a href="register.html" class="text-blue-500">Register</a></p>
-    <p id="login-message" class="text-center text-red-500"></p>
+    <input type="email" id="email" placeholder="Email" class="w-full p-3 rounded bg-gray-700" required>
+    <input type="password" id="password" placeholder="Password" class="w-full p-3 rounded bg-gray-700" required>
+    <button type="submit" class="w-full bg-cyan-500 py-3 rounded hover:bg-cyan-600">Login</button>
+    <p class="text-center text-sm mt-2">Don't have an account? <a href="register.html" class="text-cyan-400">Register</a></p>
+    <p id="login-msg" class="text-center text-red-400"></p>
   </form>
 </div>
-
-<script type="module">
-import { auth, db } from './firebase.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-
-const form = document.getElementById('login-form');
-const message = document.getElementById('login-message');
-
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-
-  try {
-    const userCred = await signInWithEmailAndPassword(auth, email, password);
-    const docSnap = await getDoc(doc(db, "users", userCred.user.uid));
-    const course = docSnap.exists() ? docSnap.data().courseAccess : "";
-    localStorage.setItem("userEmail", email);
-    localStorage.setItem("userCourse", course);
-    message.textContent = "Login successful! Redirecting...";
-    message.classList.remove('text-red-500');
-    message.classList.add('text-green-500');
-    setTimeout(()=> window.location.href = "course.html", 1000);
-  } catch(err) {
-    message.textContent = err.message;
-  }
-});
-</script>
+<script type="module" src="login.js"></script>
 </body>
 </html>
