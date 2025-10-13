@@ -1,33 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Cyber Buddy Academy</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; }
-        input, button { width: 100%; padding: 10px; margin: 5px 0; }
-        button { background: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #errorMsg { color: red; display: none; margin: 10px 0; padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; }
-    </style>
-</head>
-<body>
-    <h1>Login to Cyber Buddy Academy</h1>
-    <p>Enter your registered email and password.</p>
-    <div id="errorMsg"></div>
-    <form id="loginForm">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
-        <br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
-        <br><br>
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="register.html">Register here</a></p>
+// login.js
+import { auth, db } from "./firebase.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    <script type="module" src="js/login.js"></script>
-</body>
-</html>
+const form = document.getElementById("loginForm");
+const errorMsg = document.getElementById("errorMsg");
 
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Fetch user details from Firestore
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      localStorage.setItem("user", JSON.stringify({ uid: user.uid, email: user.email, courses: userData.courses || [] }));
+      window.location.href = "courses.html";
+    } else {
+      showError("No user data found. Please register again.");
+    }
+  } catch (error) {
+    showError(error.message);
+  }
+});
+
+function showError(message) {
+  errorMsg.style.display = "block";
+  errorMsg.textContent = message;
+}
