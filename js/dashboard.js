@@ -57,10 +57,11 @@ window.startCourse = async (courseId) => {
         console.log('Attempting to start course:', courseId);
         const user = auth.currentUser;
         if (!user) {
-            console.log('No user logged in');
+            console.log('No user logged in in startCourse');
             alert('Access Denied: Please log in to start this course.');
             return;
         }
+        console.log('User UID in startCourse:', user.uid);
 
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (!userDoc.exists()) {
@@ -102,15 +103,15 @@ async function init() {
     try {
         const user = auth.currentUser;
         if (user) {
-            userName.textContent = `Welcome, ${user.displayName || 'User'}`;
+            console.log('User logged in in init:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
+            userName.textContent = `Welcome, ${user.displayName || user.email || 'User'}`;
             profilePic.src = user.photoURL || defaultAvatar;
             profilePic.onerror = () => {
                 profilePic.src = defaultAvatar;
                 console.log('Profile picture fallback to default avatar');
             };
-            console.log('User logged in:', user.uid);
         } else {
-            console.log('No user logged in, showing as guest');
+            console.log('No user logged in in init, showing as guest');
             userName.textContent = 'Welcome, Guest';
             profilePic.src = defaultAvatar;
         }
