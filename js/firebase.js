@@ -20,7 +20,9 @@ const storage = getStorage(app);
 
 // Global auth state listener for redirects
 onAuthStateChanged(auth, (user) => {
+  console.log('Auth state changed:', user ? `User: ${user.uid}, Email: ${user.email}, DisplayName: ${user.displayName}` : 'No user');
   if (!user && !window.location.pathname.includes('login.html') && !window.location.pathname.includes('register.html')) {
+    console.log('Redirecting to login.html from:', window.location.pathname);
     window.location.href = "login.html";
   }
 });
