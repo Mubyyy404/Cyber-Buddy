@@ -1,65 +1,110 @@
-import { auth, db } from './firebase.js';
-import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from './firebase.js';
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const courseGrid = document.getElementById('courseGrid');
-const userNameSpan = document.getElementById('userName');
-const profilePicImg = document.getElementById('profilePic');
+// DOM elements
+const profilePic = document.getElementById('profilePic');
+const userName = document.getElementById('userName');
 const logoutBtn = document.getElementById('logoutBtn');
+const courseGrid = document.getElementById('courseGrid');
+const noCourses = document.getElementById('noCourses');
 
-let user = JSON.parse(localStorage.getItem('user') || '{}');
+// Default avatar
+const defaultAvatar = 'images/default-avatar.png';
 
-async function loadUserData() {
-  if (!user.uid) return;
-
-  const userDoc = await getDoc(doc(db, "users", user.uid));
-  if (userDoc.exists()) {
-    user = { uid: user.uid, ...userDoc.data() };
-    localStorage.setItem('user', JSON.stringify(user));
-    userNameSpan.textContent = `Welcome, ${user.name || 'User'}`;
-    profilePicImg.src = user.profilePic || 'https://via.placeholder.com/40';
-  }
-}
-
-const courses = [
-  { id: "web-pentesting", name: "Web Pentesting", img: "https://via.placeholder.com/250x150", desc: "Learn web penetration testing.", file: "web-pentesting.html" },
-  { id: "ethical-hacking", name: "Ethical Hacking", img: "https://via.placeholder.com/250x150", desc: "Ethical hacking fundamentals.", file: "ethical-hacking.html" },
-  { id: "cyber-security-101", name: "Cyber Security 101", img: "https://via.placeholder.com/250x150", desc: "Basics of cyber security.", file: "cyber-security-101.html" }
-];
-
-async function renderCourses() {
-  await loadUserData();
-  if (!user.purchasedCourses || user.purchasedCourses.length === 0) {
-    courseGrid.innerHTML = "<p>No courses purchased yet.</p>";
-    return;
-  }
-
-  courses.forEach(course => {
-    if (user.purchasedCourses.includes(course.id)) {
-      const div = document.createElement('div');
-      div.classList.add('card');
-      div.innerHTML = `
-        <img src="${course.img}" alt="${course.name}">
-        <h3>${course.name}</h3>
-        <p>${course.desc}</p>
-        <button data-course-id="${course.id}">Go to Course</button>
-      `;
-      courseGrid.appendChild(div);
+// Handle authentication state
+onAuthStateChanged(auth, async (user) => {
+    try {
+        if (user) {
+            // Set user info
+            userName.textContent = `Welcome, ${user.displayName || 'User'}`;
+            profilePic.src = user.photoURL || defaultAvatar;
+            profilePic.onerror = () => {
+                profilePic.src = defaultAvatar; // Fallback on error
+                console.log('Profile picture fallback to default avatar');
+            };
+            console.log('User logged in:', user.uid);
+        } else {
+            console.log('No user logged in, showing as guest');
+            userName.textContent = 'Welcome, Guest';
+            profilePic.src = defaultAvatar;
+        }
+        // Load courses for all users
+        await loadCourses();
+    } catch (error) {
+        console.error('Error checking auth state:', error);
+        // Still attempt to load courses for non-logged-in users
+        await loadCourses();
     }
-  });
+});
+
+// Load courses from Firestore
+async function loadCourses() {
+    try {
+        console.log('Fetching courses from Firestore');
+        const coursesSnapshot = await getDocs(collection(db, 'courses'));
+        console.log('Courses snapshot size:', coursesSnapshot.size);
+        courseGrid.innerHTML = ''; // Clear grid
+        if (coursesSnapshot.empty) {
+            console.log('No courses found in Firestore');
+            noCourses.style.display = 'block';
+            courseGrid.style.display = 'none';
+        } else {
+            noCourses.style.display = 'none';
+            courseGrid.style.display = 'grid';
+            coursesSnapshot.forEach((doc) => {
+                const course = doc.data();
+                const courseId = doc.id;
+                console.log('Course loaded:', course.title, courseId);
+                const courseElement = document.createElement('div');
+                courseElement.classList.add('card');
+                courseElement.innerHTML = `
+                    <img src="${course.image || 'https://via.placeholder.com/250x150'}" alt="${course.title}">
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <button onclick="startCourse('${courseId}')">Start Course</button>
+                `;
+                courseGrid.appendChild(courseElement);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        noCourses.style.display = 'block';
+        noCourses.innerHTML = '<p>Error loading courses. Please try again later.</p>';
+        courseGrid.style.display = 'none';
+    }
 }
 
-courseGrid.addEventListener('click', (e) => {
-  if (e.target.tagName === 'BUTTON') {
-    const courseId = e.target.dataset.courseId;
-    window.location.href = `${courseId}.html`;
-  }
-});
+// Start course function
+window.startCourse = async (courseId) => {
+    try {
+        console.log('Attempting to start course:', courseId);
+        const user = auth.currentUser;
+        if (user) {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists() && userDoc.data().role === 'student') {
+                console.log('User authorized, redirecting to course:', courseId);
+                window.location.href = `course${courseId}.html`; // Navigate to course page
+            } else {
+                console.log('User not authorized (role not student or no user doc)');
+                alert('Access Denied: You are not authorized to start this course.');
+            }
+        } else {
+            console.log('No user logged in');
+            alert('Access Denied: Please log in to start this course.');
+        }
+    } catch (error) {
+        console.error('Error starting course:', error);
+        alert('An error occurred while trying to access the course.');
+    }
+};
 
+// Logout functionality
 logoutBtn.addEventListener('click', async () => {
-  await signOut(auth);
-  localStorage.removeItem('user');
-  window.location.href = "login.html";
+    try {
+        console.log('Logging out user');
+        await signOut(auth);
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error('Error signing out:', error);
+    }
 });
-
-renderCourses();
