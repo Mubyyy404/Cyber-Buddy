@@ -1,43 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - Cyber Buddy Academy</title>
-<style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
-    header { background: #007bff; color: white; padding: 10px; display: flex; align-items: center; justify-content: space-between; }
-    header img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
-    nav { display: flex; }
-    nav a, nav button { color: white; text-decoration: none; margin: 0 10px; background: none; border: none; cursor: pointer; }
-    nav button:hover, nav a:hover { text-decoration: underline; }
-    .container { padding: 20px; }
-    h1 { color: #333; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .card { background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); overflow: hidden; text-align: center; padding: 10px; }
-    .card img { width: 100%; height: 150px; object-fit: cover; }
-    .card button { margin: 10px 0; padding: 8px 15px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
-    .card button:hover { background: #0056b3; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cyber Buddy Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #1b263b, #415a77);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-container .logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #00ff88;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.1);
+        }
+
+        #userName {
+            font-size: 1.1rem;
+            color: #00ff88;
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a, nav button {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover, nav button:hover {
+            color: #00ff88;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.7);
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .no-courses {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            color: #ff4d4d;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1b263b;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            color: #00ff88;
+            padding: 10px;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            padding: 0 10px 10px;
+        }
+
+        .card button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(90deg, #00ff88, #00b4d8);
+            color: #1b263b;
+            border: none;
+            border-radius: 0 0 10px 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .card button:hover {
+            background: linear-gradient(90deg, #00b4d8, #00ff88);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-    <div>
-        <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile Pic">
-        <span id="userName">Welcome</span>
+    <header>
+        <div class="logo-container">
+            <img src="images/mylogo.png" alt="Cyber Buddy Logo" class="logo">
+        </div>
+        <div class="user-info">
+            <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
+            <span id="userName">Welcome, Guest</span>
+        </div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <button id="logoutBtn">Logout</button>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>My Courses</h1>
+        <div id="noCourses" class="no-courses" style="display: none;">
+            <p>No courses available at the moment.</p>
+        </div>
+        <div class="grid" id="courseGrid"></div>
     </div>
-    <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
-        <button id="logoutBtn">Logout</button>
-    </nav>
-</header>
-<div class="container">
-    <h1>My Courses</h1>
-    <div class="grid" id="courseGrid"></div>
-</div>
-
-<script type="module" src="js/dashboard.js"></script>
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
-
