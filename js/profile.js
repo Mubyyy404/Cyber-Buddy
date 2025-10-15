@@ -17,27 +17,24 @@ const logoutBtn = document.getElementById('logoutBtn');
 const saveBtn = document.getElementById('saveBtn');
 const loading = document.getElementById('loading');
 
-let user = JSON.parse(localStorage.getItem('user') || '{}');
-
 async function loadProfile() {
-  if (!user.uid) {
-    window.location.href = "login.html";
-    return;
-  }
-
   try {
+    const user = auth.currentUser;
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
     loading.style.display = 'block';
     const userDoc = await getDoc(doc(db, "users", user.uid));
     if (userDoc.exists()) {
-      user = { uid: user.uid, ...userDoc.data() };
-      localStorage.setItem('user', JSON.stringify(user));
-
-      userNameSpan.textContent = user.name || 'User';
-      profilePicImg.src = user.profilePic || 'https://via.placeholder.com/40';
-      profilePicLarge.src = user.profilePic || 'https://via.placeholder.com/150';
-      nameInput.value = user.name || '';
-      emailInput.value = user.email || '';
-      phoneInput.value = user.phone || '';
+      const userData = userDoc.data();
+      userNameSpan.textContent = userData.name || 'User';
+      profilePicImg.src = userData.profilePic || 'https://via.placeholder.com/40';
+      profilePicLarge.src = userData.profilePic || 'https://via.placeholder.com/150';
+      nameInput.value = userData.name || '';
+      emailInput.value = userData.email || '';
+      phoneInput.value = userData.phone || '';
     } else {
       showError('User data not found.');
       window.location.href = "login.html";
@@ -53,7 +50,7 @@ profileForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const newName = nameInput.value.trim();
   const newPhone = phoneInput.value.trim();
-  let newProfilePic = user.profilePic;
+  let newProfilePic = profilePicLarge.src; // Use current src as default
 
   if (newName === '') {
     showError('Name is required.');
@@ -68,6 +65,11 @@ profileForm.addEventListener('submit', async (e) => {
   try {
     saveBtn.disabled = true;
     loading.style.display = 'block';
+
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('No user logged in.');
+    }
 
     if (profilePicInput.files[0]) {
       const file = profilePicInput.files[0];
@@ -99,7 +101,6 @@ profileForm.addEventListener('submit', async (e) => {
 logoutBtn.addEventListener('click', async () => {
   try {
     await signOut(auth);
-    localStorage.removeItem('user');
     window.location.href = "login.html";
   } catch (error) {
     showError('Failed to log out: ' + error.message);
