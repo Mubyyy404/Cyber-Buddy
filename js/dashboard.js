@@ -104,7 +104,17 @@ async function init() {
         const user = auth.currentUser;
         if (user) {
             console.log('User logged in in init:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
-            userName.textContent = `Welcome, ${user.displayName || user.email || 'User'}`;
+            
+            // Get user document from Firestore as a fallback
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            let displayName = user.displayName;
+            if (!displayName && userDoc.exists()) {
+                displayName = userDoc.data().name || user.email || 'User';
+            } else if (!displayName) {
+                displayName = user.email || 'User';
+            }
+
+            userName.textContent = `Welcome, ${displayName}`;
             profilePic.src = user.photoURL || defaultAvatar;
             profilePic.onerror = () => {
                 profilePic.src = defaultAvatar;
