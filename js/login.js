@@ -1,8 +1,10 @@
 import { auth } from './firebase.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const loginForm = document.getElementById('loginForm');
 const errorMsg = document.getElementById('errorMsg');
+const successMsg = document.getElementById('successMsg');
+const resetPasswordLink = document.getElementById('resetPassword');
 
 const errorMessages = {
   'auth/invalid-credential': 'Invalid email or password.',
@@ -18,8 +20,9 @@ loginForm.addEventListener('submit', async (e) => {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
 
-  // Clear previous error messages
+  // Clear previous messages
   errorMsg.style.display = 'none';
+  successMsg.style.display = 'none';
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -31,7 +34,32 @@ loginForm.addEventListener('submit', async (e) => {
   }
 });
 
+resetPasswordLink.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+
+  if (!email) {
+    showError('Please enter your email address to reset your password.');
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showSuccess('Password reset email sent! Check your inbox.');
+  } catch (error) {
+    console.error('Password reset error:', error.code, error.message);
+    showError(errorMessages[error.code] || 'Failed to send password reset email. Please try again.');
+  }
+});
+
 function showError(message) {
   errorMsg.style.display = 'block';
   errorMsg.textContent = message;
+  successMsg.style.display = 'none';
+}
+
+function showSuccess(message) {
+  successMsg.style.display = 'block';
+  successMsg.textContent = message;
+  errorMsg.style.display = 'none';
 }
