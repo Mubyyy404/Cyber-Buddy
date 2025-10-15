@@ -1,4 +1,4 @@
-import { auth, db } from './firebase.js';
+import { auth } from './firebase.js';
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const loginForm = document.getElementById('loginForm');
@@ -9,6 +9,7 @@ const errorMessages = {
   'auth/user-disabled': 'Your account has been disabled.',
   'auth/user-not-found': 'No user found with this email.',
   'auth/wrong-password': 'Incorrect password.',
+  'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
   // Add more as needed
 };
 
@@ -17,12 +18,16 @@ loginForm.addEventListener('submit', async (e) => {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
 
+  // Clear previous error messages
+  errorMsg.style.display = 'none';
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    console.log('Login successful, redirecting to dashboard');
     window.location.href = "dashboard.html";
   } catch (error) {
     console.error('Login error:', error.code, error.message);
-    showError(errorMessages[error.code] || 'An error occurred. Please try again.');
+    showError(errorMessages[error.code] || 'An error occurred during login. Please try again.');
   }
 });
 
