@@ -24,7 +24,6 @@ loginForm.addEventListener('submit', async (e) => {
     const userDoc = await getDoc(doc(db, "users", user.uid));
     if (!userDoc.exists()) throw new Error("User data not found!");
 
-    localStorage.setItem('user', JSON.stringify({ uid: user.uid, ...userDoc.data() }));
     window.location.href = "dashboard.html";
   } catch (error) {
     showError(errorMessages[error.code] || error.message);
