@@ -1,5 +1,5 @@
 import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const registerForm = document.getElementById('registerForm');
@@ -33,11 +33,17 @@ registerForm.addEventListener('submit', async (e) => {
       email,
       phone,
       purchasedCourses: [],
-      profilePic: '' // Default empty profile pic URL
+      profilePic: ''
     });
 
+    await updateProfile(user, {
+      displayName: name
+    });
+
+    alert('Registration successful! Redirecting to login...');
     window.location.href = "login.html";
   } catch (error) {
+    console.error('Registration error:', error.code, error.message);
     showError(errorMessages[error.code] || error.message);
   }
 });
