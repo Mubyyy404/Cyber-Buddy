@@ -110,15 +110,14 @@ async function init() {
                 profilePic.src = defaultAvatar;
                 console.log('Profile picture fallback to default avatar');
             };
+            await loadCourses();
         } else {
-            console.log('No user logged in in init, showing as guest');
-            userName.textContent = 'Welcome, Guest';
-            profilePic.src = defaultAvatar;
+            console.log('No user logged in in init, redirecting');
+            window.location.href = 'login.html';
         }
-        await loadCourses();
     } catch (error) {
         console.error('Error initializing dashboard:', error);
-        await loadCourses();
+        window.location.href = 'login.html';
     }
 }
 
