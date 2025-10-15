@@ -58,15 +58,22 @@
   button:hover {
     background: #00cfa9;
   }
-  #errorMsg {
-    color: #ff4d4d;
-    display: none;
+  #errorMsg, #successMsg {
     margin: 10px 0;
     padding: 10px;
+    border-radius: 6px;
+    display: none;
+    text-align: center;
+  }
+  #errorMsg {
+    color: #ff4d4d;
     background: rgba(255, 0, 0, 0.2);
     border: 1px solid #ff4d4d;
-    border-radius: 6px;
-    text-align: center;
+  }
+  #successMsg {
+    color: #00cfa9;
+    background: rgba(0, 255, 224, 0.2);
+    border: 1px solid #00ffe0;
   }
   p {
     text-align: center;
@@ -86,6 +93,7 @@
 <div class="container">
   <h1>Login to Cyber Buddy Academy</h1>
   <div id="errorMsg"></div>
+  <div id="successMsg"></div>
   <form id="loginForm">
       <label>Email:</label>
       <input type="email" id="email" required>
@@ -93,6 +101,7 @@
       <input type="password" id="password" required>
       <button type="submit">Login</button>
   </form>
+  <p>Forgot password? <a href="#" id="resetPassword">Reset here</a></p>
   <p>Don't have an account? <a href="register.html">Register here</a></p>
 </div>
 
