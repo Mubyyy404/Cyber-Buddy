@@ -3,51 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Courses - Cyber Buddy Academy</title>
+<title>Purchased Courses - Cyber Buddy Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap: 20px; }
-    .card { border: 1px solid #ccc; border-radius: 8px; overflow: hidden; padding: 10px; text-align: center; }
-    .card img { width: 100%; height: 150px; object-fit: cover; }
-    .card button { margin-top: 10px; padding: 8px 15px; border: none; background: #007bff; color: white; cursor: pointer; }
-    .card button:hover { background: #0056b3; }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #080808, #121826);
+    color: #fff;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px solid #00ffe0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header img.logo {
+    height: 50px;
+  }
+  header h2 {
+    font-size: 22px;
+    color: #00ffe0;
+    margin: 0;
+  }
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00ffe0;
+    transition: transform 0.3s ease;
+  }
+  .profile-pic:hover {
+    transform: scale(1.1);
+  }
+  #userName {
+    font-size: 1.1rem;
+    color: #00ffe0;
+    text-shadow: 0 0 5px rgba(0, 255, 224, 0.5);
+  }
+  nav {
+    display: flex;
+    gap: 20px;
+  }
+  nav a, nav button {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  nav a:hover, nav button:hover {
+    color: #00ffe0;
+    text-shadow: 0 0 8px rgba(0, 255, 224, 0.7);
+  }
+  .container {
+    padding: 50px 30px;
+    text-align: center;
+  }
+  h1 {
+    color: #00ffe0;
+    font-size: 2em;
+    margin-bottom: 40px;
+  }
+  .no-courses {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 0, 0, 0.2);
+    border: 1px solid #ff4d4d;
+    border-radius: 8px;
+    color: #ff4d4d;
+    margin-bottom: 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 25px;
+  }
+  .card {
+    background: #1a1f2e;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 255, 224, 0.1);
+    overflow: hidden;
+    transition: 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(0, 255, 224, 0.3);
+  }
+  .card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+  .card-content {
+    padding: 20px;
+  }
+  .card h3 {
+    margin-top: 0;
+    color: #00ffe0;
+    font-size: 18px;
+  }
+  .card p {
+    color: #bbb;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 60px;
+  }
+  .card button {
+    margin-top: 15px;
+    padding: 10px 18px;
+    background: #00ffe0;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .card button:hover {
+    background: #00cfa9;
+  }
+  footer {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid #00ffe0;
+    color: #ccc;
+    font-size: 14px;
+    margin-top: 50px;
+  }
 </style>
 </head>
 <body>
-<h1>Welcome to Cyber Buddy Academy</h1>
-<div class="grid" id="courseGrid"></div>
+  <header>
+    <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo">
+    <h2>Cyber Buddy Academy</h2>
+    <div class="user-info">
+      <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
+      <span id="userName">Welcome, Guest</span>
+    </div>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profile.html">Profile</a>
+      <button id="logoutBtn">Logout</button>
+    </nav>
+  </header>
+  <div class="container">
+    <h1>Your Purchased Courses</h1>
+    <div id="noCourses" class="no-courses" style="display: none;">
+      <p>No purchased courses available.</p>
+    </div>
+    <div class="grid" id="courseGrid"></div>
+  </div>
+  <footer>
+    © 2025 Cyber Buddy Academy — All Rights Reserved
+  </footer>
 
 <script type="module">
-    import { auth } from './firebase.js';
+    import { auth, db } from './firebase.js';
+    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) window.location.href = "login.html"; // redirect if not logged in
-
-    // Example courses
-    const courses = [
-        { id: "web-pentesting", name: "Web Pentesting", img: "https://via.placeholder.com/250x150", desc: "Learn web penetration testing." },
-        { id: "ethical-hacking", name: "Ethical Hacking", img: "https://via.placeholder.com/250x150", desc: "Ethical hacking fundamentals." },
-        { id: "cyber-security-101", name: "Cyber Security 101", img: "https://via.placeholder.com/250x150", desc: "Basics of cyber security." }
-    ];
-
+    const profilePic = document.getElementById('profilePic');
+    const userName = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
     const courseGrid = document.getElementById('courseGrid');
-    courses.forEach(course => {
-        if (user.purchasedCourses.includes(course.id)) { // only show purchased courses
-            const div = document.createElement('div');
-            div.classList.add('card');
-            div.innerHTML = `
-                <img src="${course.img}" alt="${course.name}">
-                <h3>${course.name}</h3>
-                <p>${course.desc}</p>
-                <button onclick="goCourse('${course.id}')">Go to Course</button>
-            `;
-            courseGrid.appendChild(div);
+    const noCourses = document.getElementById('noCourses');
+    const defaultAvatar = 'images/default-avatar.png';
+
+    async function init() {
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            userName.textContent = `Welcome, ${user.displayName || user.email || 'User'}`;
+            profilePic.src = user.photoURL || defaultAvatar;
+            profilePic.onerror = () => {
+                profilePic.src = defaultAvatar;
+            };
+
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (!userDoc.exists()) {
+                alert('Error: User data not found.');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            const userData = userDoc.data();
+            const purchasedCourses = userData.purchasedCourses || [];
+
+            if (purchasedCourses.length === 0) {
+                noCourses.style.display = 'block';
+                courseGrid.style.display = 'none';
+                return;
+            }
+
+            noCourses.style.display = 'none';
+            courseGrid.style.display = 'grid';
+            courseGrid.innerHTML = '';
+
+            for (const courseId of purchasedCourses) {
+                const courseDoc = await getDoc(doc(db, 'courses', courseId));
+                if (courseDoc.exists()) {
+                    const course = courseDoc.data();
+                    const courseElement = document.createElement('div');
+                    courseElement.classList.add('card');
+                    courseElement.innerHTML = `
+                        <img src="${course.image || 'https://via.placeholder.com/270x160'}" alt="${course.title}">
+                        <div class="card-content">
+                            <h3>${course.title}</h3>
+                            <p>${course.description}</p>
+                            <button onclick="goCourse('${courseId}')">Go to Course</button>
+                        </div>
+                    `;
+                    courseGrid.appendChild(courseElement);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading purchased courses:', error);
+            noCourses.style.display = 'block';
+            noCourses.innerHTML = '<p>Error loading courses. Please try again later.</p>';
+            courseGrid.style.display = 'none';
+        }
+    }
+
+    window.goCourse = (courseId) => {
+        window.location.href = courseId + ".html";
+    };
+
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            window.location.href = 'login.html';
+        } catch (error) {
+            console.error('Error signing out:', error);
         }
     });
 
-    window.goCourse = (courseId) => {
-        window.location.href = courseId + ".html"; // redirect to separate course page
-    };
+    init();
 </script>
 </body>
 </html>
