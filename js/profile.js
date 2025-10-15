@@ -1,5 +1,5 @@
 import { auth, db, storage } from './firebase.js';
-import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { signOut, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
@@ -29,17 +29,18 @@ async function loadProfile() {
     const userDoc = await getDoc(doc(db, "users", user.uid));
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      userNameSpan.textContent = userData.name || 'User';
-      profilePicImg.src = userData.profilePic || 'https://via.placeholder.com/40';
-      profilePicLarge.src = userData.profilePic || 'https://via.placeholder.com/150';
-      nameInput.value = userData.name || '';
-      emailInput.value = userData.email || '';
+      userNameSpan.textContent = user.displayName || 'User';
+      profilePicImg.src = user.photoURL || 'https://via.placeholder.com/40';
+      profilePicLarge.src = user.photoURL || 'https://via.placeholder.com/150';
+      nameInput.value = user.displayName || userData.name || '';
+      emailInput.value = user.email || '';
       phoneInput.value = userData.phone || '';
     } else {
-      showError('User data not found.');
+      showError('User data not found. Please contact support.');
       window.location.href = "login.html";
     }
   } catch (error) {
+    console.error('Error loading profile:', error);
     showError('Failed to load profile: ' + error.message);
   } finally {
     loading.style.display = 'none';
@@ -50,7 +51,7 @@ profileForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const newName = nameInput.value.trim();
   const newPhone = phoneInput.value.trim();
-  let newProfilePic = profilePicLarge.src; // Use current src as default
+  let newProfilePic = profilePicLarge.src;
 
   if (newName === '') {
     showError('Name is required.');
@@ -73,7 +74,7 @@ profileForm.addEventListener('submit', async (e) => {
 
     if (profilePicInput.files[0]) {
       const file = profilePicInput.files[0];
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
         showError('Profile picture must be under 2MB.');
         return;
       }
@@ -88,9 +89,15 @@ profileForm.addEventListener('submit', async (e) => {
       profilePic: newProfilePic
     });
 
+    await updateProfile(user, {
+      displayName: newName,
+      photoURL: newProfilePic
+    });
+
     showSuccess('Profile updated successfully!');
-    await loadProfile(); // Reload to reflect changes
+    await loadProfile();
   } catch (error) {
+    console.error('Error updating profile:', error);
     showError('Failed to update profile: ' + error.message);
   } finally {
     saveBtn.disabled = false;
@@ -103,6 +110,7 @@ logoutBtn.addEventListener('click', async () => {
     await signOut(auth);
     window.location.href = "login.html";
   } catch (error) {
+    console.error('Error logging out:', error);
     showError('Failed to log out: ' + error.message);
   }
 });
