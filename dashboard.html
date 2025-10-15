@@ -1,177 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cyber Buddy Academy - Courses Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #080808, #121826);
-      color: #fff;
+import { auth, db, storage } from './firebase.js';
+import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+// DOM elements
+const profilePic = document.getElementById('profilePic');
+const userName = document.getElementById('userName');
+const logoutBtn = document.getElementById('logoutBtn');
+const courseGrid = document.getElementById('courseGrid');
+const noCourses = document.getElementById('noCourses');
+
+// Default avatar
+const defaultAvatar = 'images/default-avatar.png';
+
+// Load courses from Firestore
+async function loadCourses() {
+    try {
+        console.log('Fetching courses from Firestore');
+        const coursesSnapshot = await getDocs(collection(db, 'courses'));
+        console.log('Courses snapshot size:', coursesSnapshot.size);
+        courseGrid.innerHTML = '';
+        if (coursesSnapshot.empty) {
+            console.log('No courses found in Firestore');
+            noCourses.style.display = 'block';
+            courseGrid.style.display = 'none';
+        } else {
+            noCourses.style.display = 'none';
+            courseGrid.style.display = 'grid';
+            coursesSnapshot.forEach((doc) => {
+                const course = doc.data();
+                const courseId = doc.id;
+                console.log('Course loaded:', course.title, courseId);
+                const courseElement = document.createElement('div');
+                courseElement.classList.add('card');
+                courseElement.innerHTML = `
+                    <img src="${course.image || 'https://via.placeholder.com/270x160'}" alt="${course.title}">
+                    <div class="card-content">
+                        <h3>${course.title}</h3>
+                        <p>${course.description}</p>
+                        <button onclick="startCourse('${courseId}')">Access Course</button>
+                    </div>
+                `;
+                courseGrid.appendChild(courseElement);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        noCourses.style.display = 'block';
+        noCourses.innerHTML = '<p>Error loading courses. Please try again later.</p>';
+        courseGrid.style.display = 'none';
     }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.85);
-      border-bottom: 1px solid #00ffe0;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+}
+
+// Start course function
+window.startCourse = async (courseId) => {
+    try {
+        console.log('Attempting to start course:', courseId);
+        const user = auth.currentUser;
+        if (!user) {
+            console.log('No user logged in in startCourse');
+            alert('Access Denied: Please log in to start this course.');
+            return;
+        }
+        console.log('User UID in startCourse:', user.uid);
+
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (!userDoc.exists()) {
+            console.log('User document not found:', user.uid);
+            alert('Error: User data not found.');
+            return;
+        }
+
+        const userData = userDoc.data();
+        const purchasedCourses = userData.purchasedCourses || [];
+        console.log('Purchased courses for user:', purchasedCourses);
+
+        if (purchasedCourses.includes(courseId)) {
+            console.log('User authorized, redirecting to course:', courseId);
+            window.location.href = `${courseId}.html`;
+        } else {
+            console.log('User not authorized for course:', courseId);
+            alert('Access Denied: You have not purchased this course.');
+        }
+    } catch (error) {
+        console.error('Error starting course:', error);
+        alert('An error occurred while trying to access the course.');
     }
-    header img.logo {
-      height: 50px;
+};
+
+// Logout functionality
+logoutBtn.addEventListener('click', async () => {
+    try {
+        console.log('Logging out user');
+        await signOut(auth);
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Error signing out:', error);
     }
-    header h2 {
-      font-size: 22px;
-      color: #00ffe0;
-      margin: 0;
+});
+
+// Initialize dashboard
+async function init() {
+    try {
+        const user = auth.currentUser;
+        if (user) {
+            console.log('User logged in in init:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
+            userName.textContent = `Welcome, ${user.displayName || user.email || 'User'}`;
+            profilePic.src = user.photoURL || defaultAvatar;
+            profilePic.onerror = () => {
+                profilePic.src = defaultAvatar;
+                console.log('Profile picture fallback to default avatar');
+            };
+            await loadCourses();
+        } else {
+            console.log('No user logged in in init, redirecting');
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        window.location.href = 'login.html';
     }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .profile-pic {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #00ffe0;
-      transition: transform 0.3s ease;
-    }
-    .profile-pic:hover {
-      transform: scale(1.1);
-    }
-    #userName {
-      font-size: 1.1rem;
-      color: #00ffe0;
-      text-shadow: 0 0 5px rgba(0, 255, 224, 0.5);
-    }
-    nav {
-      display: flex;
-      gap: 20px;
-    }
-    nav a, nav button {
-      color: #e0e0e0;
-      text-decoration: none;
-      font-size: 1rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-    nav a:hover, nav button:hover {
-      color: #00ffe0;
-      text-shadow: 0 0 8px rgba(0, 255, 224, 0.7);
-    }
-    .container {
-      padding: 50px 30px;
-      text-align: center;
-    }
-    h1 {
-      color: #00ffe0;
-      font-size: 2em;
-      margin-bottom: 40px;
-    }
-    .no-courses {
-      text-align: center;
-      padding: 20px;
-      background: rgba(255, 0, 0, 0.2);
-      border: 1px solid #ff4d4d;
-      border-radius: 8px;
-      color: #ff4d4d;
-      margin-bottom: 20px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 25px;
-    }
-    .card {
-      background: #1a1f2e;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 255, 224, 0.1);
-      overflow: hidden;
-      transition: 0.3s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px rgba(0, 255, 224, 0.3);
-    }
-    .card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-    }
-    .card-content {
-      padding: 20px;
-    }
-    .card h3 {
-      margin-top: 0;
-      color: #00ffe0;
-      font-size: 18px;
-    }
-    .card p {
-      color: #bbb;
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 60px;
-    }
-    .card button {
-      margin-top: 15px;
-      padding: 10px 18px;
-      background: #00ffe0;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .card button:hover {
-      background: #00cfa9;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.9);
-      border-top: 1px solid #00ffe0;
-      color: #ccc;
-      font-size: 14px;
-      margin-top: 50px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo">
-    <h2>Cyber Buddy Academy</h2>
-    <div class="user-info">
-      <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
-      <span id="userName">Welcome, Guest</span>
-    </div>
-    <nav>
-      <a href="course.html">My Courses</a>
-      <a href="profile.html">Profile</a>
-      <button id="logoutBtn">Logout</button>
-    </nav>
-  </header>
-  <div class="container">
-    <h1>Available Courses</h1>
-    <div id="noCourses" class="no-courses" style="display: none;">
-      <p>No courses available at the moment.</p>
-    </div>
-    <div class="grid" id="courseGrid"></div>
-  </div>
-  <footer>
-    © 2025 Cyber Buddy Academy — All Rights Reserved
-  </footer>
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="dashboard.js"></script>
-</body>
-</html>
+}
+
+init();
