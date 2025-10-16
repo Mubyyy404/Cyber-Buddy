@@ -1,65 +1,51 @@
 import { auth, db } from "./firebase.js";
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// Wait for authentication
+const userNameEl = document.getElementById("userName");
+const profilePicEl = document.getElementById("profilePic");
+const courseGrid = document.getElementById("courseGrid");
+const noCourses = document.getElementById("noCourses");
+
+// Auth check
 auth.onAuthStateChanged(async (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  const userNameEl = document.getElementById("userName");
-  const profilePicEl = document.getElementById("profilePic");
-  const courseGrid = document.getElementById("courseGrid");
-  const noCourses = document.getElementById("noCourses");
+  if (!user) return window.location.href = "login.html";
 
   try {
-    // Fetch user data
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+    // Get user info
+    const userSnap = await getDoc(doc(db, "users", user.uid));
     let purchasedCourses = [];
-
     if (userSnap.exists()) {
-      const userData = userSnap.data();
-      userNameEl.textContent = userData.name || user.email;
-      if (userData.profileImage) profilePicEl.src = userData.profileImage;
-      purchasedCourses = userData.purchasedcourses || [];
+      const data = userSnap.data();
+      userNameEl.textContent = data.name || user.email;
+      profilePicEl.src = data.profilePic || 'images/default-avatar.png';
+      purchasedCourses = data.purchasedcourses || [];
     }
 
-    // Fetch all courses
-    const coursesRef = collection(db, "courses");
-    const querySnap = await getDocs(coursesRef);
+    // Get all courses
+    const coursesSnap = await getDocs(collection(db, "courses"));
+    if (coursesSnap.empty) return noCourses.style.display = "block";
 
-    if (querySnap.empty) {
-      noCourses.style.display = "block";
-      return;
-    }
+    courseGrid.innerHTML = "";
 
-    // Display all courses
-    querySnap.forEach((courseDoc) => {
+    coursesSnap.forEach((courseDoc) => {
       const course = courseDoc.data();
+      const title = course.title || courseDoc.id;
 
       const isPurchased = purchasedCourses.some(
-        (p) =>
-          p.toLowerCase().trim() === course.title?.toLowerCase().trim() ||
-          p.toLowerCase().trim() === courseDoc.id.toLowerCase().trim()
+        (p) => p.toLowerCase().trim() === title.toLowerCase().trim() || 
+               p.toLowerCase().trim() === courseDoc.id.toLowerCase().trim()
       );
 
       const card = document.createElement("div");
       card.classList.add("card");
       card.innerHTML = `
-        <img src="${course.image || 'images/default-course.png'}" alt="${course.title}">
+        <img src="${course.image || 'images/default-course.png'}" alt="${title}">
         <div class="card-content">
-          <h3>${course.title}</h3>
-          <p>${course.description || 'No description available.'}</p>
+          <h3>${title}</h3>
+          <p>${course.description || 'No description'}</p>
           ${
-            isPurchased
-              ? `<button class="access-btn" data-course="${courseDoc.id}">Access Course</button>`
+            isPurchased 
+              ? `<button class="access-btn" data-course="${courseDoc.id}">Access Course</button>` 
               : `<button class="locked-btn" disabled>🔒 Access Denied</button>`
           }
         </div>
@@ -67,24 +53,20 @@ auth.onAuthStateChanged(async (user) => {
       courseGrid.appendChild(card);
     });
 
-    // Handle access button click
-    document.querySelectorAll(".access-btn").forEach((btn) => {
+    // Button click handler
+    document.querySelectorAll(".access-btn").forEach(btn => {
       btn.addEventListener("click", () => {
-        const courseId = btn.getAttribute("data-course");
-        // Redirect based on course ID
-        if (courseId.toLowerCase().includes("web")) {
-          window.location.href = "web-pentesting.html";
-        } else if (courseId.toLowerCase().includes("network")) {
-          window.location.href = "network-pentesting.html";
-        } else {
-          alert("Course page not found!");
-        }
+        const courseId = btn.dataset.course.toLowerCase();
+        if (courseId.includes("web")) window.location.href = "web-pentesting.html";
+        else if (courseId.includes("network")) window.location.href = "network-pentesting.html";
+        else alert("Course page not found");
       });
     });
-  } catch (error) {
-    console.error("Error loading dashboard:", error);
+
+  } catch (err) {
+    console.error(err);
     noCourses.style.display = "block";
-    noCourses.innerHTML = `<p>⚠️ Error loading courses. Check console for details.</p>`;
+    noCourses.textContent = "⚠️ Error loading courses.";
   }
 });
 
