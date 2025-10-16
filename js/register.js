@@ -1,8 +1,8 @@
-import { auth, db } from '../firebase.js';
+import { auth, db } from './firebase.js';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-console.log("Register script loaded"); // Debugging
+console.log("Register script loaded at:", new Date().toISOString()); // Debugging
 console.log("Auth object:", auth); // Debugging
 console.log("Firestore db:", db); // Debugging
 
@@ -16,6 +16,7 @@ if (!successMsg) console.error("Success message element not found");
 
 // Function to show messages
 const showMessage = (element, message) => {
+  console.log("Showing message:", message); // Debugging
   element.textContent = message;
   element.style.display = "block";
   setTimeout(() => {
@@ -26,7 +27,7 @@ const showMessage = (element, message) => {
 // 🟢 Register function
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  console.log("Form submission triggered"); // Debugging
+  console.log("Form submission triggered at:", new Date().toISOString()); // Debugging
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -77,7 +78,7 @@ registerForm.addEventListener("submit", async (e) => {
     // Create user
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    console.log("User created, UID:", user.uid); // Debugging
+    console.log("User created, UID:", user.uid, "Email:", user.email); // Debugging
 
     // Update user profile with name
     await updateProfile(user, { displayName: name });
@@ -93,9 +94,9 @@ registerForm.addEventListener("submit", async (e) => {
     console.log("User data stored in Firestore"); // Debugging
 
     // Send email verification
-    console.log("Attempting to send verification email..."); // Debugging
+    console.log("Attempting to send verification email to:", email); // Debugging
     await sendEmailVerification(user);
-    console.log("Verification email sent to:", email); // Debugging
+    console.log("Verification email sent successfully to:", email); // Debugging
     showMessage(successMsg, "📩 Account created! Please check your inbox or spam folder to verify your email.");
 
     // Sign out to enforce email verification on login
