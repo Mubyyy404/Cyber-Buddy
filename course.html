@@ -173,92 +173,84 @@
   </footer>
 
 <script type="module">
-    import { auth, db } from './firebase.js';
-    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { auth, db } from './firebase.js';
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-    const profilePic = document.getElementById('profilePic');
-    const userName = document.getElementById('userName');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const courseGrid = document.getElementById('courseGrid');
-    const noCourses = document.getElementById('noCourses');
-    const defaultAvatar = 'images/default-avatar.png';
+const profilePic = document.getElementById('profilePic');
+const userName = document.getElementById('userName');
+const logoutBtn = document.getElementById('logoutBtn');
+const courseGrid = document.getElementById('courseGrid');
+const noCourses = document.getElementById('noCourses');
+const defaultAvatar = 'images/default-avatar.png';
 
-    async function init() {
-        try {
-            const user = auth.currentUser;
-            if (!user) {
-                window.location.href = "login.html";
-                return;
-            }
-
-            // Get user document from Firestore as a fallback
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            let displayName = user.displayName;
-            if (!displayName && userDoc.exists()) {
-                displayName = userDoc.data().name || user.email || 'User';
-            } else if (!displayName) {
-                displayName = user.email || 'User';
-            }
-
-            userName.textContent = `Welcome, ${displayName}`;
-            profilePic.src = user.photoURL || defaultAvatar;
-            profilePic.onerror = () => {
-                profilePic.src = defaultAvatar;
-            };
-
-            const userData = userDoc.exists() ? userDoc.data() : {};
-            const purchasedCourses = userData.purchasedCourses || [];
-
-            if (purchasedCourses.length === 0) {
-                noCourses.style.display = 'block';
-                courseGrid.style.display = 'none';
-                return;
-            }
-
-            noCourses.style.display = 'none';
-            courseGrid.style.display = 'grid';
-            courseGrid.innerHTML = '';
-
-            for (const courseId of purchasedCourses) {
-                const courseDoc = await getDoc(doc(db, 'courses', courseId));
-                if (courseDoc.exists()) {
-                    const course = courseDoc.data();
-                    const courseElement = document.createElement('div');
-                    courseElement.classList.add('card');
-                    courseElement.innerHTML = `
-                        <img src="${course.image || 'https://via.placeholder.com/270x160'}" alt="${course.title}">
-                        <div class="card-content">
-                            <h3>${course.title}</h3>
-                            <p>${course.description}</p>
-                            <button onclick="goCourse('${courseId}')">Go to Course</button>
-                        </div>
-                    `;
-                    courseGrid.appendChild(courseElement);
-                }
-            }
-        } catch (error) {
-            console.error('Error loading purchased courses:', error);
-            noCourses.style.display = 'block';
-            noCourses.innerHTML = '<p>Error loading courses. Please try again later.</p>';
-            courseGrid.style.display = 'none';
-        }
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadPurchasedCourses(user);
+    } else {
+        window.location.href = 'login.html';
     }
+});
 
-    window.goCourse = (courseId) => {
-        window.location.href = courseId + ".html";
-    };
+async function loadPurchasedCourses(user) {
+    try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
 
-    logoutBtn.addEventListener('click', async () => {
-        try {
-            await signOut(auth);
-            window.location.href = 'login.html';
-        } catch (error) {
-            console.error('Error signing out:', error);
+        const displayName = user.displayName || userData.name || user.email || 'User';
+        userName.textContent = `Welcome, ${displayName}`;
+        profilePic.src = user.photoURL || userData.profilePic || defaultAvatar;
+        profilePic.onerror = () => { profilePic.src = defaultAvatar; };
+
+        const purchasedCourses = Array.isArray(userData.purchasedCourses) ? userData.purchasedCourses : [];
+
+        if (purchasedCourses.length === 0) {
+            noCourses.style.display = 'block';
+            courseGrid.style.display = 'none';
+            return;
         }
-    });
 
-    init();
+        noCourses.style.display = 'none';
+        courseGrid.style.display = 'grid';
+        courseGrid.innerHTML = '';
+
+        for (const courseId of purchasedCourses) {
+            const courseDoc = await getDoc(doc(db, 'courses', courseId));
+            if (courseDoc.exists()) {
+                const course = courseDoc.data();
+                const courseElement = document.createElement('div');
+                courseElement.classList.add('card');
+                courseElement.innerHTML = `
+                    <img src="${course.image || 'https://via.placeholder.com/270x160'}" alt="${course.title}">
+                    <div class="card-content">
+                        <h3>${course.title}</h3>
+                        <p>${course.description}</p>
+                        <button onclick="goCourse('${courseId}')">Go to Course</button>
+                    </div>
+                `;
+                courseGrid.appendChild(courseElement);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading purchased courses:', error);
+        noCourses.style.display = 'block';
+        noCourses.innerHTML = '<p>Error loading courses. Please try again later.</p>';
+        courseGrid.style.display = 'none';
+    }
+}
+
+window.goCourse = (courseId) => {
+    window.location.href = courseId + ".html";
+};
+
+logoutBtn.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Error signing out:', error);
+    }
+});
 </script>
 </body>
 </html>
