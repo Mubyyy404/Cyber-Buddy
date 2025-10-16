@@ -17,41 +17,34 @@ const logoutBtn = document.getElementById('logoutBtn');
 const saveBtn = document.getElementById('saveBtn');
 const loading = document.getElementById('loading');
 
-// ✅ Default avatars
+// Default avatars
 const defaultAvatarSmall = 'images/default-avatar.png';
 const defaultAvatarLarge = 'images/default-avatar-large.png';
 
-// ✅ FIXED VERSION: Wait for Firebase auth state to load
+// Wait for auth state
 onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    await loadProfile(user);
-  } else {
-    window.location.href = "login.html";
-  }
+  if (user) await loadProfile(user);
+  else window.location.href = "login.html";
 });
 
 async function loadProfile(user) {
   try {
     loading.style.display = 'block';
     const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (!userDoc.exists()) throw new Error("User data not found");
 
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      userNameSpan.textContent = user.displayName || userData.name || 'User';
-      profilePicImg.src = user.photoURL || userData.profilePic || defaultAvatarSmall;
-      profilePicImg.onerror = () => { profilePicImg.src = defaultAvatarSmall; };
-      profilePicLarge.src = user.photoURL || userData.profilePic || defaultAvatarLarge;
-      profilePicLarge.onerror = () => { profilePicLarge.src = defaultAvatarLarge; };
-      nameInput.value = user.displayName || userData.name || '';
-      emailInput.value = user.email || '';
-      phoneInput.value = userData.phone || '';
-    } else {
-      showError('User data not found. Please contact support.');
-      window.location.href = "login.html";
-    }
-  } catch (error) {
-    console.error('Error loading profile:', error);
-    showError('Failed to load profile: ' + error.message);
+    const userData = userDoc.data();
+    userNameSpan.textContent = user.displayName || userData.name || 'User';
+    profilePicImg.src = user.photoURL || userData.profilePic || defaultAvatarSmall;
+    profilePicImg.onerror = () => { profilePicImg.src = defaultAvatarSmall; };
+    profilePicLarge.src = user.photoURL || userData.profilePic || defaultAvatarLarge;
+    profilePicLarge.onerror = () => { profilePicLarge.src = defaultAvatarLarge; };
+    nameInput.value = user.displayName || userData.name || '';
+    emailInput.value = user.email || '';
+    phoneInput.value = userData.phone || '';
+  } catch (err) {
+    console.error(err);
+    showError(err.message);
   } finally {
     loading.style.display = 'none';
   }
@@ -59,34 +52,24 @@ async function loadProfile(user) {
 
 profileForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  saveBtn.disabled = true;
+  loading.style.display = 'block';
+
   const newName = nameInput.value.trim();
   const newPhone = phoneInput.value.trim();
 
-  if (newName === '') {
-    showError('Name is required.');
-    return;
-  }
-
-  if (newPhone && !/^[0-9]{10,15}$/.test(newPhone)) {
-    showError('Phone number must be 10-15 digits.');
-    return;
-  }
+  if (!newName) { showError("Name is required"); saveBtn.disabled = false; loading.style.display='none'; return; }
+  if (newPhone && !/^[0-9]{10,15}$/.test(newPhone)) { showError("Phone must be 10-15 digits"); saveBtn.disabled=false; loading.style.display='none'; return; }
 
   try {
-    saveBtn.disabled = true;
-    loading.style.display = 'block';
-
     const user = auth.currentUser;
-    if (!user) throw new Error('No user logged in.');
+    if (!user) throw new Error("No user logged in");
 
     let newProfilePic = profilePicLarge.src;
 
     if (profilePicInput.files[0]) {
       const file = profilePicInput.files[0];
-      if (file.size > 2 * 1024 * 1024) {
-        showError('Profile picture must be under 2MB.');
-        return;
-      }
+      if (file.size > 2*1024*1024) throw new Error("Profile picture must be <2MB");
       const storageRef = ref(storage, `profilePics/${user.uid}`);
       await uploadBytes(storageRef, file);
       newProfilePic = await getDownloadURL(storageRef);
@@ -98,20 +81,16 @@ profileForm.addEventListener('submit', async (e) => {
       profilePic: newProfilePic
     });
 
-    await updateProfile(user, {
-      displayName: newName,
-      photoURL: newProfilePic
-    });
+    await updateProfile(user, { displayName: newName, photoURL: newProfilePic });
 
-    // ✅ Directly update the images immediately
-    profilePicImg.src = newProfilePic || defaultAvatarSmall;
-    profilePicLarge.src = newProfilePic || defaultAvatarLarge;
+    // Update immediately
+    profilePicImg.src = newProfilePic;
+    profilePicLarge.src = newProfilePic;
 
-    showSuccess('Profile updated successfully!');
-    await loadProfile(user);
-  } catch (error) {
-    console.error('Error updating profile:', error);
-    showError('Failed to update profile: ' + error.message);
+    showSuccess("Profile updated successfully");
+  } catch(err) {
+    console.error(err);
+    showError(err.message);
   } finally {
     saveBtn.disabled = false;
     loading.style.display = 'none';
@@ -119,23 +98,17 @@ profileForm.addEventListener('submit', async (e) => {
 });
 
 logoutBtn.addEventListener('click', async () => {
-  try {
-    await signOut(auth);
-    window.location.href = "login.html";
-  } catch (error) {
-    console.error('Error logging out:', error);
-    showError('Failed to log out: ' + error.message);
-  }
+  try { await signOut(auth); window.location.href="login.html"; }
+  catch(err){ showError(err.message); }
 });
 
-function showError(message) {
+function showError(msg) {
   errorMsg.style.display = 'block';
-  errorMsg.textContent = message;
+  errorMsg.textContent = msg;
   successMsg.style.display = 'none';
 }
-
-function showSuccess(message) {
+function showSuccess(msg) {
   successMsg.style.display = 'block';
-  successMsg.textContent = message;
+  successMsg.textContent = msg;
   errorMsg.style.display = 'none';
 }
