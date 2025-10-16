@@ -105,19 +105,18 @@ onAuthStateChanged(auth, async (user) => {
 
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
+            let displayName = user.displayName;
+            let profilePicURL = defaultAvatar;
 
-            // Use Firestore photo if available, fallback to Auth photo, then default
-            const photoURL = (userDoc.exists() && userDoc.data().profilePic) || user.photoURL || defaultAvatar;
-            
-            // Use Firestore name if available, fallback to Auth displayName, then email
-            let displayName = (userDoc.exists() && userDoc.data().name) || user.displayName || user.email || 'User';
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                displayName = displayName || userData.name || user.email || 'User';
+                profilePicURL = user.photoURL || userData.profilePic || defaultAvatar;
+            }
 
             userName.textContent = `Welcome, ${displayName}`;
-            profilePic.src = photoURL;
-            profilePic.onerror = () => {
-                profilePic.src = defaultAvatar;
-                console.log('Profile picture fallback to default avatar');
-            };
+            profilePic.src = profilePicURL;
+            profilePic.onerror = () => { profilePic.src = defaultAvatar; };
 
             await loadCourses();
         } catch (error) {
