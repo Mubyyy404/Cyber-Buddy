@@ -1,72 +1,95 @@
-import { auth, db } from './firebase.js';
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { auth, db } from "./firebase.js";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const courseContainer = document.getElementById('courseContainer');
-const noCoursesMsg = document.getElementById('noCoursesMsg');
-const logoutBtn = document.getElementById('logoutBtn');
-
-onAuthStateChanged(auth, async (user) => {
+// Wait for authentication
+auth.onAuthStateChanged(async (user) => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
-  await loadDashboard(user);
-});
 
-async function loadDashboard(user) {
+  const userNameEl = document.getElementById("userName");
+  const profilePicEl = document.getElementById("profilePic");
+  const courseGrid = document.getElementById("courseGrid");
+  const noCourses = document.getElementById("noCourses");
+
   try {
+    // Fetch user data
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
+    let purchasedCourses = [];
 
-    if (!userSnap.exists()) {
-      console.error("User data not found.");
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      userNameEl.textContent = userData.name || user.email;
+      if (userData.profileImage) profilePicEl.src = userData.profileImage;
+      purchasedCourses = userData.purchasedcourses || [];
+    }
+
+    // Fetch all courses
+    const coursesRef = collection(db, "courses");
+    const querySnap = await getDocs(coursesRef);
+
+    if (querySnap.empty) {
+      noCourses.style.display = "block";
       return;
     }
 
-    const userData = userSnap.data();
-    const purchased = userData.purchasedcourses || [];
+    // Display all courses
+    querySnap.forEach((courseDoc) => {
+      const course = courseDoc.data();
 
-    const courseSnap = await getDocs(collection(db, "courses"));
-    const allCourses = [];
-    courseSnap.forEach((doc) => allCourses.push({ id: doc.id, ...doc.data() }));
+      const isPurchased = purchasedCourses.some(
+        (p) =>
+          p.toLowerCase().trim() === course.title?.toLowerCase().trim() ||
+          p.toLowerCase().trim() === courseDoc.id.toLowerCase().trim()
+      );
 
-    const purchasedCourses = allCourses.filter(course => purchased.includes(course.title));
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.innerHTML = `
+        <img src="${course.image || 'images/default-course.png'}" alt="${course.title}">
+        <div class="card-content">
+          <h3>${course.title}</h3>
+          <p>${course.description || 'No description available.'}</p>
+          ${
+            isPurchased
+              ? `<button class="access-btn" data-course="${courseDoc.id}">Access Course</button>`
+              : `<button class="locked-btn" disabled>🔒 Access Denied</button>`
+          }
+        </div>
+      `;
+      courseGrid.appendChild(card);
+    });
 
-    if (purchasedCourses.length === 0) {
-      noCoursesMsg.style.display = "block";
-    } else {
-      noCoursesMsg.style.display = "none";
-      renderCourses(purchasedCourses);
-    }
+    // Handle access button click
+    document.querySelectorAll(".access-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const courseId = btn.getAttribute("data-course");
+        // Redirect based on course ID
+        if (courseId.toLowerCase().includes("web")) {
+          window.location.href = "web-pentesting.html";
+        } else if (courseId.toLowerCase().includes("network")) {
+          window.location.href = "network-pentesting.html";
+        } else {
+          alert("Course page not found!");
+        }
+      });
+    });
   } catch (error) {
     console.error("Error loading dashboard:", error);
+    noCourses.style.display = "block";
+    noCourses.innerHTML = `<p>⚠️ Error loading courses. Check console for details.</p>`;
   }
-}
+});
 
-function renderCourses(courses) {
-  courseContainer.innerHTML = "";
-  courses.forEach((course) => {
-    const card = document.createElement("div");
-    card.className = "course-card";
-    card.innerHTML = `
-      <img src="${course.image}" alt="${course.title}">
-      <div class="course-card-content">
-        <h3>${course.title}</h3>
-        <p>${course.description}</p>
-        <button onclick="startCourse('${course.title}')">Start Course</button>
-      </div>
-    `;
-    courseContainer.appendChild(card);
-  });
-}
-
-window.startCourse = (courseTitle) => {
-  const formatted = courseTitle.toLowerCase().replace(/\s+/g, '-');
-  window.location.href = `${formatted}.html`;
-};
-
-logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
+// Logout
+document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+  await auth.signOut();
   window.location.href = "login.html";
 });
