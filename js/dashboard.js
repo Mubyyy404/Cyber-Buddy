@@ -1,82 +1,129 @@
-import { auth, db } from "./firebase.js";
-import { collection, getDocs, doc, getDoc, query, limit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { auth, db, storage } from './firebase.js';
+import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-const userNameEl = document.getElementById("userName");
-const profilePicEl = document.getElementById("profilePic");
-const courseGrid = document.getElementById("courseGrid");
-const noCourses = document.getElementById("noCourses");
-const loadingEl = document.getElementById("loading");
+// DOM elements
+const profilePic = document.getElementById('profilePic');
+const userName = document.getElementById('userName');
+const logoutBtn = document.getElementById('logoutBtn');
+const courseGrid = document.getElementById('courseGrid');
+const noCourses = document.getElementById('noCourses');
 
-auth.onAuthStateChanged(async (user) => {
-  if (!user) return window.location.href = "login.html";
+// Default avatar
+const defaultAvatar = 'images/default-avatar.png';
 
-  loadingEl.style.display = "block";
-  try {
-    // Get user info
-    const userSnap = await getDoc(doc(db, "users", user.uid));
-    let purchasedCourses = [];
-    if (userSnap.exists()) {
-      const data = userSnap.data();
-      userNameEl.textContent = data.name || user.email;
-      profilePicEl.src = data.profilePic || "https://via.placeholder.com/40?text=Avatar";
-      purchasedCourses = Array.isArray(data.purchasedcourses) ? data.purchasedcourses : [];
+// Load courses from Firestore
+async function loadCourses() {
+    try {
+        console.log('Fetching courses from Firestore');
+        const coursesSnapshot = await getDocs(collection(db, 'courses'));
+        console.log('Courses snapshot size:', coursesSnapshot.size);
+        courseGrid.innerHTML = '';
+        if (coursesSnapshot.empty) {
+            console.log('No courses found in Firestore');
+            noCourses.style.display = 'block';
+            courseGrid.style.display = 'none';
+        } else {
+            noCourses.style.display = 'none';
+            courseGrid.style.display = 'grid';
+            coursesSnapshot.forEach((doc) => {
+                const course = doc.data();
+                const courseId = doc.id;
+                console.log('Course loaded:', course.title, courseId);
+                const courseElement = document.createElement('div');
+                courseElement.classList.add('card');
+                courseElement.innerHTML = `
+                    <img src="${course.image || 'https://via.placeholder.com/270x160'}" alt="${course.title}">
+                    <div class="card-content">
+                        <h3>${course.title}</h3>
+                        <p>${course.description}</p>
+                        <button onclick="startCourse('${courseId}')">Access Course</button>
+                    </div>
+                `;
+                courseGrid.appendChild(courseElement);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        noCourses.style.display = 'block';
+        noCourses.innerHTML = '<p>Error loading courses. Please try again later.</p>';
+        courseGrid.style.display = 'none';
     }
+}
 
-    // Get courses (with pagination)
-    const coursesQuery = query(collection(db, "courses"), limit(10));
-    const coursesSnap = await getDocs(coursesQuery);
-    if (coursesSnap.empty) {
-      noCourses.style.display = "block";
-      return;
+// Start course function
+window.startCourse = async (courseId) => {
+    try {
+        console.log('Attempting to start course:', courseId);
+        const user = auth.currentUser;
+        if (!user) {
+            console.log('No user logged in in startCourse');
+            alert('Access Denied: Please log in to start this course.');
+            return;
+        }
+        console.log('User UID in startCourse:', user.uid);
+
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (!userDoc.exists()) {
+            console.log('User document not found:', user.uid);
+            alert('Error: User data not found.');
+            return;
+        }
+
+        const userData = userDoc.data();
+        const purchasedCourses = userData.purchasedCourses || [];
+        console.log('Purchased courses for user:', purchasedCourses);
+
+        if (purchasedCourses.includes(courseId)) {
+            console.log('User authorized, redirecting to course:', courseId);
+            window.location.href = `${courseId}.html`;
+        } else {
+            console.log('User not authorized for course:', courseId);
+            alert('Access Denied: You have not purchased this course.');
+        }
+    } catch (error) {
+        console.error('Error starting course:', error);
+        alert('An error occurred while trying to access the course.');
     }
+};
 
-    courseGrid.innerHTML = "";
-    coursesSnap.forEach((courseDoc) => {
-      const course = courseDoc.data();
-      const title = course.title || courseDoc.id;
-      const isPurchased = purchasedCourses.some(
-        (p) => p.toLowerCase().trim() === title.toLowerCase().trim() || 
-               p.toLowerCase().trim() === courseDoc.id.toLowerCase().trim()
-      );
-
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.innerHTML = `
-        <img src="${course.image || 'https://via.placeholder.com/300x160?text=Course+Image'}" alt="${title} course image">
-        <div class="card-content">
-          <h3>${title}</h3>
-          <p>${course.description || 'No description'}</p>
-          ${
-            isPurchased 
-              ? `<button class="access-btn" data-course="${courseDoc.id}" data-url="${course.pageUrl || 'default-course.html'}" aria-label="Access ${title} course">Access Course</button>` 
-              : `<button class="locked-btn" disabled aria-disabled="true" aria-label="${title} course is locked">🔒 Access Denied</button>`
-          }
-        </div>
-      `;
-      courseGrid.appendChild(card);
-    });
-
-    // Button click handler
-    document.querySelectorAll(".access-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const courseUrl = btn.dataset.url;
-        window.location.href = courseUrl;
-      });
-    });
-
-  } catch (err) {
-    console.error(err);
-    noCourses.style.display = "block";
-    noCourses.textContent = err.code === "permission-denied" 
-      ? "⚠️ You don’t have permission to view courses."
-      : err.code === "unavailable"
-      ? "⚠️ Network error. Please try again later."
-      : "⚠️ Error loading courses.";
-  } finally {
-    loadingEl.style.display = "none";
-  }
+// Logout functionality
+logoutBtn.addEventListener('click', async () => {
+    try {
+        console.log('Logging out user');
+        await signOut(auth);
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Error signing out:', error);
+    }
 });
 
-document.getElementById("logoutBtn")?.addEventListener("click", async () => {
-  await auth.signOut();
+// ✅ Fixed Auth Check using onAuthStateChanged
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log('User logged in:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
+
+        try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            let displayName = user.displayName;
+            if (!displayName && userDoc.exists()) {
+                displayName = userDoc.data().name || user.email || 'User';
+            } else if (!displayName) {
+                displayName = user.email || 'User';
+            }
+
+            userName.textContent = `Welcome, ${displayName}`;
+            profilePic.src = user.photoURL || defaultAvatar;
+            profilePic.onerror = () => {
+                profilePic.src = defaultAvatar;
+                console.log('Profile picture fallback to default avatar');
+            };
+            await loadCourses();
+        } catch (error) {
+            console.error('Error initializing dashboard:', error);
+        }
+    } else {
+        console.log('No user logged in, redirecting to login');
+        window.location.href = 'login.html';
+    }
 });
