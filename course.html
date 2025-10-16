@@ -153,7 +153,7 @@
     <h2>Cyber Buddy Academy</h2>
     <div class="user-info">
       <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
-      <span id="userName">Welcome, Guest</span>
+      <span id="userName"></span>
     </div>
     <nav>
       <a href="dashboard.html">Dashboard</a>
@@ -173,7 +173,7 @@
   </footer>
 
 <script type="module">
-    import { auth, db } from 'js/firebase.js';
+    import { auth, db } from './firebase.js';
     import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
     import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
@@ -192,20 +192,22 @@
                 return;
             }
 
-            userName.textContent = `Welcome, ${user.displayName || user.email || 'User'}`;
+            // Get user document from Firestore as a fallback
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            let displayName = user.displayName;
+            if (!displayName && userDoc.exists()) {
+                displayName = userDoc.data().name || user.email || 'User';
+            } else if (!displayName) {
+                displayName = user.email || 'User';
+            }
+
+            userName.textContent = `Welcome, ${displayName}`;
             profilePic.src = user.photoURL || defaultAvatar;
             profilePic.onerror = () => {
                 profilePic.src = defaultAvatar;
             };
 
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            if (!userDoc.exists()) {
-                alert('Error: User data not found.');
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            const userData = userDoc.data();
+            const userData = userDoc.exists() ? userDoc.data() : {};
             const purchasedCourses = userData.purchasedCourses || [];
 
             if (purchasedCourses.length === 0) {
