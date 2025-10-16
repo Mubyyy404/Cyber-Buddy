@@ -1,6 +1,6 @@
 import { auth, db, storage } from './firebase.js';
 import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 // DOM elements
 const profilePic = document.getElementById('profilePic');
@@ -98,12 +98,14 @@ logoutBtn.addEventListener('click', async () => {
     }
 });
 
-// ✅ Fixed Auth Check using onAuthStateChanged
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        console.log('User logged in:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
-
-        try {
+// Initialize dashboard
+async function init() {
+    try {
+        const user = auth.currentUser;
+        if (user) {
+            console.log('User logged in in init:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
+            
+            // Get user document from Firestore as a fallback
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             let displayName = user.displayName;
             if (!displayName && userDoc.exists()) {
@@ -119,11 +121,14 @@ onAuthStateChanged(auth, async (user) => {
                 console.log('Profile picture fallback to default avatar');
             };
             await loadCourses();
-        } catch (error) {
-            console.error('Error initializing dashboard:', error);
+        } else {
+            console.log('No user logged in in init, redirecting');
+            window.location.href = 'login.html';
         }
-    } else {
-        console.log('No user logged in, redirecting to login');
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
         window.location.href = 'login.html';
     }
-});
+}
+
+init();
