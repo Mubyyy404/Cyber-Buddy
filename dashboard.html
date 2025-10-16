@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Buddy Academy - Courses Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard - Cyber Buddy Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<script type="module" src="js/dashboard.js" defer></script>
 <style>
-  /* Base */
   body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
@@ -15,11 +15,10 @@
   }
   header {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.85);
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.85);
     border-bottom: 1px solid #00ffe0;
     position: sticky;
     top: 0;
@@ -29,45 +28,18 @@
     height: 50px;
   }
   header h2 {
-    font-size: 20px;
+    font-size: 22px;
     color: #00ffe0;
-    margin: 5px 0;
-    flex: 1 1 100%;
-    text-align: center;
-  }
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #00ffe0;
-    transition: transform 0.3s ease;
-  }
-  .profile-pic:hover {
-    transform: scale(1.1);
-  }
-  #userName {
-    font-size: 1rem;
-    color: #00ffe0;
-    text-shadow: 0 0 5px rgba(0,255,224,0.5);
-    white-space: nowrap;
+    margin: 0;
   }
   nav {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 5px;
+    gap: 20px;
   }
   nav a, nav button {
     color: #e0e0e0;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 1rem;
     background: none;
     border: none;
     cursor: pointer;
@@ -75,116 +47,95 @@
   }
   nav a:hover, nav button:hover {
     color: #00ffe0;
-    text-shadow: 0 0 8px rgba(0,255,224,0.7);
+    text-shadow: 0 0 8px rgba(0, 255, 224, 0.7);
   }
 
-  .container {
-    padding: 30px 15px;
-    text-align: center;
+  .dashboard-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
+
   h1 {
+    text-align: center;
     color: #00ffe0;
-    font-size: 1.8rem;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
   }
 
-  .no-courses {
-    padding: 15px;
-    background: rgba(255,0,0,0.2);
-    border: 1px solid #ff4d4d;
-    border-radius: 8px;
-    color: #ff4d4d;
-    margin-bottom: 20px;
-  }
-
-  .grid {
+  .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
-  .card {
+
+  .course-card {
     background: #1a1f2e;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,255,224,0.1);
+    border: 1px solid #00ffe0;
+    border-radius: 12px;
     overflow: hidden;
-    transition: 0.3s ease;
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0, 255, 224, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 30px rgba(0,255,224,0.3);
+
+  .course-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(0, 255, 224, 0.25);
   }
-  .card img {
+
+  .course-card img {
     width: 100%;
-    height: 140px;
+    height: 160px;
     object-fit: cover;
   }
-  .card-content {
+
+  .course-card-content {
     padding: 15px;
-    flex: 1;
   }
-  .card h3 {
-    margin-top: 0;
+
+  .course-card-content h3 {
     color: #00ffe0;
-    font-size: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
   }
-  .card p {
-    color: #bbb;
-    font-size: 13px;
-    line-height: 1.4;
-    min-height: 50px;
+
+  .course-card-content p {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
   }
-  .card button {
-    margin-top: auto;
-    padding: 8px 15px;
+
+  .course-card-content button {
+    width: 100%;
+    padding: 10px;
     background: #00ffe0;
-    color: #000;
     border: none;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
+    color: #000;
     transition: 0.3s;
   }
-  .card button:hover {
+
+  .course-card-content button:hover {
     background: #00cfa9;
   }
 
   footer {
     text-align: center;
-    padding: 15px;
-    background: rgba(0,0,0,0.9);
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.9);
     border-top: 1px solid #00ffe0;
     color: #ccc;
-    font-size: 13px;
-    margin-top: 30px;
+    font-size: 14px;
+    margin-top: 50px;
   }
 
-  /* Mobile adjustments */
-  @media (max-width: 480px) {
-    header {
-      flex-direction: column;
-      gap: 8px;
+  @media (max-width: 600px) {
+    header h2 {
+      font-size: 18px;
     }
-    #userName {
-      font-size: 0.9rem;
-    }
-    h1 {
-      font-size: 1.5rem;
-    }
-    .card img {
-      height: 120px;
-    }
-    .card h3 {
-      font-size: 14px;
-    }
-    .card p {
-      font-size: 12px;
-    }
-    nav {
-      gap: 10px;
-      flex-wrap: wrap;
+    .course-card-content h3 {
+      font-size: 1rem;
     }
   }
 </style>
@@ -193,30 +144,21 @@
 <header>
   <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo">
   <h2>Cyber Buddy Academy</h2>
-  <div class="user-info">
-    <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
-    <span id="userName">Loading...</span>
-  </div>
   <nav>
-    <a href="course.html">My Courses</a>
+    <a href="dashboard.html">Dashboard</a>
     <a href="profile.html">Profile</a>
     <button id="logoutBtn">Logout</button>
   </nav>
 </header>
 
-<div class="container">
-  <h1>Available Courses</h1>
-  <div id="noCourses" class="no-courses" style="display:none;">
-    <p>No courses available at the moment.</p>
-  </div>
-  <div class="grid" id="courseGrid"></div>
+<div class="dashboard-container">
+  <h1>Your Courses</h1>
+  <div id="courseContainer" class="course-grid"></div>
+  <p id="noCoursesMsg" style="text-align:center;color:#bbb;display:none;">No courses purchased yet.</p>
 </div>
 
 <footer>
   © 2025 Cyber Buddy Academy — All Rights Reserved
 </footer>
-
-<script type="module" src="js/firebase.js"></script>
-<script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
