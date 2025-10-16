@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard - Cyber Buddy Academy</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-<script type="module" src="js/dashboard.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Buddy Academy - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
   body {
     margin: 0;
@@ -17,133 +16,148 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    background: rgba(0, 0, 0, 0.85);
+    padding: 15px 20px;
+    background: rgba(0,0,0,0.85);
     border-bottom: 1px solid #00ffe0;
     position: sticky;
     top: 0;
     z-index: 10;
   }
-  header img.logo {
-    height: 50px;
-  }
+  header img.logo { height: 50px; }
   header h2 {
-    font-size: 22px;
+    font-size: 20px;
     color: #00ffe0;
     margin: 0;
   }
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #00ffe0;
+    object-fit: cover;
+  }
   nav {
     display: flex;
-    gap: 20px;
+    gap: 15px;
   }
   nav a, nav button {
     color: #e0e0e0;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 0.95rem;
     background: none;
     border: none;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: 0.3s;
   }
   nav a:hover, nav button:hover {
     color: #00ffe0;
-    text-shadow: 0 0 8px rgba(0, 255, 224, 0.7);
   }
-
-  .dashboard-container {
-    padding: 40px 20px;
+  .container {
+    padding: 30px 20px;
     max-width: 1200px;
     margin: 0 auto;
   }
-
   h1 {
-    text-align: center;
     color: #00ffe0;
+    text-align: center;
     margin-bottom: 30px;
   }
-
-  .course-grid {
+  .no-courses {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255,0,0,0.2);
+    border: 1px solid #ff4d4d;
+    border-radius: 8px;
+    color: #ff4d4d;
+    margin-bottom: 20px;
+  }
+  .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
   }
-
-  .course-card {
+  .card {
     background: #1a1f2e;
-    border: 1px solid #00ffe0;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 255, 224, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: 0.3s;
   }
-
-  .course-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 25px rgba(0, 255, 224, 0.25);
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #00ffe0;
   }
-
-  .course-card img {
+  .card img {
     width: 100%;
     height: 160px;
     object-fit: cover;
   }
-
-  .course-card-content {
+  .card-content {
     padding: 15px;
   }
-
-  .course-card-content h3 {
+  .card-content h3 {
+    margin: 0 0 10px;
     color: #00ffe0;
-    margin-bottom: 10px;
-    font-size: 1.1rem;
+    font-size: 18px;
   }
-
-  .course-card-content p {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
+  .card-content p {
+    color: #bbb;
+    font-size: 14px;
+    min-height: 50px;
   }
-
-  .course-card-content button {
+  .card button {
     width: 100%;
-    padding: 10px;
-    background: #00ffe0;
-    border: none;
+    padding: 8px;
+    margin-top: 10px;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
-    color: #000;
+    border: none;
     transition: 0.3s;
   }
-
-  .course-card-content button:hover {
+  .access-btn {
+    background: #00ffe0;
+    color: #000;
+  }
+  .access-btn:hover {
     background: #00cfa9;
   }
-
+  .locked-btn {
+    background: #555;
+    color: #ccc;
+    cursor: not-allowed;
+  }
   footer {
     text-align: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.9);
+    padding: 15px;
+    background: rgba(0,0,0,0.9);
     border-top: 1px solid #00ffe0;
     color: #ccc;
     font-size: 14px;
-    margin-top: 50px;
+    margin-top: 40px;
   }
 
+  /* Mobile tweaks */
   @media (max-width: 600px) {
-    header h2 {
-      font-size: 18px;
-    }
-    .course-card-content h3 {
-      font-size: 1rem;
-    }
+    header { flex-direction: column; gap: 10px; text-align: center; }
+    nav { justify-content: center; flex-wrap: wrap; gap: 10px; }
+    .card-content h3 { font-size: 16px; }
+    .card-content p { font-size: 13px; min-height: 40px; }
   }
 </style>
 </head>
 <body>
 <header>
-  <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo">
+  <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Logo">
   <h2>Cyber Buddy Academy</h2>
+  <div class="user-info">
+    <img id="profilePic" src="images/default-avatar.png" alt="Profile">
+    <span id="userName">Loading...</span>
+  </div>
   <nav>
     <a href="dashboard.html">Dashboard</a>
     <a href="profile.html">Profile</a>
@@ -151,14 +165,16 @@
   </nav>
 </header>
 
-<div class="dashboard-container">
-  <h1>Your Courses</h1>
-  <div id="courseContainer" class="course-grid"></div>
-  <p id="noCoursesMsg" style="text-align:center;color:#bbb;display:none;">No courses purchased yet.</p>
+<div class="container">
+  <h1>Available Courses</h1>
+  <div id="noCourses" class="no-courses" style="display:none;">No courses available.</div>
+  <div class="grid" id="courseGrid"></div>
 </div>
 
 <footer>
   © 2025 Cyber Buddy Academy — All Rights Reserved
 </footer>
+
+<script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
