@@ -4,7 +4,7 @@ import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-
 
 const registerForm = document.getElementById('registerForm');
 const errorMsg = document.getElementById('errorMsg');
-const successMsg = document.getElementById('successMsg'); // Added for success feedback
+const successMsg = document.getElementById('successMsg');
 
 const errorMessages = {
   'auth/email-already-in-use': 'This email is already registered.',
