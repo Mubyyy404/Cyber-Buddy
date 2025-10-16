@@ -1,60 +1,79 @@
-import { auth, db } from "./firebase.js";
-import { 
-  createUserWithEmailAndPassword, 
-  sendEmailVerification 
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { 
-  doc, 
-  setDoc 
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { auth, db } from './firebase.js';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const registerForm = document.getElementById("registerForm");
+  const errorMsg = document.getElementById("errorMsg");
+  const successMsg = document.getElementById("successMsg");
 
-  const registerBtn = document.getElementById("registerBtn");
-  registerBtn.disabled = true;
-  registerBtn.textContent = "Registering...";
+  if (!registerForm) return console.error("Register form not found");
 
-  try {
-    // ✅ Create user
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+  const submitButton = registerForm.querySelector("button");
+  if (!submitButton) return console.error("Register button not found");
 
-    console.log("User created:", user.uid);
+  const showMessage = (element, message) => {
+    element.textContent = message;
+    element.style.display = "block";
+    setTimeout(() => element.style.display = "none", 5000);
+  };
 
-    // ✅ Save user details in Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      name,
-      email,
-      phone,
-      createdAt: new Date().toISOString(),
-      verified: false,
-    });
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const phone = document.getElementById("phone").value.trim();
 
-    // ✅ Send email verification
-    await sendEmailVerification(user);
-    alert("✅ Verification email sent! Please check your inbox before logging in.");
+    if (!name || !email || !password || !phone) {
+      showMessage(errorMsg, "Please fill in all fields.");
+      return;
+    }
 
-    registerBtn.textContent = "Registration Successful";
-    registerBtn.disabled = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showMessage(errorMsg, "Invalid email address.");
+      return;
+    }
 
-    // ✅ Sign out temporarily so unverified users can’t auto-login
-    await auth.signOut();
+    if (password.length < 6) {
+      showMessage(errorMsg, "Password must be at least 6 characters.");
+      return;
+    }
 
-    // Redirect to login after 3 sec
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 3000);
+    const phoneRegex = /^\+?[\d\s-]{8,15}$/;
+    if (!phoneRegex.test(phone)) {
+      showMessage(errorMsg, "Invalid phone number.");
+      return;
+    }
 
-  } catch (error) {
-    console.error("Registration Error:", error);
-    alert("❌ " + error.message);
-    registerBtn.disabled = false;
-    registerBtn.textContent = "Register";
-  }
+    submitButton.disabled = true;
+    submitButton.textContent = "Registering...";
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await updateProfile(user, { displayName: name });
+      await setDoc(doc(db, "users", user.uid), {
+        name, email, phone, createdAt: new Date()
+      });
+
+      await sendEmailVerification(user);
+      showMessage(successMsg, "📩 Account created! Verify your email before login.");
+
+      await signOut(auth);
+
+      setTimeout(() => window.location.href = "login.html", 3000);
+
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") showMessage(errorMsg, "Email already registered.");
+      else showMessage(errorMsg, "Error: " + error.message);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Register";
+    }
+  });
+
 });
