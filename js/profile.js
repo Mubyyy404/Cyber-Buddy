@@ -17,6 +17,10 @@ const logoutBtn = document.getElementById('logoutBtn');
 const saveBtn = document.getElementById('saveBtn');
 const loading = document.getElementById('loading');
 
+// ✅ Default avatars
+const defaultAvatarSmall = 'images/default-avatar.png';
+const defaultAvatarLarge = 'images/default-avatar-large.png';
+
 // ✅ FIXED VERSION: Wait for Firebase auth state to load
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -33,9 +37,11 @@ async function loadProfile(user) {
 
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      userNameSpan.textContent = user.displayName || 'User';
-      profilePicImg.src = user.photoURL || 'https://via.placeholder.com/40';
-      profilePicLarge.src = user.photoURL || 'https://via.placeholder.com/150';
+      userNameSpan.textContent = user.displayName || userData.name || 'User';
+      profilePicImg.src = user.photoURL || userData.profilePic || defaultAvatarSmall;
+      profilePicImg.onerror = () => { profilePicImg.src = defaultAvatarSmall; };
+      profilePicLarge.src = user.photoURL || userData.profilePic || defaultAvatarLarge;
+      profilePicLarge.onerror = () => { profilePicLarge.src = defaultAvatarLarge; };
       nameInput.value = user.displayName || userData.name || '';
       emailInput.value = user.email || '';
       phoneInput.value = userData.phone || '';
@@ -55,7 +61,6 @@ profileForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const newName = nameInput.value.trim();
   const newPhone = phoneInput.value.trim();
-  let newProfilePic = profilePicLarge.src;
 
   if (newName === '') {
     showError('Name is required.');
@@ -73,6 +78,8 @@ profileForm.addEventListener('submit', async (e) => {
 
     const user = auth.currentUser;
     if (!user) throw new Error('No user logged in.');
+
+    let newProfilePic = profilePicLarge.src;
 
     if (profilePicInput.files[0]) {
       const file = profilePicInput.files[0];
@@ -95,6 +102,10 @@ profileForm.addEventListener('submit', async (e) => {
       displayName: newName,
       photoURL: newProfilePic
     });
+
+    // ✅ Directly update the images immediately
+    profilePicImg.src = newProfilePic || defaultAvatarSmall;
+    profilePicLarge.src = newProfilePic || defaultAvatarLarge;
 
     showSuccess('Profile updated successfully!');
     await loadProfile(user);
