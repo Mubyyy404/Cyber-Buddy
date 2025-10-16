@@ -64,7 +64,7 @@ registerForm.addEventListener("submit", async (e) => {
   }
 
   if (!auth) {
-    console.error("Auth object is undefined");
+    console.error("Auth object is undefined - check firebase.js import");
     showMessage(errorMsg, "❌ Error: Authentication service not initialized.");
     return;
   }
