@@ -1,5 +1,5 @@
 import { auth, db, storage } from './firebase.js';
-import { signOut, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { signOut, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
@@ -17,16 +17,20 @@ const logoutBtn = document.getElementById('logoutBtn');
 const saveBtn = document.getElementById('saveBtn');
 const loading = document.getElementById('loading');
 
-async function loadProfile() {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      window.location.href = "login.html";
-      return;
-    }
+// ✅ FIXED VERSION: Wait for Firebase auth state to load
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await loadProfile(user);
+  } else {
+    window.location.href = "login.html";
+  }
+});
 
+async function loadProfile(user) {
+  try {
     loading.style.display = 'block';
     const userDoc = await getDoc(doc(db, "users", user.uid));
+
     if (userDoc.exists()) {
       const userData = userDoc.data();
       userNameSpan.textContent = user.displayName || 'User';
@@ -68,9 +72,7 @@ profileForm.addEventListener('submit', async (e) => {
     loading.style.display = 'block';
 
     const user = auth.currentUser;
-    if (!user) {
-      throw new Error('No user logged in.');
-    }
+    if (!user) throw new Error('No user logged in.');
 
     if (profilePicInput.files[0]) {
       const file = profilePicInput.files[0];
@@ -95,7 +97,7 @@ profileForm.addEventListener('submit', async (e) => {
     });
 
     showSuccess('Profile updated successfully!');
-    await loadProfile();
+    await loadProfile(user);
   } catch (error) {
     console.error('Error updating profile:', error);
     showError('Failed to update profile: ' + error.message);
@@ -126,5 +128,3 @@ function showSuccess(message) {
   successMsg.textContent = message;
   errorMsg.style.display = 'none';
 }
-
-loadProfile();
