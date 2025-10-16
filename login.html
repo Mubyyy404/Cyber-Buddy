@@ -14,7 +14,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
   }
   .container {
     max-width: 400px;
@@ -28,6 +29,7 @@
     color: #00ffe0;
     text-align: center;
     margin-bottom: 20px;
+    font-size: 1.8rem;
   }
   form {
     display: flex;
@@ -36,17 +38,19 @@
   label {
     color: #bbb;
     margin-bottom: 5px;
+    font-size: 0.9rem;
   }
   input {
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
     border: 1px solid #00ffe0;
     border-radius: 6px;
     background: #121826;
     color: #fff;
+    font-size: 1rem;
   }
   button {
-    padding: 10px;
+    padding: 12px;
     background: #00ffe0;
     color: #000;
     border: none;
@@ -54,6 +58,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
+    font-size: 1rem;
   }
   button:hover {
     background: #00cfa9;
@@ -68,6 +73,7 @@
     border-radius: 6px;
     display: none;
     text-align: center;
+    font-size: 0.9rem;
   }
   #errorMsg {
     color: #ff4d4d;
@@ -83,6 +89,7 @@
     text-align: center;
     margin-top: 15px;
     color: #bbb;
+    font-size: 0.9rem;
   }
   p a {
     color: #00ffe0;
@@ -91,14 +98,22 @@
   p a:hover {
     text-decoration: underline;
   }
-  p a.disabled {
-    color: #555;
-    pointer-events: none;
-    cursor: not-allowed;
+  @media (max-width: 500px) {
+    .container {
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+    input, button {
+      font-size: 0.95rem;
+      padding: 10px;
+    }
   }
 </style>
 </head>
 <body>
+
 <div class="container">
   <h1>Login to Cyber Buddy Academy</h1>
   <div id="errorMsg"></div>
@@ -108,12 +123,14 @@
       <input type="email" id="email" required>
       <label>Password:</label>
       <input type="password" id="password" required>
-      <button type="submit">Login</button>
+      <button type="submit" id="loginBtn">Login</button>
   </form>
   <p>Forgot password? <a href="#" id="resetPassword">Reset here</a></p>
   <p>Don't have an account? <a href="register.html">Register here</a></p>
 </div>
 
+<!-- Scripts at the end -->
+<script type="module" src="js/firebase.js"></script>
 <script type="module" src="js/login.js"></script>
 </body>
 </html>
