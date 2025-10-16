@@ -1,6 +1,6 @@
 import { auth, db, storage } from './firebase.js';
 import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 // DOM elements
 const profilePic = document.getElementById('profilePic');
@@ -95,64 +95,35 @@ logoutBtn.addEventListener('click', async () => {
         window.location.href = 'login.html';
     } catch (error) {
         console.error('Error signing out:', error);
-        alert('Failed to log out. Please try again.');
     }
 });
 
-// Initialize dashboard
-async function init() {
-    try {
-        // Show loading state
-        userName.textContent = 'Loading...';
-        noCourses.style.display = 'none';
-        courseGrid.style.display = 'none';
+// ✅ Fixed Auth Check using onAuthStateChanged
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log('User logged in:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
 
-        // Wait for auth state to resolve
-        await new Promise((resolve, reject) => {
-            const unsubscribe = auth.onAuthStateChanged((user) => {
-                unsubscribe(); // Unsubscribe after first call
-                if (user) {
-                    console.log('User logged in in init:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
-                    resolve(user);
-                } else {
-                    console.log('No user logged in in init, redirecting');
-                    window.location.href = 'login.html';
-                    reject(new Error('No user logged in'));
-                }
-            }, reject);
-        });
+        try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            let displayName = user.displayName;
+            if (!displayName && userDoc.exists()) {
+                displayName = userDoc.data().name || user.email || 'User';
+            } else if (!displayName) {
+                displayName = user.email || 'User';
+            }
 
-        const user = auth.currentUser;
-        if (!user) return; // Redundant check, but ensures safety
-
-        // Get user document from Firestore as a fallback
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        let displayName = user.displayName;
-        if (!displayName && userDoc.exists()) {
-            displayName = userDoc.data().name || user.email || 'User';
-        } else if (!displayName) {
-            displayName = user.email || 'User';
+            userName.textContent = `Welcome, ${displayName}`;
+            profilePic.src = user.photoURL || defaultAvatar;
+            profilePic.onerror = () => {
+                profilePic.src = defaultAvatar;
+                console.log('Profile picture fallback to default avatar');
+            };
+            await loadCourses();
+        } catch (error) {
+            console.error('Error initializing dashboard:', error);
         }
-
-        userName.textContent = `Welcome, ${displayName}`;
-        profilePic.src = user.photoURL || defaultAvatar;
-        profilePic.onerror = () => {
-            profilePic.src = defaultAvatar;
-            console.log('Profile picture fallback to default avatar');
-        };
-
-        await loadCourses();
-    } catch (error) {
-        console.error('Error initializing dashboard:', error);
-        userName.textContent = 'Error loading user data';
-        noCourses.style.display = 'block';
-        noCourses.innerHTML = '<p>Error loading dashboard. Please try again later.</p>';
-        courseGrid.style.display = 'none';
-        // Only redirect to login if explicitly a permission or auth issue
-        if (error.code === 'permission-denied' || error.message.includes('No user logged in')) {
-            window.location.href = 'login.html';
-        }
+    } else {
+        console.log('No user logged in, redirecting to login');
+        window.location.href = 'login.html';
     }
-}
-
-init();
+});
