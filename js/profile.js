@@ -23,92 +23,115 @@ const defaultAvatarLarge = 'images/default-avatar-large.png';
 
 // Wait for auth state
 onAuthStateChanged(auth, async (user) => {
-  if (user) await loadProfile(user);
-  else window.location.href = "login.html";
+  if (user) await loadProfile(user);
+  else window.location.href = "login.html";
 });
 
 async function loadProfile(user) {
-  try {
-    loading.style.display = 'block';
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (!userDoc.exists()) throw new Error("User data not found");
+  try {
+    loading.style.display = 'block';
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (!userDoc.exists()) throw new Error("User data not found");
 
-    const userData = userDoc.data();
-    userNameSpan.textContent = user.displayName || userData.name || 'User';
-    profilePicImg.src = user.photoURL || userData.profilePic || defaultAvatarSmall;
-    profilePicImg.onerror = () => { profilePicImg.src = defaultAvatarSmall; };
-    profilePicLarge.src = user.photoURL || userData.profilePic || defaultAvatarLarge;
-    profilePicLarge.onerror = () => { profilePicLarge.src = defaultAvatarLarge; };
-    nameInput.value = user.displayName || userData.name || '';
-    emailInput.value = user.email || '';
-    phoneInput.value = userData.phone || '';
-  } catch (err) {
-    console.error(err);
-    showError(err.message);
-  } finally {
-    loading.style.display = 'none';
-  }
+    const userData = userDoc.data();
+    userNameSpan.textContent = user.displayName || userData.name || 'User';
+    profilePicImg.src = user.photoURL || userData.profilePic || defaultAvatarSmall;
+    profilePicImg.onerror = () => { profilePicImg.src = defaultAvatarSmall; };
+    profilePicLarge.src = user.photoURL || userData.profilePic || defaultAvatarLarge;
+    profilePicLarge.onerror = () => { profilePicLarge.src = defaultAvatarLarge; };
+    nameInput.value = user.displayName || userData.name || '';
+    emailInput.value = user.email || '';
+    phoneInput.value = userData.phone || '';
+  } catch (err) {
+    console.error(err);
+    showError(err.message);
+  } finally {
+    loading.style.display = 'none';
+  }
 }
 
 profileForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  saveBtn.disabled = true;
-  loading.style.display = 'block';
+  e.preventDefault();
+  saveBtn.disabled = true;
+  loading.style.display = 'block';
 
-  const newName = nameInput.value.trim();
-  const newPhone = phoneInput.value.trim();
+  const newName = nameInput.value.trim();
+  const newPhone = phoneInput.value.trim();
 
-  if (!newName) { showError("Name is required"); saveBtn.disabled = false; loading.style.display='none'; return; }
-  if (newPhone && !/^[0-9]{10,15}$/.test(newPhone)) { showError("Phone must be 10-15 digits"); saveBtn.disabled=false; loading.style.display='none'; return; }
+  if (!newName) { showError("Name is required"); saveBtn.disabled = false; loading.style.display='none'; return; }
+  if (newPhone && !/^[0-9]{10,15}$/.test(newPhone)) { showError("Phone must be 10-15 digits"); saveBtn.disabled=false; loading.style.display='none'; return; }
 
-  try {
-    const user = auth.currentUser;
-    if (!user) throw new Error("No user logged in");
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("No user logged in");
 
-    let newProfilePic = profilePicLarge.src;
+    // Start with the existing photo URL for safety
+    let newProfilePic = user.photoURL || profilePicLarge.src; 
+    let uploadSuccess = false; // Flag to track successful upload
 
-    if (profilePicInput.files[0]) {
-      const file = profilePicInput.files[0];
-      if (file.size > 2*1024*1024) throw new Error("Profile picture must be <2MB");
-      const storageRef = ref(storage, `profilePics/${user.uid}`);
-      await uploadBytes(storageRef, file);
-      newProfilePic = await getDownloadURL(storageRef);
+    if (profilePicInput.files[0]) {
+      const file = profilePicInput.files[0];
+      if (file.size > 2*1024*1024) throw new Error("Profile picture must be <2MB");
+      const storageRef = ref(storage, `profilePics/${user.uid}`);
+      
+      // Use a nested block to isolate storage failure
+      try {
+        await uploadBytes(storageRef, file);
+        newProfilePic = await getDownloadURL(storageRef);
+        uploadSuccess = true;
+      } catch (storageError) {
+        console.error("Storage upload or URL retrieval failed:", storageError);
+        showError("Photo upload failed. Check file size or permissions in Firebase rules.");
+        // Throw an error to stop execution and prevent update with potentially bad URL
+        throw new Error("Photo upload failed."); 
+      }
+    }
+
+    await updateDoc(doc(db, "users", user.uid), {
+      name: newName,
+      phone: newPhone,
+      profilePic: newProfilePic
+    });
+
+    await updateProfile(user, { displayName: newName, photoURL: newProfilePic });
+
+    // Update immediately only with the successful URL
+    profilePicImg.src = newProfilePic;
+    profilePicLarge.src = newProfilePic;
+
+    showSuccess("Profile updated successfully");
+  } catch(err) {
+    console.error(err);
+    showError(err.message);
+    
+    // FIX: If the save/upload fails, ensure the UI reverts to the current (safe) state
+    if (auth.currentUser) {
+        profilePicImg.src = auth.currentUser.photoURL || defaultAvatarSmall;
+        profilePicLarge.src = auth.currentUser.photoURL || defaultAvatarLarge;
+    } else {
+        // Fallback for complete failure
+        profilePicImg.src = defaultAvatarSmall;
+        profilePicLarge.src = defaultAvatarLarge;
     }
-
-    await updateDoc(doc(db, "users", user.uid), {
-      name: newName,
-      phone: newPhone,
-      profilePic: newProfilePic
-    });
-
-    await updateProfile(user, { displayName: newName, photoURL: newProfilePic });
-
-    // Update immediately
-    profilePicImg.src = newProfilePic;
-    profilePicLarge.src = newProfilePic;
-
-    showSuccess("Profile updated successfully");
-  } catch(err) {
-    console.error(err);
-    showError(err.message);
-  } finally {
-    saveBtn.disabled = false;
-    loading.style.display = 'none';
-  }
+    
+  } finally {
+    saveBtn.disabled = false;
+    loading.style.display = 'none';
+  }
 });
 
 logoutBtn.addEventListener('click', async () => {
-  try { await signOut(auth); window.location.href="login.html"; }
-  catch(err){ showError(err.message); }
+  try { await signOut(auth); window.location.href="login.html"; }
+  catch(err){ showError(err.message); }
 });
 
 function showError(msg) {
-  errorMsg.style.display = 'block';
-  errorMsg.textContent = msg;
-  successMsg.style.display = 'none';
+  errorMsg.style.display = 'block';
+  errorMsg.textContent = msg;
+  successMsg.style.display = 'none';
 }
 function showSuccess(msg) {
-  successMsg.style.display = 'block';
-  successMsg.textContent = msg;
-  errorMsg.style.display = 'none';
+  successMsg.style.display = 'block';
+  successMsg.textContent = msg;
+  errorMsg.style.display = 'none';
 }
