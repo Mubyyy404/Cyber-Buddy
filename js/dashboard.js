@@ -105,19 +105,20 @@ onAuthStateChanged(auth, async (user) => {
 
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
-            let displayName = user.displayName;
-            if (!displayName && userDoc.exists()) {
-                displayName = userDoc.data().name || user.email || 'User';
-            } else if (!displayName) {
-                displayName = user.email || 'User';
-            }
+
+            // Use Firestore photo if available, fallback to Auth photo, then default
+            const photoURL = (userDoc.exists() && userDoc.data().profilePic) || user.photoURL || defaultAvatar;
+            
+            // Use Firestore name if available, fallback to Auth displayName, then email
+            let displayName = (userDoc.exists() && userDoc.data().name) || user.displayName || user.email || 'User';
 
             userName.textContent = `Welcome, ${displayName}`;
-            profilePic.src = user.photoURL || defaultAvatar;
+            profilePic.src = photoURL;
             profilePic.onerror = () => {
                 profilePic.src = defaultAvatar;
                 console.log('Profile picture fallback to default avatar');
             };
+
             await loadCourses();
         } catch (error) {
             console.error('Error initializing dashboard:', error);
