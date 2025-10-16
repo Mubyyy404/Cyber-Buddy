@@ -32,17 +32,26 @@ loginForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value.trim();
   console.log("Login attempt with email:", email); // Debugging
 
+  if (!auth) {
+    console.error("Auth object is undefined - check firebase.js import");
+    showMessage(errorMsg, "❌ Error: Authentication service not initialized.");
+    return;
+  }
+
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    console.log("Login successful, user:", user.email); // Debugging
+    console.log("Login successful, user:", user.email, "Verified:", user.emailVerified); // Debugging
 
     if (!user.emailVerified) {
-      showMessage(errorMsg, "⚠️ Please verify your email before logging in.");
+      console.log("User email not verified, signing out"); // Debugging
+      showMessage(errorMsg, "⚠️ Please verify your email before logging in. Check your inbox or spam folder.");
       await signOut(auth);
+      console.log("User signed out due to unverified email"); // Debugging
       return;
     }
 
+    console.log("User verified, redirecting to dashboard.html"); // Debugging
     window.location.href = "dashboard.html";
   } catch (error) {
     console.error("Login error:", error.code, error.message); // Detailed error logging
