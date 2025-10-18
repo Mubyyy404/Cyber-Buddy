@@ -13,9 +13,10 @@ const purchasedCoursesDiv = document.getElementById('purchased-courses');
 const loading = document.getElementById('loading');
 const searchCoursesAll = document.getElementById('searchCoursesAll');
 const searchCoursesMy = document.getElementById('searchCoursesMy');
+const supportForm = document.getElementById('supportForm');
 
 // Log DOM elements for debugging
-console.log('DOM elements:', { profilePic, userName, logoutBtn, coursesGrid, myCoursesGrid, profileInfo, purchasedCoursesDiv, loading, searchCoursesAll, searchCoursesMy });
+console.log('DOM elements:', { profilePic, userName, logoutBtn, coursesGrid, myCoursesGrid, profileInfo, purchasedCoursesDiv, loading, searchCoursesAll, searchCoursesMy, supportForm });
 
 // Global variables
 let courses = [];
@@ -151,6 +152,8 @@ function switchTab(tabId) {
         renderCourses(tabId, tabId === 'all-courses' ? searchCoursesAll.value : searchCoursesMy.value);
     } else if (tabId === 'profile') {
         loadProfile();
+    } else if (tabId === 'support') {
+        supportForm.reset();
     }
 }
 
@@ -202,7 +205,7 @@ window.buyCourse = async (courseId) => {
 
 // Update course progress
 window.updateCourseProgress = async (courseId) => {
-    const progress = prompt('Enter progress percentage (0-100):', '0');
+    const progress = prompt('Enter progress percentage (0-100):', userData[`${courseId}Progress`] || '0');
     if (progress && !isNaN(progress) && progress >= 0 && progress <= 100) {
         try {
             console.log('Updating progress for course:', courseId, 'to', progress);
@@ -210,6 +213,8 @@ window.updateCourseProgress = async (courseId) => {
                 [`${courseId}Progress`]: Number(progress),
                 [`${courseId}Completed`]: progress >= 100
             });
+            userData[`${courseId}Progress`] = Number(progress);
+            userData[`${courseId}Completed`] = progress >= 100;
             loadProfile();
         } catch (error) {
             console.error('Error updating progress:', error);
@@ -258,6 +263,7 @@ async function loadProfile() {
             purchasedCoursesDiv.appendChild(div);
         } else {
             console.log('Course not found for ID:', courseId);
+            purchasedCoursesDiv.innerHTML += `<p class="text-[#e6f6f8]/60">Course ID ${courseId} not found.</p>`;
         }
     }
 }
@@ -277,6 +283,31 @@ window.updateProfile = async () => {
             console.error('Error updating profile:', error);
             alert('Failed to update profile: ' + error.message);
         }
+    }
+};
+
+// Submit support form
+window.submitSupport = async () => {
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    if (!subject || !message) {
+        alert('Please fill out both subject and message.');
+        return;
+    }
+    try {
+        console.log('Submitting support request:', { subject, message });
+        await setDoc(doc(collection(db, 'supportRequests')), {
+            userId: currentUser.uid,
+            email: currentUser.email,
+            subject,
+            message,
+            timestamp: new Date()
+        });
+        alert('Support request submitted successfully!');
+        supportForm.reset();
+    } catch (error) {
+        console.error('Error submitting support request:', error);
+        alert('Failed to submit support request: ' + error.message);
     }
 };
 
