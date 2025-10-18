@@ -14,13 +14,16 @@ const loading = document.getElementById('loading');
 const searchCoursesAll = document.getElementById('searchCoursesAll');
 const searchCoursesMy = document.getElementById('searchCoursesMy');
 
+// Log DOM elements for debugging
+console.log('DOM elements:', { profilePic, userName, logoutBtn, coursesGrid, myCoursesGrid, profileInfo, purchasedCoursesDiv, loading, searchCoursesAll, searchCoursesMy });
+
 // Global variables
 let courses = [];
 let userData = {};
 let currentUser = null;
 
 // Default avatar
-const defaultAvatar = 'images/default-avatar.png';
+const defaultAvatar = 'https://mubyyy404.github.io/Cyber-Buddy/images/default-avatar-large.png';
 
 // Utility to validate URL
 function isValidUrl(url) {
@@ -32,38 +35,53 @@ function isValidUrl(url) {
     }
 }
 
+// Clean purchasedCourses array
+function cleanPurchasedCourses(courses) {
+    return courses.filter(id => id && typeof id === 'string' && id.trim() !== '');
+}
+
 // Load courses from Firestore with real-time updates
 function listenForCourses() {
     try {
         loading.style.display = 'block';
         coursesGrid.style.display = 'none';
         myCoursesGrid.style.display = 'none';
+        console.log('Starting real-time course listener');
         onSnapshot(collection(db, 'courses'), (snapshot) => {
             console.log('Real-time courses update, snapshot size:', snapshot.size);
             courses = [];
-            snapshot.forEach((docSnap) => {
-                const course = docSnap.data();
-                const courseId = docSnap.id;
-                console.log('Course loaded:', course.title, courseId);
-                courses.push({
-                    id: courseId,
-                    title: course.title,
-                    description: course.description,
-                    thumbnail: course.image || '/images/course-placeholder.png'
+            if (snapshot.empty) {
+                console.log('No courses found in Firestore');
+                coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">No courses available.</p>';
+                myCoursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">No purchased courses.</p>';
+            } else {
+                snapshot.forEach((docSnap) => {
+                    const course = docSnap.data();
+                    const courseId = docSnap.id;
+                    console.log('Course loaded:', course.title, courseId);
+                    courses.push({
+                        id: courseId,
+                        title: course.title || 'Untitled Course',
+                        description: course.description || 'No description available.',
+                        thumbnail: course.image || '/images/course-placeholder.png'
+                    });
                 });
-            });
+            }
+            console.log('Courses array:', courses);
             renderCourses(document.querySelector('.tab-content:not(.hidden)').id || 'all-courses');
             loading.style.display = 'none';
             coursesGrid.style.display = 'grid';
             myCoursesGrid.style.display = 'grid';
         }, (error) => {
             console.error('Error listening for courses:', error);
-            coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading courses. Please try again later.</p>';
+            coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading courses: ' + error.message + '</p>';
+            myCoursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading courses: ' + error.message + '</p>';
             loading.style.display = 'none';
         });
     } catch (error) {
         console.error('Error initializing course listener:', error);
-        coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading courses. Please try again later.</p>';
+        coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading courses: ' + error.message + '</p>';
+        myCoursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading courses: ' + error.message + '</p>';
         loading.style.display = 'none';
     }
 }
@@ -72,8 +90,12 @@ function listenForCourses() {
 function renderCourses(tab, searchTerm = '') {
     const grid = tab === 'all-courses' ? coursesGrid : myCoursesGrid;
     grid.innerHTML = '';
+    console.log('Rendering courses for tab:', tab, 'Search term:', searchTerm);
+    console.log('User data:', userData);
     const filteredCourses = (tab === 'my-courses' ? courses.filter(c => userData.purchasedCourses.includes(c.id)) : courses)
         .filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()) || c.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    console.log('Filtered courses:', filteredCourses);
 
     if (filteredCourses.length === 0) {
         grid.innerHTML = `<p class="text-[#e6f6f8]/60 text-center">${tab === 'my-courses' ? 'No purchased courses.' : 'No courses found.'}</p>`;
@@ -124,6 +146,7 @@ function renderCourses(tab, searchTerm = '') {
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
     document.getElementById(tabId).classList.remove('hidden');
+    console.log('Switching to tab:', tabId);
     if (tabId === 'all-courses' || tabId === 'my-courses') {
         renderCourses(tabId, tabId === 'all-courses' ? searchCoursesAll.value : searchCoursesMy.value);
     } else if (tabId === 'profile') {
@@ -149,25 +172,31 @@ window.startCourse = async (courseId) => {
         }
     } catch (error) {
         console.error('Error starting course:', error);
-        alert('An error occurred while trying to access the course.');
+        alert('An error occurred while trying to access the course: ' + error.message);
     }
 };
 
 // Buy course function (simulated payment)
 window.buyCourse = async (courseId) => {
     try {
+        console.log('Attempting to buy course:', courseId);
         alert('Redirecting to payment... (Future: Integrate Razorpay/Stripe)');
         await updateDoc(doc(db, 'users', currentUser.uid), {
             purchasedCourses: arrayUnion(courseId)
         });
         userData.purchasedCourses.push(courseId);
+        userData.purchasedCourses = cleanPurchasedCourses(userData.purchasedCourses);
+        console.log('Updated purchased courses:', userData.purchasedCourses);
         renderCourses('all-courses', searchCoursesAll.value);
         if (!document.getElementById('my-courses').classList.contains('hidden')) {
             renderCourses('my-courses', searchCoursesMy.value);
         }
+        if (!document.getElementById('profile').classList.contains('hidden')) {
+            loadProfile();
+        }
     } catch (error) {
         console.error('Error buying course:', error);
-        alert('An error occurred while purchasing the course.');
+        alert('An error occurred while purchasing the course: ' + error.message);
     }
 };
 
@@ -176,11 +205,15 @@ window.updateCourseProgress = async (courseId) => {
     const progress = prompt('Enter progress percentage (0-100):', '0');
     if (progress && !isNaN(progress) && progress >= 0 && progress <= 100) {
         try {
-            await setDoc(doc(db, 'users', currentUser.uid, 'progress', courseId), { progress: `${progress}%` });
+            console.log('Updating progress for course:', courseId, 'to', progress);
+            await updateDoc(doc(db, 'users', currentUser.uid), {
+                [`${courseId}Progress`]: Number(progress),
+                [`${courseId}Completed`]: progress >= 100
+            });
             loadProfile();
         } catch (error) {
             console.error('Error updating progress:', error);
-            alert('Failed to update progress.');
+            alert('Failed to update progress: ' + error.message);
         }
     } else {
         alert('Please enter a valid percentage (0-100).');
@@ -189,43 +222,52 @@ window.updateCourseProgress = async (courseId) => {
 
 // Load profile function
 async function loadProfile() {
+    console.log('Loading profile for user:', currentUser.uid);
     let displayName = currentUser.displayName || userData.name || currentUser.email || 'User';
-    let joinDate = currentUser.metadata.creationTime ? new Date(currentUser.metadata.creationTime).toDateString() : 'October 18, 2025';
+    let joinDate = userData.createdAt ? userData.createdAt.toDate().toDateString() : 'October 18, 2025';
+    let phone = userData.phone || 'Not provided';
 
     profileInfo.innerHTML = `
         <p><strong>Name:</strong> ${displayName}</p>
         <p><strong>Email:</strong> ${currentUser.email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
         <p><strong>Join Date:</strong> ${joinDate}</p>
     `;
 
     purchasedCoursesDiv.innerHTML = '';
     if (userData.purchasedCourses.length === 0) {
         purchasedCoursesDiv.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">No purchased courses.</p>';
+        console.log('No purchased courses for user');
         return;
     }
 
     for (const courseId of userData.purchasedCourses) {
         const course = courses.find(c => c.id === courseId);
         if (course) {
-            const progressDoc = await getDoc(doc(db, 'users', currentUser.uid, 'progress', courseId));
-            const progress = progressDoc.exists() ? progressDoc.data().progress : '0%';
+            const progress = userData[`${courseId}Progress`] || 0;
+            const completed = userData[`${courseId}Completed`] || false;
+            console.log('Course progress:', courseId, progress, 'Completed:', completed);
             const div = document.createElement('div');
             div.className = 'glass-card p-4 rounded';
             div.innerHTML = `
                 <h4 class="font-bold glow">${course.title}</h4>
-                <p>Progress: ${progress}</p>
+                <p>Progress: ${progress}%</p>
+                <p>Completed: ${completed ? 'Yes' : 'No'}</p>
                 <button onclick="updateCourseProgress('${courseId}')" class="mt-2 bg-[var(--accent)] px-4 py-1 rounded hover:bg-[#0891b2] pulse-cta text-slate-900 font-semibold" aria-label="Update progress for ${course.title}">Update Progress</button>
             `;
             purchasedCoursesDiv.appendChild(div);
+        } else {
+            console.log('Course not found for ID:', courseId);
         }
     }
 }
 
 // Update profile function
 window.updateProfile = async () => {
-    const newName = prompt('New name:');
+    const newName = prompt('New name:', userData.name || currentUser.displayName || '');
     if (newName) {
         try {
+            console.log('Updating profile name to:', newName);
             await authUpdateProfile(currentUser, { displayName: newName });
             await updateDoc(doc(db, 'users', currentUser.uid), { name: newName });
             userData.name = newName;
@@ -233,7 +275,7 @@ window.updateProfile = async () => {
             loadProfile();
         } catch (error) {
             console.error('Error updating profile:', error);
-            alert('Failed to update profile.');
+            alert('Failed to update profile: ' + error.message);
         }
     }
 };
@@ -246,15 +288,17 @@ logoutBtn.addEventListener('click', async () => {
         window.location.href = 'login.html';
     } catch (error) {
         console.error('Error signing out:', error);
-        alert('Failed to sign out. Please try again.');
+        alert('Failed to sign out: ' + error.message);
     }
 });
 
 // Search functionality
 searchCoursesAll.addEventListener('input', (e) => {
+    console.log('Search all courses:', e.target.value);
     renderCourses('all-courses', e.target.value);
 });
 searchCoursesMy.addEventListener('input', (e) => {
+    console.log('Search my courses:', e.target.value);
     renderCourses('my-courses', e.target.value);
 });
 
@@ -268,16 +312,23 @@ onAuthStateChanged(auth, async (user) => {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             if (userDoc.exists()) {
                 userData = userDoc.data();
-                userData.purchasedCourses = userData.purchasedCourses || [];
+                userData.purchasedCourses = cleanPurchasedCourses(userData.purchasedCourses || []);
             } else {
-                console.log('User document not found:', user.uid);
-                userData = { purchasedCourses: [] };
-                await setDoc(doc(db, 'users', user.uid), { purchasedCourses: [], name: user.displayName || user.email });
+                console.log('User document not found, creating new:', user.uid);
+                userData = { 
+                    purchasedCourses: [], 
+                    name: user.displayName || user.email, 
+                    email: user.email,
+                    createdAt: new Date(),
+                    phone: ''
+                };
+                await setDoc(doc(db, 'users', user.uid), userData);
             }
+            console.log('User data loaded:', userData);
 
             let displayName = user.displayName || userData.name || user.email || 'User';
             userName.textContent = `Welcome, ${displayName}`;
-            profilePic.src = user.photoURL && isValidUrl(user.photoURL) ? user.photoURL : defaultAvatar;
+            profilePic.src = userData.profilePic && isValidUrl(userData.profilePic) ? userData.profilePic : defaultAvatar;
             profilePic.onerror = () => {
                 profilePic.src = defaultAvatar;
                 console.log('Profile picture fallback to default avatar');
@@ -287,7 +338,9 @@ onAuthStateChanged(auth, async (user) => {
             switchTab('all-courses');
         } catch (error) {
             console.error('Error initializing dashboard:', error);
-            coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error initializing dashboard. Please try again.</p>';
+            coursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error initializing dashboard: ' + error.message + '</p>';
+            myCoursesGrid.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error initializing dashboard: ' + error.message + '</p>';
+            profileInfo.innerHTML = '<p class="text-[#e6f6f8]/60 text-center">Error loading profile: ' + error.message + '</p>';
         }
     } else {
         console.log('No user logged in, redirecting to login');
