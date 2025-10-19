@@ -1,10 +1,17 @@
 import { auth } from './firebase.js';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const loginForm = document.getElementById("loginForm");
   const resetPasswordLink = document.getElementById("resetPassword");
+  const googleSignInButton = document.getElementById("googleSignIn"); // ✅ Added
   const errorMsg = document.getElementById("errorMsg");
   const successMsg = document.getElementById("successMsg");
 
@@ -21,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 5000);
   };
 
-  // 🔹 Login
+  // 🔹 Email/Password Login (unchanged)
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
@@ -47,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Redirect to dashboard
+      // ✅ Redirect to dashboard
       window.location.href = "dashboard.html";
 
     } catch (error) {
@@ -60,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔹 Reset password
+  // 🔹 Reset password (unchanged)
   if (resetPasswordLink) {
     resetPasswordLink.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -84,6 +91,39 @@ document.addEventListener("DOMContentLoaded", () => {
         resetPasswordLink.textContent = "Reset here";
       }
     });
+  }
+
+  // 🔹 Google OAuth Login (✅ Newly Added)
+  if (googleSignInButton) {
+    googleSignInButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+      console.log("Google sign-in button clicked");
+      googleSignInButton.disabled = true;
+      googleSignInButton.textContent = "Processing...";
+
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.addScope("https://www.googleapis.com/auth/userinfo.profile");
+        provider.addScope("https://www.googleapis.com/auth/userinfo.email");
+
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("Google sign-in successful:", user.email);
+
+        showMessage(successMsg, "✅ Logged in successfully with Google!");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+      } catch (error) {
+        console.error("Google sign-in error:", error.code, error.message);
+        showMessage(errorMsg, "Google sign-in failed: " + error.message);
+      } finally {
+        googleSignInButton.disabled = false;
+        googleSignInButton.textContent = "Continue with Google";
+      }
+    });
+  } else {
+    console.warn("Google sign-in button not found on page.");
   }
 
 });
