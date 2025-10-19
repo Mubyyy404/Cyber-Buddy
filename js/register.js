@@ -78,22 +78,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  googleSignInButton.addEventListener("click", async () => {
-    const provider(policy provider = new GoogleAuthProvider();
+  googleSignInButton.addEventListener("click", async (e) => {
+    e.preventDefault();
+    console.log("Google sign-in clicked");
+    
+    const provider = new GoogleAuthProvider();
     try {
+      console.log("Starting Google sign-in...");
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+      console.log("Google sign-in successful:", user.email);
 
-      await setDoc(doc(db, "users", user.uid), {
-        name: user.displayName || "Google User",
-        email: user.email,
-        phone: user.phoneNumber || "",
-        createdAt: new Date()
-      }, { merge: true });
+      // Check if user document exists
+      const userDoc = doc(db, "users", user.uid);
+      const docSnap = await getDoc(userDoc);
+      
+      if (!docSnap.exists()) {
+        // New user - create document
+        await setDoc(userDoc, {
+          name: user.displayName || "Google User",
+          email: user.email,
+          phone: user.phoneNumber || "",
+          createdAt: new Date(),
+          authProvider: 'google'
+        });
+        console.log("User document created");
+      } else {
+        // Existing user - update if needed
+        await updateDoc(userDoc, {
+          lastLogin: new Date()
+        });
+        console.log("User document updated");
+      }
 
       showMessage(successMsg, "Successfully signed in with Google!");
       setTimeout(() => window.location.href = "dashboard.html", 2000);
     } catch (error) {
+      console.error("Google sign-in error:", error);
       showMessage(errorMsg, "Google sign-in failed: " + error.message);
     }
   });
