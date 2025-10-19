@@ -91,6 +91,27 @@
   p a:hover {
     text-decoration: underline;
   }
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+  }
+  .google-btn:hover {
+    background: #f1f1f1;
+  }
+  .google-btn img {
+    width: 20px;
+    margin-right: 10px;
+  }
 </style>
 </head>
 <body>
@@ -109,6 +130,10 @@
       <input type="tel" id="phone" required>
       <button type="submit">Register</button>
   </form>
+  <button class="google-btn" id="googleSignIn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+    Continue with Google
+  </button>
   <p>Already have an account? <a href="login.html">Login here</a></p>
 </div>
 
