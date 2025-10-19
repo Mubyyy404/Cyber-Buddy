@@ -1,4 +1,4 @@
-import { auth } from './firebase.js';
+import { auth, db } from './firebase.js';
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -6,12 +6,13 @@ import {
   signInWithPopup,
   GoogleAuthProvider
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const loginForm = document.getElementById("loginForm");
   const resetPasswordLink = document.getElementById("resetPassword");
-  const googleSignInButton = document.getElementById("googleSignIn"); // ✅ Added
+  const googleSignInButton = document.getElementById("googleSignIn");
   const errorMsg = document.getElementById("errorMsg");
   const successMsg = document.getElementById("successMsg");
 
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 5000);
   };
 
-  // 🔹 Email/Password Login (unchanged)
+  // Email/Password Login (unchanged)
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
@@ -54,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // ✅ Redirect to dashboard
+      // Redirect to dashboard
       window.location.href = "dashboard.html";
 
     } catch (error) {
@@ -67,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔹 Reset password (unchanged)
+  // Reset password (unchanged)
   if (resetPasswordLink) {
     resetPasswordLink.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -93,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 🔹 Google OAuth Login (✅ Newly Added)
+  // Google OAuth Login (modified to check Firestore and redirect to register.html)
   if (googleSignInButton) {
     googleSignInButton.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -110,6 +111,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = result.user;
         console.log("Google sign-in successful:", user.email);
 
+        // Check if user exists in Firestore
+        const userDoc = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userDoc);
+        if (!docSnap.exists()) {
+          console.log("No user document found, signing out and redirecting to register.html");
+          await signOut(auth);
+          showMessage(errorMsg, "No account found. Please register first.");
+          setTimeout(() => {
+            window.location.href = "register.html";
+          }, 1500);
+          return;
+        }
+
         showMessage(successMsg, "✅ Logged in successfully with Google!");
         setTimeout(() => {
           window.location.href = "dashboard.html";
@@ -119,11 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage(errorMsg, "Google sign-in failed: " + error.message);
       } finally {
         googleSignInButton.disabled = false;
-        googleSignInButton.textContent = "Continue with Google";
+        googleSignInButton.textContent = "Sign in with Google";
       }
     });
   } else {
     console.warn("Google sign-in button not found on page.");
   }
-
 });
