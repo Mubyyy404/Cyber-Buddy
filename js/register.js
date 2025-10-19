@@ -4,7 +4,8 @@ import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebase
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM loaded, initializing register.js");
-  console.log("Firebase auth initialized:", auth ? "Yes" : "No");
+  console.log("Firebase auth:", auth ? "Initialized" : "Not initialized");
+  console.log("Firebase db:", db ? "Initialized" : "Not initialized");
 
   const registerForm = document.getElementById("registerForm");
   const errorMsg = document.getElementById("errorMsg");
@@ -20,8 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
   if (!auth) {
-    console.error("Firebase auth is not initialized. Check firebase.js configuration.");
-    showMessage(errorMsg, "Firebase not initialized. Contact support.");
+    console.error("Firebase auth not initialized. Check firebase.js");
+    showMessage(errorMsg, "Firebase authentication not initialized.");
+    return;
+  }
+  if (!db) {
+    console.error("Firestore not initialized. Check firebase.js");
+    showMessage(errorMsg, "Firestore not initialized.");
     return;
   }
 
@@ -32,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const showMessage = (element, message) => {
-    console.log("Showing message:", message);
+    console.log("Displaying message:", message);
     element.textContent = message;
     element.style.display = "block";
     setTimeout(() => {
@@ -40,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 5000);
   };
 
+  // Email/Password Registration (unchanged)
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     console.log("Form submitted");
@@ -111,14 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Google Sign-In
   googleSignInButton.addEventListener("click", async (e) => {
     e.preventDefault();
     console.log("Google sign-in button clicked");
+    googleSignInButton.disabled = true;
+    googleSignInButton.textContent = "Processing...";
 
     try {
-      console.log("Initializing GoogleAuthProvider");
+      console.log("Creating GoogleAuthProvider");
       const provider = new GoogleAuthProvider();
-      provider.addScope("profile email");
+      provider.addScope("https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email");
       console.log("Attempting signInWithPopup");
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
@@ -152,7 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 2000);
     } catch (error) {
       console.error("Google sign-in error:", error.code, error.message);
-      showMessage(errorMsg, "Google sign-in failed: " + error.message);
+      showMessage(errorMsg, `Google sign-in failed: ${error.message}`);
+    } finally {
+      googleSignInButton.disabled = false;
+      googleSignInButton.textContent = "Continue with Google";
     }
   });
 });
