@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const successMsg = document.getElementById("successMsg");
   const googleSignInButton = document.getElementById("googleSignIn");
 
+  // ✅ Added this function here (moved from below)
+  const showMessage = (element, message) => {
+    console.log("Displaying message:", message);
+    element.textContent = message;
+    element.style.display = "block";
+    setTimeout(() => {
+      element.style.display = "none";
+    }, 5000);
+  };
+
   if (!registerForm) {
     console.error("Register form not found");
     return;
@@ -36,15 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Register button not found");
     return;
   }
-
-  const showMessage = (element, message) => {
-    console.log("Displaying message:", message);
-    element.textContent = message;
-    element.style.display = "block";
-    setTimeout(() => {
-      element.style.display = "none";
-    }, 5000);
-  };
 
   // Email/Password Registration (unchanged)
   registerForm.addEventListener("submit", async (e) => {
@@ -128,7 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       console.log("Creating GoogleAuthProvider");
       const provider = new GoogleAuthProvider();
-      provider.addScope("https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email");
+      // ✅ Split scopes correctly
+      provider.addScope("https://www.googleapis.com/auth/userinfo.profile");
+      provider.addScope("https://www.googleapis.com/auth/userinfo.email");
+
       console.log("Attempting signInWithPopup");
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
