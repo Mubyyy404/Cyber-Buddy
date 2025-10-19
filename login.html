@@ -152,39 +152,17 @@
       <input type="password" id="password" required>
       <button type="submit" id="loginBtn">Login</button>
   </form>
-
   <!-- Divider -->
   <div class="divider">or</div>
-
   <!-- Google Sign-In Button -->
-  <button class="google-btn" id="googleLogin">
+  <button class="google-btn" id="googleSignIn">
     <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google Logo"> Sign in with Google
   </button>
-
   <p>Forgot password? <a href="#" id="resetPassword">Reset here</a></p>
   <p>Don't have an account? <a href="register.html">Register here</a></p>
 </div>
 
-<!-- Scripts -->
 <script type="module" src="js/firebase.js"></script>
 <script type="module" src="js/login.js"></script>
-<script type="module">
-  import { signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-  import { auth } from "./js/firebase.js";
-
-  const googleBtn = document.getElementById("googleLogin");
-  googleBtn.addEventListener("click", async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      localStorage.setItem("userEmail", user.email);
-      window.location.href = "dashboard.html"; // redirect after successful login
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      alert("Google Sign-In failed. Try again.");
-    }
-  });
-</script>
 </body>
 </html>
