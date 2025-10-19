@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standalone User Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #f8fafc; font-family: 'Inter', sans-serif; }
+    .user-card:hover { transform: scale(1.02); transition: all 0.2s ease-in-out; }
+  </style>
+</head>
+<body class="p-6">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">👥 Standalone User Dashboard</h1>
+
+  <div id="status" class="mb-4 text-gray-600">Initializing...</div>
+  <div id="usersContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+  <script type="module">
+    // 1️⃣ Import Firebase and tracker
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import UserActivityTracker from "./js/userActivityTracker.js";
+
+    // 2️⃣ Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCLPNGY6w2otiBUGfbjnOM86DYfvh-zt4U",
+      authDomain: "cyber-buddy-academy.firebaseapp.com",
+      projectId: "cyber-buddy-academy",
+      storageBucket: "cyber-buddy-academy.appspot.com",
+      messagingSenderId: "378058712667",
+      appId: "1:378058712667:web:88b72bcde024c217dac17e",
+      measurementId: "G-3F7D703MWN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // 3️⃣ Initialize tracker
+    UserActivityTracker.init({ db, appVersion: "1.0.0", platform: "standalone" });
+    const CONSENT = { analytics: true, purchases: true };
+
+    const status = document.getElementById("status");
+    const usersContainer = document.getElementById("usersContainer");
+
+    // 4️⃣ Track user login automatically
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        status.textContent = `Logged in as: ${user.email}`;
+        await UserActivityTracker.handleSignIn(user, { consent: CONSENT });
+        await UserActivityTracker.trackPageView(user.uid, window.location.pathname, { consent: CONSENT });
+        fetchAllUsers(); // Load dashboard
+      } else {
+        status.textContent = "No user logged in. Please login first.";
+      }
+    });
+
+    // 5️⃣ Function to fetch all users and display
+    async function fetchAllUsers() {
+      usersContainer.innerHTML = "<p class='text-gray-500'>Loading users...</p>";
+      const usersCol = collection(db, "users");
+      const snapshot = await getDocs(usersCol);
+
+      if (snapshot.empty) {
+        usersContainer.innerHTML = "<p class='text-gray-500'>No users found.</p>";
+        return;
+      }
+
+      usersContainer.innerHTML = "";
+      snapshot.forEach(docSnap => {
+        const user = docSnap.data();
+        const createdAt = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleString() : "—";
+        const lastLogin = user.lastLogin?.toDate ? user.lastLogin.toDate().toLocaleString() : "—";
+        const purchased = user.purchasedCourses?.map(c => c.courseId || c).join(", ") || "—";
+        const progress = user.progress ? Object.entries(user.progress).map(([k,v]) => `${k}: ${v.percent||0}%`).join(", ") : "—";
+        const bookmarks = user.webPentestingBookmarks?.join(", ") || "—";
+
+        const div = document.createElement('div');
+        div.className = "user-card bg-white rounded-2xl shadow-md p-5 border border-gray-200";
+        div.innerHTML = `
+          <h2 class="text-xl font-semibold">${user.name || 'Unknown User'}</h2>
+          <p class="text-sm text-gray-600">${user.email || ''}</p>
+          <p class="text-sm text-gray-600 mt-1"><strong>Phone:</strong> ${user.phone || '—'}</p>
+          <p class="text-sm text-gray-600"><strong>Created:</strong> ${createdAt}</p>
+          <p class="text-sm text-gray-600"><strong>Last Login:</strong> ${lastLogin}</p>
+          <hr class="my-3">
+          <p class="text-sm"><strong>Purchased:</strong> ${purchased}</p>
+          <p class="text-sm"><strong>Bookmarks:</strong> ${bookmarks}</p>
+          <p class="text-sm"><strong>Progress:</strong> ${progress}</p>
+          <button class="mt-3 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 view-details">View Full Details</button>
+        `;
+        div.querySelector(".view-details").addEventListener("click", async () => {
+          const snap = await getDoc(doc(db, "users", docSnap.id));
+          alert(JSON.stringify(snap.data(), null, 2));
+        });
+        usersContainer.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
