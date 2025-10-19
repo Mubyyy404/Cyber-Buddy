@@ -10,9 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
   const errorMsg = document.getElementById("errorMsg");
   const successMsg = document.getElementById("successMsg");
-  const googleSignInButton = document.getElementById("googleSignIn");
+  const googleSignInButton = document.getElementById("googleSignup");
 
-  // ✅ Added this function here (moved from below)
   const showMessage = (element, message) => {
     console.log("Displaying message:", message);
     element.textContent = message;
@@ -24,10 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!registerForm) {
     console.error("Register form not found");
+    showMessage(errorMsg, "Register form not found.");
     return;
   }
   if (!googleSignInButton) {
     console.error("Google sign-in button not found");
+    showMessage(errorMsg, "Google sign-in button not found.");
     return;
   }
   if (!auth) {
@@ -44,10 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitButton = registerForm.querySelector("button");
   if (!submitButton) {
     console.error("Register button not found");
+    showMessage(errorMsg, "Register button not found.");
     return;
   }
 
-  // Email/Password Registration (unchanged)
+  // Email/Password Registration
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     console.log("Form submitted");
@@ -110,6 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Registration error:", error.code, error.message);
       if (error.code === "auth/email-already-in-use") {
         showMessage(errorMsg, "Email already registered.");
+      } else if (error.code === "auth/network-request-failed") {
+        showMessage(errorMsg, "Network error. Check your connection.");
+      } else if (error.code === "auth/operation-not-allowed") {
+        showMessage(errorMsg, "Email/Password registration not enabled in Firebase Console.");
       } else {
         showMessage(errorMsg, "Error: " + error.message);
       }
@@ -129,14 +135,14 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       console.log("Creating GoogleAuthProvider");
       const provider = new GoogleAuthProvider();
-      // ✅ Split scopes correctly
       provider.addScope("https://www.googleapis.com/auth/userinfo.profile");
       provider.addScope("https://www.googleapis.com/auth/userinfo.email");
-
       console.log("Attempting signInWithPopup");
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       console.log("Google sign-in successful:", user.email, user.uid);
+
+      localStorage.setItem("userEmail", user.email);
 
       const userDoc = doc(db, "users", user.uid);
       const docSnap = await getDoc(userDoc);
@@ -159,17 +165,25 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("User document updated for:", user.email);
       }
 
-      showMessage(successMsg, "Successfully signed in with Google!");
+      showMessage(successMsg, "Successfully signed up with Google!");
       console.log("Redirecting to dashboard.html");
       setTimeout(() => {
         window.location.href = "dashboard.html";
-      }, 2000);
+      }, 1500);
     } catch (error) {
       console.error("Google sign-in error:", error.code, error.message);
-      showMessage(errorMsg, `Google sign-in failed: ${error.message}`);
+      if (error.code === "auth/popup-blocked") {
+        showMessage(errorMsg, "Popup blocked. Please allow popups and try again.");
+      } else if (error.code === "auth/operation-not-allowed") {
+        showMessage(errorMsg, "Google sign-in not enabled in Firebase Console.");
+      } else if (error.code === "auth/network-request-failed") {
+        showMessage(errorMsg, "Network error. Check your connection.");
+      } else {
+        showMessage(errorMsg, "Google sign-in failed: " + error.message);
+      }
     } finally {
       googleSignInButton.disabled = false;
-      googleSignInButton.textContent = "Continue with Google";
+      googleSignInButton.textContent = "Sign up with Google";
     }
   });
 });
