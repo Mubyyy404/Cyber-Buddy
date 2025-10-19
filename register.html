@@ -79,6 +79,33 @@
     background: rgba(0, 255, 224, 0.2);
     border: 1px solid #00ffe0;
   }
+  .divider {
+    text-align: center;
+    margin: 15px 0;
+    color: #888;
+    font-size: 0.85rem;
+  }
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+  }
+  .google-btn img {
+    width: 20px;
+    margin-right: 10px;
+  }
+  .google-btn:hover {
+    background: #e8e8e8;
+  }
   p {
     text-align: center;
     margin-top: 15px;
@@ -90,27 +117,6 @@
   }
   p a:hover {
     text-decoration: underline;
-  }
-  .google-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background: #fff;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: 0.3s;
-  }
-  .google-btn:hover {
-    background: #f1f1f1;
-  }
-  .google-btn img {
-    width: 20px;
-    margin-right: 10px;
   }
 </style>
 </head>
@@ -130,13 +136,36 @@
       <input type="tel" id="phone" required>
       <button type="submit">Register</button>
   </form>
-  <button class="google-btn" id="googleSignIn">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-    Continue with Google
+
+  <!-- Divider -->
+  <div class="divider">or</div>
+
+  <!-- Google Sign-Up Button -->
+  <button class="google-btn" id="googleSignup">
+    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google Logo"> Sign up with Google
   </button>
+
   <p>Already have an account? <a href="login.html">Login here</a></p>
 </div>
 
 <script type="module" src="js/register.js"></script>
+<script type="module">
+  import { signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+  import { auth } from "./js/firebase.js";
+
+  const googleBtn = document.getElementById("googleSignup");
+  googleBtn.addEventListener("click", async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      localStorage.setItem("userEmail", user.email);
+      window.location.href = "dashboard.html"; // redirect after successful signup
+    } catch (error) {
+      console.error("Google Sign-Up Error:", error);
+      alert("Google Sign-Up failed. Try again.");
+    }
+  });
+</script>
 </body>
 </html>
