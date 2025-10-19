@@ -1,5 +1,5 @@
 import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -7,8 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
   const errorMsg = document.getElementById("errorMsg");
   const successMsg = document.getElementById("successMsg");
+  const googleSignInButton = document.getElementById("googleSignIn");
 
   if (!registerForm) return console.error("Register form not found");
+  if (!googleSignInButton) return console.error("Google sign-in button not found");
 
   const submitButton = registerForm.querySelector("button");
   if (!submitButton) return console.error("Register button not found");
@@ -73,6 +75,26 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       submitButton.disabled = false;
       submitButton.textContent = "Register";
+    }
+  });
+
+  googleSignInButton.addEventListener("click", async () => {
+    const provider(policy provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName || "Google User",
+        email: user.email,
+        phone: user.phoneNumber || "",
+        createdAt: new Date()
+      }, { merge: true });
+
+      showMessage(successMsg, "Successfully signed in with Google!");
+      setTimeout(() => window.location.href = "dashboard.html", 2000);
+    } catch (error) {
+      showMessage(errorMsg, "Google sign-in failed: " + error.message);
     }
   });
 
