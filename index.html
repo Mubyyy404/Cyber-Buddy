@@ -788,15 +788,14 @@
     const mobileMenu = $('#mobile-menu');
     mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
 
-    // Popup configuration
-    const popupConfig = {
-      enabled: true, // Set to false to disable popup
-      title: 'Join Our Upcoming Webinar!',
-      description: 'Learn advanced penetration testing techniques in our live webinar on Nov 10, 2025. Register now to secure your spot!',
-      image: 'https://www.techprofree.com/wp-content/webp-express/webp-images/uploads/2024/07/A-Complete-Guide-to-Ethical-Hacking.jpg.webp',
-      ctaText: 'Register Now',
-      ctaLink: 'https://docs.google.com/spreadsheets/d/1w-bfSBNzX8TerdN_--enCiqIVVc19DtQMKGtYcvW6rw/edit?usp=sharing'
-    };
+   const popupConfig = {
+  enabled: true,
+  title: 'Join Our Upcoming Webinar!',
+  description: 'Learn advanced penetration testing techniques in our live webinar on Nov 10, 2025. Register now to secure your spot!',
+  image: 'https://www.techprofree.com/wp-content/webp-express/webp-images/uploads/2024/07/A-Complete-Guide-to-Ethical-Hacking.jpg.webp',
+  ctaText: 'Register Now',
+  ctaLink: 'https://forms.gle/YourActualFormLinkHere' // Use Google Form!
+};
     function showPopup() {
       if (!popupConfig.enabled) return;
       const overlay = $('#popup-overlay');
