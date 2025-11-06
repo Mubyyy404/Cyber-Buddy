@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Buddy Academy</title>
+  <title>Pay – Cyber Buddy Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
@@ -91,84 +91,18 @@
       margin-bottom: 25px;
       text-align: center;
     }
-    /* About */
-    .course-description {
-      font-size: 1.1em;
-      line-height: 1.7;
-    }
-    .course-description strong {
-      color: var(--accent-gold);
-    }
-    /* Prizes */
-    .prizes-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 30px;
-      margin-top: 30px;
-    }
-    .prize-card {
-      background: #112a5c;
-      padding: 25px;
-      border-radius: 12px;
-      text-align: center;
-      flex: 1 1 300px;
-      max-width: 400px;
-      box-shadow: var(--shadow-glow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .prize-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 0 35px rgba(240,200,8,0.7);
-    }
-    .prize-card img {
-      width: 130px;
-      margin-bottom: 20px;
-    }
-    .prize-card h4 {
-      color: var(--accent-green);
+    .course-title {
       font-size: 1.6em;
-      margin-bottom: 10px;
-    }
-    .prize-card p {
-      font-size: 1.05em;
-      color: #ddd;
-    }
-    /* Enrollment Steps */
-    .steps-container {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-    .step {
-      display: flex;
-      align-items: flex-start;
-      background: #112a5c;
-      padding: 25px;
-      border-radius: 12px;
-      border-left: 4px solid var(--accent-gold);
-      transition: 0.3s ease;
-    }
-    .step:hover {
-      transform: translateX(5px);
-      box-shadow: 0 0 20px rgba(79,209,197,0.5);
-    }
-    .step-icon {
-      font-size: 2em;
-      color: var(--accent-green);
-      margin-right: 20px;
-      min-width: 40px;
+      color: var(--accent-gold);
       text-align: center;
+      margin: 20px 0;
     }
-    .step-text h4 {
-      margin: 0 0 8px 0;
-      color: #fff;
-      font-size: 1.3em;
-    }
-    .step-text p {
-      font-size: 1.05em;
-      color: #ddd;
-      margin: 0;
+    .price-display {
+      font-size: 2.2em;
+      font-weight: 700;
+      color: var(--accent-green);
+      text-align: center;
+      margin: 15px 0;
     }
     /* Buttons */
     .cta-buttons {
@@ -189,6 +123,9 @@
       text-transform: uppercase;
       box-shadow: 0 5px 15px rgba(79,209,197,0.4);
       transition: 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
     .button:hover {
       background: #3bb3ad;
@@ -215,15 +152,12 @@
     @media(max-width:768px){
       .academy-name { font-size: 2.2em; }
       .tagline { font-size: 1.1em; }
-      .price-tag { font-size: 1.6em; padding: 10px 25px; }
-      .step { flex-direction: column; text-align: center; }
-      .step-icon { margin: 0 auto 15px; }
-      .prize-card { max-width: 100%; }
+      .price-tag, .price-display { font-size: 1.8em; padding: 10px 25px; }
+      .button { padding: 12px 25px; font-size: 1em; }
     }
     @media(max-width:480px){
       .academy-name { font-size: 1.9em; }
       .content-section { padding: 25px; }
-      .button { padding: 12px 25px; font-size: 1em; }
     }
   </style>
 </head>
@@ -233,50 +167,30 @@
     <header>
       <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo" class="logo">
       <h1 class="academy-name">CYBER BUDDY ACADEMY</h1>
-      <p class="tagline">CYBERSECURITY FOUNDATION COURSE</p>
-      <div class="price-tag">₹999 Only!</div>
+      <p class="tagline" id="course-tagline">Loading course...</p>
+      <div class="price-tag" id="price-tag">Loading...</div>
     </header>
 
-    <!-- ABOUT -->
-    <section id="about" class="content-section">
-      <h3>About the Course</h3>
-      <p class="course-description">
-        This 1-month beginner-friendly course is designed to help you understand the
-        foundational concepts of cybersecurity. We focus on simple explanations,
-        practical examples, and hands-on activities that make learning easy and engaging.
-        By the end of the course, you’ll have a solid starting point to strengthen your
-        knowledge and confidently explore advanced topics in the future.
-      </p>
-    </section>
-
-    <!-- PRIZES -->
-    <section id="prizes" class="content-section">
-      <h3>Prizes for Top Performers</h3>
-      <div class="prizes-container">
-        <div class="prize-card">
-          <img src="https://cdn.sanity.io/images/0s2zavz0/production/35d8d19566aaa5812a909761c36286785ccd68dd-995x546.png" alt="TryHackMe Logo">
-          <h4>TryHackMe FREE Subscription</h4>
-          <p>The <strong>top 3 performers</strong> will each receive a <strong>1-month TryHackMe subscription</strong> to continue their hands-on cybersecurity training.</p>
-        </div>
-      </div>
-    </section>
+    <!-- DYNAMIC COURSE INFO -->
+    <div class="course-title" id="course-title">Course Title</div>
+    <div class="price-display" id="course-price">₹0</div>
 
     <!-- ENROLLMENT -->
     <section id="enroll" class="content-section">
-      <h3>How to Enroll</h3>
+      <h3>Complete Your Enrollment</h3>
       <div class="steps-container">
         <div class="step">
           <div class="step-icon"><i class="fas fa-credit-card"></i></div>
           <div class="step-text">
             <h4>Step 1: Make Payment</h4>
-            <p>Transfer the course fee of <strong>₹999</strong> to our official UPI ID by clicking the below <strong>Make Payment</strong> button and capture a clear screenshot of the successful transaction.</p>
+            <p>Click <strong>Make Payment</strong> below to pay <span id="step-price">₹0</span> via UPI. The amount will be <strong>pre-filled</strong> in your app.</p>
           </div>
         </div>
         <div class="step">
           <div class="step-icon"><i class="fas fa-file-alt"></i></div>
           <div class="step-text">
             <h4>Step 2: Register & Upload</h4>
-            <p>Click the <strong>Register Now</strong> button below to access the registration form. Fill in your details completely and upload the payment screenshot.</p>
+            <p>After payment, take a screenshot and upload it using the <strong>Register Now</strong> button.</p>
           </div>
         </div>
       </div>
@@ -284,22 +198,51 @@
 
     <!-- CTA -->
     <div class="cta-buttons">
-      <a href="upi://pay?pa=mohamedmubeen576-1@okaxis&pn=Mohamed%20Mubeen&aid=uGICAgICT_Lf0Dw" class="button"><i class="fas fa-money-bill-wave"></i> Make Payment</a>
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfjwUxiF17F52oEMfXZuZ-vlYSWNsRm83lRzoEisKCbFzgrMw/viewform" class="button button-register"><i class="fas fa-user-plus"></i> Register Now</a>
+      <a href="#" id="pay-btn" class="button">
+        <i class="fas fa-money-bill-wave"></i> Make Payment (<span id="btn-price">₹0</span>)
+      </a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfjwUxiF17F52oEMfXZuZ-vlYSWNsRm83lRzoEisKCbFzgrMw/viewform" 
+         class="button button-register">
+        <i class="fas fa-user-plus"></i> Register Now
+      </a>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // === READ URL PARAMETERS ===
+      const params = new URLSearchParams(location.search);
+      const title = decodeURIComponent(params.get('title') || 'Cybersecurity Course');
+      const price = params.get('price') || '999';
+      const upi = params.get('upi') || 'mohamedmubeen576-1@okaxis';
+
+      const cleanPrice = price.replace(/[^\d]/g, ''); // Remove ₹, commas
+      const displayPrice = '₹' + cleanPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+      // === UPDATE PAGE CONTENT ===
+      document.getElementById('course-tagline').textContent = title;
+      document.getElementById('price-tag').textContent = displayPrice + ' Only!';
+      document.getElementById('course-title').textContent = title;
+      document.getElementById('course-price').textContent = displayPrice;
+      document.getElementById('step-price').textContent = displayPrice;
+      document.getElementById('btn-price').textContent = displayPrice;
+
+      // === BUILD UPI LINK ===
+      const upiLink = `upi://pay?pa=${upi}&pn=Mohamed%20Mubeen&am=${cleanPrice}&cu=INR&tn=${encodeURIComponent(title)}%20Course%20Fee`;
+
+      // === ATTACH TO BUTTON ===
+      document.getElementById('pay-btn').href = upiLink;
+
+      // === SCROLL ANIMATIONS ===
       const sections = document.querySelectorAll('.content-section');
       const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
-          if(entry.isIntersecting){
+          if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
             obs.unobserve(entry.target);
           }
         });
-      }, {threshold: 0.15});
+      }, { threshold: 0.15 });
       sections.forEach(section => observer.observe(section));
     });
   </script>
