@@ -1106,29 +1106,46 @@
  counters.forEach(c => counterObserver.observe(c));
 
  // Contact form
- $('#contact-form').addEventListener('submit', (e) => {
- e.preventDefault();
- const submitBtn = $('#contact-submit');
- const formMsg = $('#form-message');
- const name = $('#contact-name').value.trim();
- const email = $('#contact-email').value.trim();
- const msg = $('#contact-message').value.trim();
- if (!name || !email || !msg) {
-  formMsg.textContent = 'Please fill out all fields.';
-  formMsg.style.color = 'tomato';
-  return;
- }
- submitBtn.classList.add('form-loading');
- submitBtn.disabled = true;
- setTimeout(() => {
-  formMsg.style.color = 'var(--accent)';
-  formMsg.textContent = 'Your inquiry has been submitted successfully.';
-  $('#contact-form').reset();
-  submitBtn.classList.remove('form-loading');
-  submitBtn.disabled = false;
-  setTimeout(() => formMsg.textContent = '', 5000);
- }, 1000);
- });
+ $('#contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault(); // Prevent default to control UX
+
+  const form = e.target;
+  const submitBtn = $('#contact-submit');
+  const formMsg = $('#form-message');
+  const formData = new FormData(form);
+
+  // Show loading
+  submitBtn.disabled = true;
+  submitBtn.classList.add('form-loading');
+  formMsg.textContent = '';
+  formMsg.style.color = '';
+
+  try {
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      formMsg.textContent = 'Message sent successfully!';
+      formMsg.style.color = 'var(--accent)';
+      form.reset();
+    } else {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to send message');
+    }
+  } catch (err) {
+    formMsg.textContent = err.message || 'Network error. Please try again.';
+    formMsg.style.color = 'tomato';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('form-loading');
+    setTimeout(() => formMsg.textContent = '', 6000);
+  }
+});
 
  // Smooth anchor links
  $$('a[href^="#"]').forEach(a => {
