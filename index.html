@@ -608,37 +608,57 @@
 
  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
 
- <!-- FAQ -->
- <section id="faq" class="py-24 bg-slate-900/40" role="region" aria-label="Frequently Asked Questions">
- <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-  <h2 class="text-4xl font-bold text-center glow">Frequently Asked Questions</h2>
-  <p class="mt-6 text-center text-slate-300 max-w-3xl mx-auto">Find answers to common questions about our courses and training programs.</p>
-  <div class="mt-12 glass-card p-6 rounded-lg shadow-lg">
-   <div class="faq-item">
-   <div class="faq-question">
-    <h3 class="text-lg font-semibold">What prerequisites are needed for your courses?</h3>
-    <svg class="faq-toggle w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-   </div>
-   <div class="faq-answer text-slate-300">Our courses cater to all levels. Beginners need basic computer skills, while advanced courses may require networking or programming knowledge. Check individual course pages for details.</div>
-   </div>
-   <div class="faq-item">
-   <div class="faq-question">
-    <h3 class="text-lg font-semibold">Are certifications included with the courses?</h3>
-    <svg class="faq-toggle w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-   </div>
-   <div class="faq-answer text-slate-300">Yes, most courses include preparation for industry-recognized certifications, such as CEH or CompTIA Security+. Completion certificates are also provided.</div>
-   </div>
-   <div class="faq-item">
-   <div class="faq-question">
-    <h3 class="text-lg font-semibold">Can I access labs remotely?</h3>
-    <svg class="faq-toggle w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-   </div>
-   <div class="faq-answer text-slate-300">Absolutely! Our labs are cloud-based, allowing secure remote access from anywhere with an internet connection.</div>
-   </div>
-  </div>
- </div>
- </section>
+<!-- FAQ -->
+<section id="faq" class="py-24 bg-slate-900/40" role="region" aria-label="Frequently Asked Questions">
+  <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-4xl font-bold text-center glow">Frequently Asked Questions</h2>
+    <p class="mt-6 text-center text-slate-300 max-w-3xl mx-auto">Find answers to common questions about our courses and training programs.</p>
 
+    <div class="mt-12 space-y-4">
+      <!-- FAQ Item 1 -->
+      <div class="faq-item glass-card p-6 rounded-lg shadow-lg">
+        <div class="faq-question flex justify-between items-center cursor-pointer">
+          <h3 class="text-lg font-semibold">What prerequisites are needed for your courses?</h3>
+          <svg class="faq-toggle w-6 h-6 text-cyan-400 transition-transform duration-300" 
+               viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="faq-answer text-slate-300 mt-4 max-h-0 overflow-hidden transition-all duration-300">
+          Our courses cater to all levels. Beginners need basic computer skills, while advanced courses may require networking or programming knowledge. Check individual course pages for details.
+        </div>
+      </div>
+
+      <!-- FAQ Item 2 -->
+      <div class="faq-item glass-card p-6 rounded-lg shadow-lg">
+        <div class="faq-question flex justify-between items-center cursor-pointer">
+          <h3 class="text-lg font-semibold">Are certifications included with the courses?</h3>
+          <svg class="faq-toggle w-6 h-6 text-cyan-400 transition-transform duration-300" 
+               viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="faq-answer text-slate-300 mt-4 max-h-0 overflow-hidden transition-all duration-300">
+          Yes, most courses include preparation for industry-recognized certifications, such as CEH or CompTIA Security+. Completion certificates are also provided.
+        </div>
+      </div>
+
+      <!-- FAQ Item 3 -->
+      <div class="faq-item glass-card p-6 rounded-lg shadow-lg">
+        <div class="faq-question flex justify-between items-center cursor-pointer">
+          <h3 class="text-lg font-semibold">Can I access labs remotely?</h3>
+          <svg class="faq-toggle w-6 h-6 text-cyan-400 transition-transform duration-300" 
+               viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="faq-answer text-slate-300 mt-4 max-h-0 overflow-hidden transition-all duration-300">
+          Absolutely! Our labs are cloud-based, allowing secure remote access from anywhere with an internet connection.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
  <div class="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
 
  <!-- STATS / COUNTERS -->
@@ -1194,19 +1214,42 @@
  fadeIO.observe(el);
  });
 
- // FAQ accordion
- $$('.faq-question').forEach(q => {
- q.addEventListener('click', () => {
-  const item = q.parentElement;
-  const isActive = item.classList.contains('active');
-  $$('.faq-item').forEach(i => i.classList.remove('active'));
-  if (!isActive) {
-   item.classList.add('active');
-   const answer = item.querySelector('.faq-answer');
-   answer.style.maxHeight = `${answer.scrollHeight}px`;
-  }
- });
- });
+ // === FIXED FAQ ACCORDION (NO STICKING) ===
+document.querySelectorAll('.faq-question').forEach(question => {
+  question.addEventListener('click', () => {
+    const faqItem = question.parentElement;
+    const answer = faqItem.querySelector('.faq-answer');
+    const icon = question.querySelector('.faq-toggle');
+    const isOpen = faqItem.classList.contains('active');
+
+    // Close all others
+    document.querySelectorAll('.faq-item').forEach(item => {
+      if (item !== faqItem) {
+        item.classList.remove('active');
+        item.querySelector('.faq-answer').style.maxHeight = '0px';
+        item.querySelector('.faq-toggle').style.transform = 'rotate(0deg)';
+      }
+    });
+
+    // Toggle current
+    if (isOpen) {
+      faqItem.classList.remove('active');
+      answer.style.maxHeight = '0px';
+      icon.style.transform = 'rotate(0deg)';
+    } else {
+      faqItem.classList.add('active');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+      icon.style.transform = 'rotate(180deg)';
+    }
+  });
+});
+
+// Responsive fix: Recalculate height on resize
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.faq-item.active .faq-answer').forEach(answer => {
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  });
+});
 
  // Handle window resize for FAQ answer heights
  window.addEventListener('resize', () => {
