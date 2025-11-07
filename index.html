@@ -624,8 +624,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
           </svg>
         </div>
-        <div class="faq-answer text-slate-300 mt-4 max-h-0 overflow-hidden transition-all duration-300">
-          Our courses cater to all levels. Beginners need basic computer skills, while advanced courses may require networking or programming knowledge. Check individual course pages for details.
+        <div class="faq-answer text-slate-300 overflow-hidden transition-all duration-300" 
+             style="max-height: 0; padding-top: 0; padding-bottom: 0;">
+          <div class="pt-4 pb-2"> <!-- Inner wrapper to preserve spacing -->
+            Our courses cater to all levels. Beginners need basic computer skills, while advanced courses may require networking or programming knowledge. Check individual course pages for details.
+          </div>
         </div>
       </div>
 
@@ -638,8 +641,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
           </svg>
         </div>
-        <div class="faq-answer text-slate-300 mt-4 max-h-0 overflow-hidden transition-all duration-300">
-          Yes, most courses include preparation for industry-recognized certifications, such as CEH or CompTIA Security+. Completion certificates are also provided.
+        <div class="faq-answer text-slate-300 overflow-hidden transition-all duration-300" 
+             style="max-height: 0; padding-top: 0; padding-bottom: 0;">
+          <div class="pt-4 pb-2">
+            Yes, most courses include preparation for industry-recognized certifications, such as CEH or CompTIA Security+. Completion certificates are also provided.
+          </div>
         </div>
       </div>
 
@@ -652,8 +658,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
           </svg>
         </div>
-        <div class="faq-answer text-slate-300 mt-4 max-h-0 overflow-hidden transition-all duration-300">
-          Absolutely! Our labs are cloud-based, allowing secure remote access from anywhere with an internet connection.
+        <div class="faq-answer text-slate-300 overflow-hidden transition-all duration-300" 
+             style="max-height: 0; padding-top: 0; padding-bottom: 0;">
+          <div class="pt-4 pb-2">
+            Absolutely! Our labs are cloud-based, allowing secure remote access from anywhere with an internet connection.
+          </div>
         </div>
       </div>
     </div>
@@ -1214,11 +1223,12 @@
  fadeIO.observe(el);
  });
 
- // === FIXED FAQ ACCORDION (NO STICKING) ===
+ // === FIXED FAQ ACCORDION – FULL TEXT VISIBLE, NO CLIPPING ===
 document.querySelectorAll('.faq-question').forEach(question => {
   question.addEventListener('click', () => {
     const faqItem = question.parentElement;
     const answer = faqItem.querySelector('.faq-answer');
+    const inner = answer.querySelector('div');
     const icon = question.querySelector('.faq-toggle');
     const isOpen = faqItem.classList.contains('active');
 
@@ -1226,7 +1236,10 @@ document.querySelectorAll('.faq-question').forEach(question => {
     document.querySelectorAll('.faq-item').forEach(item => {
       if (item !== faqItem) {
         item.classList.remove('active');
-        item.querySelector('.faq-answer').style.maxHeight = '0px';
+        const a = item.querySelector('.faq-answer');
+        a.style.maxHeight = '0px';
+        a.style.paddingTop = '0';
+        a.style.paddingBottom = '0';
         item.querySelector('.faq-toggle').style.transform = 'rotate(0deg)';
       }
     });
@@ -1235,19 +1248,26 @@ document.querySelectorAll('.faq-question').forEach(question => {
     if (isOpen) {
       faqItem.classList.remove('active');
       answer.style.maxHeight = '0px';
+      answer.style.paddingTop = '0';
+      answer.style.paddingBottom = '0';
       icon.style.transform = 'rotate(0deg)';
     } else {
       faqItem.classList.add('active');
-      answer.style.maxHeight = answer.scrollHeight + 'px';
+      const fullHeight = inner.scrollHeight + 24; // content + padding
+      answer.style.maxHeight = fullHeight + 'px';
+      answer.style.paddingTop = '1rem';
+      answer.style.paddingBottom = '0.5rem';
       icon.style.transform = 'rotate(180deg)';
     }
   });
 });
 
-// Responsive fix: Recalculate height on resize
+// Fix height on window resize
 window.addEventListener('resize', () => {
   document.querySelectorAll('.faq-item.active .faq-answer').forEach(answer => {
-    answer.style.maxHeight = answer.scrollHeight + 'px';
+    const inner = answer.querySelector('div');
+    const fullHeight = inner.scrollHeight + 24;
+    answer.style.maxHeight = fullHeight + 'px';
   });
 });
 
