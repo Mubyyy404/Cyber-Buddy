@@ -1,322 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GBill — Cyber Buddy Academy (Admin)</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Buddy Academy - Bill Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <style>
-  :root{
-    --bg:#fbfbfc; --card:#fff; --gold1:#d4af37; --gold2:#f6d77a; --muted:#6b7280;
-    font-family:Poppins,system-ui,Arial;
-  }
-  body{background:linear-gradient(180deg,#f7f9fc,#eef6ff);padding:28px;display:flex;justify-content:center}
-  .wrap{max-width:980px;width:100%;display:grid;grid-template-columns:420px 1fr;gap:20px}
-  .card{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 12px 30px rgba(11,20,50,.06)}
-  header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
-  .logo img{height:64px;border-radius:10px}
-  h1{font-size:18px;margin:0}
-  form label{display:block;margin-top:12px;font-weight:600;color:var(--muted)}
-  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #e6eef8;font-size:14px}
-  .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-  .primary{background:linear-gradient(90deg,#0b63ff,#00b4ff);color:white}
-  .ghost{background:transparent;border:1px solid #e6eef8}
-  .actions{display:flex;gap:8px;margin-top:14px}
-  .preview{padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fcfeff)}
-  pre.snip{background:#0b1220;color:#fff;padding:10px;border-radius:8px;overflow:auto;font-family:monospace;font-size:12px}
-  .small{font-size:13px;color:var(--muted)}
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f5f7fb;
+        color: #222;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 90%;
+        max-width: 600px;
+        background: #fff;
+        margin: 50px auto;
+        border-radius: 15px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+    h1 {
+        text-align: center;
+        color: #1a73e8;
+        margin-bottom: 20px;
+    }
+    label {
+        font-weight: 600;
+    }
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0 15px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background: #0c59d1;
+    }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- Admin form -->
-    <div class="card">
-      <header>
-        <div class="logo"><img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="logo"></div>
-        <div>
-          <h1>GBill — Cyber Buddy Academy</h1>
-          <div class="small">Admin billing generator (private). Creates PDF + JSON for receipts.json</div>
-        </div>
-      </header>
+<div class="container">
+    <h1>Generate Bill - Cyber Buddy Academy</h1>
+    <label>Student Name</label>
+    <input type="text" id="name" placeholder="Enter student name">
 
-      <form id="gbill">
-        <label>Student / Customer Name</label>
-        <input id="name" required placeholder="e.g. M. Mubeen">
+    <label>Course Name</label>
+    <input type="text" id="course" placeholder="Enter course name">
 
-        <label>Course Name</label>
-        <input id="course" required placeholder="e.g. Web Application Pentesting">
+    <label>Amount (₹)</label>
+    <input type="number" id="amount" placeholder="Enter amount">
 
-        <label>Amount (INR)</label>
-        <input id="amount" type="number" required placeholder="e.g. 2999">
+    <label>Date</label>
+    <input type="date" id="date">
 
-        <label>Payment / Transaction ID</label>
-        <input id="paymentId" required placeholder="e.g. TXN20251108001">
-
-        <label>Payment Date</label>
-        <input id="date" type="date" required>
-
-        <label>Notes (optional)</label>
-        <textarea id="notes" rows="2" placeholder="Payment method, remarks..."></textarea>
-
-        <div class="actions">
-          <button class="btn primary" id="genPDF" type="button">Generate PDF & JSON</button>
-          <button class="btn ghost" id="clear" type="button">Clear</button>
-        </div>
-
-        <div style="margin-top:10px" class="small">
-          After generating a bill: use "Copy JSON" or "Download JSON" to update your public <code>receipts.json</code> in the GitHub Pages repo.
-        </div>
-      </form>
-
-      <hr style="margin:14px 0">
-
-      <div class="small">New receipt JSON (copy to append into <code>receipts.json</code>):</div>
-      <pre id="jsonOut" class="snip" style="height:120px;">(No receipt yet)</pre>
-
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn ghost" id="copyJson">Copy JSON</button>
-        <button class="btn ghost" id="downloadJson">Download JSON File</button>
-      </div>
-
-      <div style="margin-top:12px" class="small">
-        <strong>Note:</strong> Because this is static hosting, you must manually merge new receipt objects into <code>receipts.json</code> in your GitHub repo. I provide a ready JSON snippet to paste or upload.
-      </div>
-    </div>
-
-    <!-- Preview + printable receipt -->
-    <div class="card">
-      <div class="preview" id="printArea" style="position:relative">
-        <!-- Receipt layout (this is captured by html2pdf) -->
-        <div id="receipt" style="padding:20px;max-width:720px;">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="display:flex;gap:12px;align-items:center">
-              <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="logo" style="height:64px;border-radius:8px">
-              <div>
-                <div style="font-family:'Playfair Display', serif;font-size:20px;font-weight:700">Cyber Buddy Academy</div>
-                <div style="font-size:12px;color:#6b7280">Ethical Hacking • Penetration Testing • Courses</div>
-              </div>
-            </div>
-            <div style="text-align:right">
-              <div style="font-size:12px;color:#6b7280">Receipt ID</div>
-              <div id="receiptId" style="font-family:monospace;font-weight:800">—</div>
-              <div id="rDate" style="font-size:12px;color:#6b7280">—</div>
-            </div>
-          </div>
-
-          <hr style="margin:14px 0;border:none;border-top:1px solid #eef4ff">
-
-          <div style="display:flex;gap:20px">
-            <div style="flex:1">
-              <div style="font-size:13px;color:#6b7280">Billed To</div>
-              <div id="rName" style="font-weight:700">—</div>
-              <div id="rCourse" style="color:#374151">—</div>
-            </div>
-            <div style="width:180px">
-              <div style="font-size:13px;color:#6b7280">Amount</div>
-              <div style="font-weight:800;font-size:20px">₹ <span id="rAmt">—</span></div>
-              <div style="margin-top:12px;font-size:12px;color:#6b7280">Payment ID: <span id="rPay">—</span></div>
-            </div>
-          </div>
-
-          <div style="margin-top:18px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfe);border:1px solid #eef6ff">
-            <strong>Notes</strong>
-            <div id="rNotes" style="margin-top:8px;color:#374151">—</div>
-          </div>
-
-          <!-- SVG Royal Seal: gold ring with text -->
-          <div style="position:relative;margin-top:22px">
-            <div style="position:absolute;right:0;bottom:0">
-              <!-- SVG seal -->
-              <svg width="150" height="150" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <defs>
-                  <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0" stop-color="#f8e6a0"/>
-                    <stop offset="1" stop-color="#d4af37"/>
-                  </linearGradient>
-                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.15"/>
-                  </filter>
-                </defs>
-                <g filter="url(#shadow)">
-                  <circle cx="100" cy="100" r="76" fill="url(#g1)" stroke="#b88c22" stroke-width="6"/>
-                  <circle cx="100" cy="100" r="56" fill="#fffef6" stroke="#f0e7b6" stroke-width="3"/>
-                </g>
-                <!-- central emblem -->
-                <g transform="translate(100,100)">
-                  <path d="M0,-28 L7,-12 L22,-10 L11,0 L14,16 L0,6 L-14,16 L-11,0 L-22,-10 L-7,-12 Z" fill="#d4af37" opacity="0.95" />
-                </g>
-                <!-- curved text around top -->
-                <g transform="translate(100,100)">
-                  <path id="arcTop" d="M-70,0 A70,70 0 0,1 70,0" fill="none"/>
-                  <text font-family="Poppins" font-size="10" fill="#3b2f11" font-weight="700">
-                    <textPath href="#arcTop" startOffset="10%">CYBER BUDDY ACADEMY</textPath>
-                  </text>
-                  <!-- curved bottom -->
-                  <path id="arcBot" d="M70,0 A70,70 0 0,1 -70,0" fill="none"/>
-                  <text font-family="Poppins" font-size="7" fill="#3b2f11">
-                    <textPath href="#arcBot" startOffset="12%">OFFICIAL SEAL OF AUTHENTICITY</textPath>
-                  </text>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          <div style="margin-top:22px;font-size:12px;color:#6b7280">
-            Verified via: <a href="https://mubyyy404.github.io/Cyber-Buddy/verifybill.html" target="_blank">Cyber Buddy Academy – Verification</a>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
+    <button onclick="generateBill()">Generate PDF Bill</button>
+</div>
 
 <script>
-  function uid() {
-    // unique short id: CBA-YYYYMMDD-XXXX
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    const rand = Math.floor(1000 + Math.random()*9000);
-    return `CBA-${y}${m}${day}-${rand}`;
-  }
+async function generateBill() {
+    const name = document.getElementById("name").value;
+    const course = document.getElementById("course").value;
+    const amount = document.getElementById("amount").value;
+    const date = document.getElementById("date").value;
 
-  function formatDateForDisplay(dstr){
-    if(!dstr) return '';
-    const d = new Date(dstr);
-    return d.toLocaleDateString();
-  }
-
-  const genBtn = document.getElementById('genPDF');
-  const clearBtn = document.getElementById('clear');
-  const copyBtn = document.getElementById('copyJson');
-  const downloadBtn = document.getElementById('downloadJson');
-
-  function updatePreview(obj){
-    document.getElementById('receiptId').textContent = obj.receiptId || '—';
-    document.getElementById('rDate').textContent = formatDateForDisplay(obj.date) || '—';
-    document.getElementById('rName').textContent = obj.name || '—';
-    document.getElementById('rCourse').textContent = obj.course || '—';
-    document.getElementById('rAmt').textContent = obj.amount || '—';
-    document.getElementById('rPay').textContent = obj.paymentId || '—';
-    document.getElementById('rNotes').textContent = obj.notes || '—';
-  }
-
-  function generateReceiptObject(){
-    const name = document.getElementById('name').value.trim();
-    const course = document.getElementById('course').value.trim();
-    const amount = document.getElementById('amount').value.trim();
-    const paymentId = document.getElementById('paymentId').value.trim();
-    const date = document.getElementById('date').value;
-    const notes = document.getElementById('notes').value.trim();
-
-    const receiptId = uid();
-    const now = new Date().toISOString();
-
-    const obj = {
-      receiptId,
-      name,
-      course,
-      amount,
-      paymentId,
-      date,
-      notes,
-      createdAt: now
-    };
-    return obj;
-  }
-
-  genBtn.addEventListener('click', async ()=>{
-    // validation
-    const name = document.getElementById('name').value.trim();
-    const course = document.getElementById('course').value.trim();
-    const amount = document.getElementById('amount').value.trim();
-    const paymentId = document.getElementById('paymentId').value.trim();
-    const date = document.getElementById('date').value;
-    if(!name || !course || !amount || !paymentId || !date){
-      alert('Fill all required fields.');
-      return;
+    if (!name || !course || !amount || !date) {
+        alert("Please fill all fields!");
+        return;
     }
 
-    const receipt = generateReceiptObject();
+    const billId = "CBA-" + new Date().getTime();
+    const verifyLink = `https://mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=${billId}`;
 
-    // set preview
-    updatePreview(receipt);
+    // QR Code
+    const qr = new QRious({
+        value: verifyLink,
+        size: 100
+    });
 
-    // generate QR → link to your verify page with query param
-    const verifyBase = 'https://mubyyy404.github.io/Cyber-Buddy/verifybill.html';
-    const qrUrl = `${verifyBase}?billid=${encodeURIComponent(receipt.receiptId)}`;
-    const qr = new QRious({ element: (function(){ // create small canvas
-        const c = document.createElement('canvas'); c.id='tmpqr'; c.width=120; c.height=120; return c;
-      })(), value: qrUrl, size: 120 });
+    // Create PDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-    // embed QR into receipt preview area (append to printArea)
-    // remove any previous embedded QR in the print area
-    const printArea = document.getElementById('printArea');
-    let existing = document.getElementById('receiptQR');
-    if(existing) existing.remove();
-    // create image element from canvas
-    const img = document.createElement('img');
-    img.id='receiptQR';
-    img.src = document.getElementById('tmpqr').toDataURL('image/png');
-    img.style.position = 'absolute';
-    img.style.right = '22px';
-    img.style.bottom = '22px';
-    img.style.width = '110px';
-    img.style.height = '110px';
-    img.style.border = '1px solid #e6eef8';
-    img.style.borderRadius = '8px';
-    printArea.appendChild(img);
+    const logoUrl = "https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png";
 
-    // small delay for rendering stable
-    await new Promise(res => setTimeout(res,200));
+    const img = new Image();
+    img.src = logoUrl;
+    img.onload = function () {
+        doc.addImage(img, "PNG", 80, 10, 50, 25);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text("Cyber Buddy Academy", 105, 45, { align: "center" });
+        doc.setFontSize(14);
+        doc.text("Official Payment Receipt", 105, 55, { align: "center" });
+        doc.line(20, 60, 190, 60);
 
-    // generate PDF (full printArea)
-    const element = document.getElementById('receipt');
-    const opt = {
-      margin: 0.4,
-      filename: `${receipt.receiptId}_${receipt.paymentId}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        doc.setFontSize(12);
+        doc.text(`Bill ID: ${billId}`, 20, 70);
+        doc.text(`Student Name: ${name}`, 20, 80);
+        doc.text(`Course: ${course}`, 20, 90);
+        doc.text(`Amount: ₹${amount}`, 20, 100);
+        doc.text(`Date: ${date}`, 20, 110);
+
+        doc.line(20, 115, 190, 115);
+        doc.text("Thank you for learning with Cyber Buddy Academy.", 20, 125);
+
+        doc.text("Scan QR to Verify", 20, 150);
+        doc.addImage(qr.toDataURL(), "PNG", 150, 135, 40, 40);
+
+        doc.textWithLink("Verify Bill Online", 20, 165, { url: verifyLink });
+        doc.save(`${billId}.pdf`);
     };
-    html2pdf().set(opt).from(document.getElementById('printArea')).save();
 
-    // show JSON snippet for receipts.json
-    const jsonOut = document.getElementById('jsonOut');
-    jsonOut.textContent = JSON.stringify(receipt, null, 2);
+    // Add to bills.json (local)
+    let bills = [];
+    try {
+        const res = await fetch("../bills.json");
+        bills = await res.json();
+    } catch (e) {
+        bills = [];
+    }
 
-    // prepare blob for download
-    window._lastReceipt = receipt; // store globally for copy/download
-  });
+    bills.push({ billId, name, course, amount, date });
 
-  clearBtn.addEventListener('click', ()=>{
-    document.getElementById('gbill').reset();
-    document.getElementById('jsonOut').textContent = '(No receipt yet)';
-    updatePreview({});
-    const old = document.getElementById('receiptQR'); if(old) old.remove();
-    window._lastReceipt = null;
-  });
-
-  copyBtn.addEventListener('click', ()=>{
-    if(!window._lastReceipt){ alert('Generate a receipt first'); return; }
-    navigator.clipboard.writeText(JSON.stringify(window._lastReceipt, null, 2)).then(()=> alert('Receipt JSON copied to clipboard.'));
-  });
-
-  downloadBtn.addEventListener('click', ()=>{
-    if(!window._lastReceipt){ alert('Generate a receipt first'); return; }
-    const blob = new Blob([JSON.stringify(window._lastReceipt, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url;
-    a.download = `${window._lastReceipt.receiptId}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  });
-
-  // init preview empty
-  updatePreview({});
+    // Download updated bills.json locally (you'll re-upload it to GitHub)
+    const blob = new Blob([JSON.stringify(bills, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "bills.json";
+    a.click();
+}
 </script>
 </body>
 </html>
