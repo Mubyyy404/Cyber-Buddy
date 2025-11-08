@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Verify Bill — Cyber Buddy Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  body{font-family:Poppins,system-ui,Arial;background:#f4f7fb;padding:28px;display:flex;justify-content:center}
+  .card{max-width:760px;width:100%;background:#fff;padding:20px;border-radius:12px;box-shadow:0 12px 30px rgba(11,20,50,.06)}
+  header{display:flex;align-items:center;gap:14px}
+  header img{height:56px;border-radius:8px}
+  h1{margin:0;font-size:18px}
+  .row{display:flex;gap:8px;margin-top:14px}
+  input{flex:1;padding:10px;border-radius:10px;border:1px solid #e6eef8}
+  button{padding:10px 12px;border-radius:10px;border:none;background:linear-gradient(90deg,#0b63ff,#00b4ff);color:#fff;font-weight:700}
+  .result{margin-top:18px;padding:12px;border-radius:8px;background:#fbfdff;border:1px solid #eef6ff}
+  .ok{color:green;font-weight:800}
+  .no{color:#b91c1c;font-weight:800}
+  .muted{color:#6b7280}
+  a.small{font-size:13px;color:#0b63ff}
+</style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="logo">
+      <div>
+        <h1>Verify Receipt — Cyber Buddy Academy</h1>
+        <div class="muted">Enter Bill ID to confirm authenticity (Example: CBA-20251108-1234)</div>
+      </div>
+    </header>
+
+    <div style="margin-top:14px">
+      <div class="row">
+        <input id="billid" placeholder="Enter Bill ID or paste from QR query param">
+        <button id="check">Check</button>
+      </div>
+
+      <div style="margin-top:8px" class="muted">Or scan a receipt QR that points to this page with <code>?billid=...</code></div>
+
+      <div id="result" class="result">
+        Paste bill id and click <strong>Check</strong> to verify.
+      </div>
+    </div>
+  </div>
+
+<script>
+  // URL of receipts.json — place this file in the same folder on GitHub Pages
+  const RECEIPTS_URL = 'receipts.json';
+
+  async function loadReceipts(){
+    try{
+      const r = await fetch(RECEIPTS_URL + '?t=' + Date.now(), {cache:'no-store'});
+      if(!r.ok) throw new Error('receipts.json not found');
+      const data = await r.json();
+      if(!Array.isArray(data)) throw new Error('Invalid receipts.json format');
+      return data;
+    }catch(e){
+      console.error(e);
+      return null;
+    }
+  }
+
+  function showNotFound(){
+    const el = document.getElementById('result');
+    el.innerHTML = '<div class="no">✖ Not verified — Bill not found in our records.</div><div class="muted" style="margin-top:8px">If you believe this is an error, contact Cyber Buddy Academy.</div>';
+  }
+
+  function showFound(rec){
+    const el = document.getElementById('result');
+    el.innerHTML = `
+      <div class="ok">✔ Verified — Authentic Bill</div>
+      <div style="margin-top:8px"><strong>Receipt ID:</strong> ${rec.receiptId}</div>
+      <div><strong>Student:</strong> ${rec.name}</div>
+      <div><strong>Course:</strong> ${rec.course}</div>
+      <div><strong>Amount:</strong> ₹ ${rec.amount}</div>
+      <div><strong>Payment ID:</strong> ${rec.paymentId}</div>
+      <div><strong>Date:</strong> ${new Date(rec.date).toLocaleDateString()}</div>
+      <div style="margin-top:8px" class="muted">Issued on: ${new Date(rec.createdAt).toLocaleString()}</div>
+    `;
+  }
+
+  document.getElementById('check').addEventListener('click', async ()=>{
+    const bid = document.getElementById('billid').value.trim();
+    if(!bid){ alert('Enter Bill ID'); return; }
+    const receipts = await loadReceipts();
+    if(!receipts){ document.getElementById('result').innerHTML = '<div class="no">Error loading records. Contact admin.</div>'; return; }
+    const found = receipts.find(r => r.receiptId === bid || r.paymentId === bid);
+    if(found) showFound(found); else showNotFound();
+  });
+
+  // If ?billid=... in URL, auto-check
+  (async function(){
+    const params = new URLSearchParams(location.search);
+    const q = params.get('billid');
+    if(q){
+      document.getElementById('billid').value = q;
+      document.getElementById('check').click();
+    }
+  })();
+</script>
+</body>
+</html>
