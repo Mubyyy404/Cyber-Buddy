@@ -1,77 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verify Bill - Cyber Buddy Academy</title>
-<style>
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: #f0f5ff;
-        text-align: center;
-        padding: 40px;
-    }
-    h1 {
-        color: #1a73e8;
-    }
-    input {
-        padding: 10px;
-        width: 250px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        margin: 10px;
-    }
-    button {
-        padding: 10px 20px;
-        background: #1a73e8;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    #result {
-        margin-top: 30px;
-        font-size: 18px;
-    }
-</style>
+  <meta charset="UTF-8">
+  <title>Verify Bill - Cyber Buddy Academy</title>
+  <style>
+    body { font-family: Arial; background: #f0f3f8; text-align:center; padding:50px; }
+    input { padding:10px; width:250px; }
+    button { padding:10px 20px; background:#0056b3; color:white; border:none; cursor:pointer; }
+    .result { margin-top:20px; font-size:18px; }
+  </style>
 </head>
 <body>
-<h1>Verify Bill - Cyber Buddy Academy</h1>
-<p>Enter your Bill ID or open your bill’s QR code link to verify authenticity.</p>
+  <h2>Cyber Buddy Academy Bill Verification</h2>
+  <input id="billid" placeholder="Enter Bill ID">
+  <button onclick="verifyBill()">Verify</button>
+  <div class="result" id="result"></div>
 
-<input type="text" id="billId" placeholder="Enter Bill ID">
-<button onclick="verifyBill()">Verify</button>
-
-<div id="result"></div>
-
-<script>
-async function verifyBill() {
-    const billId = new URLSearchParams(window.location.search).get("billid") || 
-                   document.getElementById("billId").value.trim();
-
-    if (!billId) {
-        alert("Please enter Bill ID");
-        return;
+  <script>
+    async function verifyBill() {
+      const id = document.getElementById("billid").value.trim();
+      const res = await fetch("https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/bills.json");
+      const bills = await res.json();
+      const bill = bills.find(b => b.billId === id);
+      const result = document.getElementById("result");
+      if (bill) {
+        result.innerHTML = `✅ Valid Bill<br>Name: ${bill.name}<br>Course: ${bill.course}<br>Amount: ₹${bill.amount}`;
+      } else {
+        result.innerHTML = "❌ Invalid or Unknown Bill ID.";
+      }
     }
-
-    const res = await fetch("bills.json");
-    const bills = await res.json();
-    const bill = bills.find(b => b.billId === billId);
-
-    const resultDiv = document.getElementById("result");
-    if (bill) {
-        resultDiv.innerHTML = `
-            <p style="color:green; font-weight:bold;">✅ Verified Bill</p>
-            <b>Bill ID:</b> ${bill.billId}<br>
-            <b>Student:</b> ${bill.name}<br>
-            <b>Course:</b> ${bill.course}<br>
-            <b>Amount:</b> ₹${bill.amount}<br>
-            <b>Date:</b> ${bill.date}
-        `;
-    } else {
-        resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">❌ Invalid or Fake Bill</p>`;
-    }
-}
-</script>
+  </script>
 </body>
 </html>
