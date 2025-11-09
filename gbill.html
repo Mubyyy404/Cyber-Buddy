@@ -1,150 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Buddy Academy - Bill Generator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-<style>
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: #f5f7fb;
-        color: #222;
-        margin: 0;
-        padding: 0;
-    }
-    .container {
-        width: 90%;
-        max-width: 600px;
-        background: #fff;
-        margin: 50px auto;
-        border-radius: 15px;
-        box-shadow: 0 0 25px rgba(0,0,0,0.1);
-        padding: 30px;
-    }
-    h1 {
-        text-align: center;
-        color: #1a73e8;
-        margin-bottom: 20px;
-    }
-    label {
-        font-weight: 600;
-    }
-    input {
-        width: 100%;
-        padding: 10px;
-        margin: 8px 0 15px 0;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-    }
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #1a73e8;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: 0.3s;
-    }
-    button:hover {
-        background: #0c59d1;
-    }
-</style>
+  <meta charset="UTF-8">
+  <title>Cyber Buddy Academy Bill Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #e9eef5; padding: 40px; }
+    .container { background: #fff; border-radius: 12px; padding: 30px; max-width: 600px; margin: auto;
+                 box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+    h1 { color: #0056b3; text-align: center; margin-bottom: 30px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 5px; }
+    button { background: #0056b3; color: white; border: none; padding: 12px 20px; margin-top: 20px;
+             border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
+    button:hover { background: #003f88; }
+  </style>
 </head>
 <body>
-<div class="container">
-    <h1>Generate Bill - Cyber Buddy Academy</h1>
-    <label>Student Name</label>
-    <input type="text" id="name" placeholder="Enter student name">
+  <div class="container">
+    <h1>Cyber Buddy Academy - Bill Generator</h1>
+    <label>Name:</label><input id="name">
+    <label>Course:</label><input id="course">
+    <label>Amount (INR):</label><input id="amount" type="number">
+    <label>Payment ID:</label><input id="paymentId">
+    <button onclick="generateBill()">Generate Bill</button>
+  </div>
 
-    <label>Course Name</label>
-    <input type="text" id="course" placeholder="Enter course name">
+  <script>
+    async function generateBill() {
+      const name = document.getElementById('name').value.trim();
+      const course = document.getElementById('course').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+      const paymentId = document.getElementById('paymentId').value.trim();
 
-    <label>Amount (₹)</label>
-    <input type="number" id="amount" placeholder="Enter amount">
-
-    <label>Date</label>
-    <input type="date" id="date">
-
-    <button onclick="generateBill()">Generate PDF Bill</button>
-</div>
-
-<script>
-async function generateBill() {
-    const name = document.getElementById("name").value;
-    const course = document.getElementById("course").value;
-    const amount = document.getElementById("amount").value;
-    const date = document.getElementById("date").value;
-
-    if (!name || !course || !amount || !date) {
+      if (!name || !course || !amount || !paymentId) {
         alert("Please fill all fields!");
         return;
+      }
+
+      const date = new Date().toLocaleDateString();
+      const billId = "CBA-" + Date.now();
+      const verifyUrl = `https://mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=${billId}`;
+      const bill = { billId, name, course, amount, date, paymentId, verifyUrl };
+
+      // === Generate PDF ===
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      pdf.setFontSize(18);
+      pdf.text("Cyber Buddy Academy", 65, 20);
+      pdf.setFontSize(12);
+      pdf.text(`Bill ID: ${billId}`, 20, 40);
+      pdf.text(`Name: ${name}`, 20, 50);
+      pdf.text(`Course: ${course}`, 20, 60);
+      pdf.text(`Amount: ₹${amount}`, 20, 70);
+      pdf.text(`Payment ID: ${paymentId}`, 20, 80);
+      pdf.text(`Date: ${date}`, 20, 90);
+      pdf.text("Thank you for learning with Cyber Buddy Academy!", 20, 120);
+
+      const qr = new QRious({ value: verifyUrl, size: 100 });
+      pdf.addImage(qr.toDataURL(), "PNG", 150, 30, 40, 40);
+      pdf.save(`${billId}.pdf`);
+
+      alert("✅ Bill PDF generated.\n\nNote: Upload manually to bills.json (server update restricted in front-end).");
+
+      // --- Optional: log data locally for testing ---
+      console.log("Bill Data:", bill);
     }
-
-    const billId = "CBA-" + new Date().getTime();
-    const verifyLink = `https://mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=${billId}`;
-
-    // QR Code
-    const qr = new QRious({
-        value: verifyLink,
-        size: 100
-    });
-
-    // Create PDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const logoUrl = "https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png";
-
-    const img = new Image();
-    img.src = logoUrl;
-    img.onload = function () {
-        doc.addImage(img, "PNG", 80, 10, 50, 25);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("Cyber Buddy Academy", 105, 45, { align: "center" });
-        doc.setFontSize(14);
-        doc.text("Official Payment Receipt", 105, 55, { align: "center" });
-        doc.line(20, 60, 190, 60);
-
-        doc.setFontSize(12);
-        doc.text(`Bill ID: ${billId}`, 20, 70);
-        doc.text(`Student Name: ${name}`, 20, 80);
-        doc.text(`Course: ${course}`, 20, 90);
-        doc.text(`Amount: ₹${amount}`, 20, 100);
-        doc.text(`Date: ${date}`, 20, 110);
-
-        doc.line(20, 115, 190, 115);
-        doc.text("Thank you for learning with Cyber Buddy Academy.", 20, 125);
-
-        doc.text("Scan QR to Verify", 20, 150);
-        doc.addImage(qr.toDataURL(), "PNG", 150, 135, 40, 40);
-
-        doc.textWithLink("Verify Bill Online", 20, 165, { url: verifyLink });
-        doc.save(`${billId}.pdf`);
-    };
-
-    // Add to bills.json (local)
-    let bills = [];
-    try {
-        const res = await fetch("../bills.json");
-        bills = await res.json();
-    } catch (e) {
-        bills = [];
-    }
-
-    bills.push({ billId, name, course, amount, date });
-
-    // Download updated bills.json locally (you'll re-upload it to GitHub)
-    const blob = new Blob([JSON.stringify(bills, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "bills.json";
-    a.click();
-}
-</script>
+  </script>
 </body>
 </html>
