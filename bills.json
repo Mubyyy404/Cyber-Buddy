@@ -34,5 +34,14 @@
     "date": "11/9/2025",
     "paymentId": "Tnx",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762710264938"
+  },
+  {
+    "billId": "CBA-1762713223568",
+    "name": "Mohamed Kasim",
+    "course": "Web Application Pentesing",
+    "amount": "2999",
+    "date": "11/10/2025",
+    "paymentId": "TN20221330",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762713223568"
   }
 ]
