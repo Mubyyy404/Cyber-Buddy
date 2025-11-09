@@ -1,47 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Verify Bill - Cyber Buddy Academy</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bill Verification – Cyber Buddy Academy</title>
   <style>
-    body { font-family: Arial; background: #f0f3f8; text-align:center; padding:50px; }
-    input { padding:10px; width:250px; }
-    button { padding:10px 20px; background:#0056b3; color:white; border:none; cursor:pointer; }
-    .result { margin-top:20px; font-size:18px; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f4f7ff, #eaf3ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 95%;
+      max-width: 450px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #0055cc;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #0055cc;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #003fa3;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: left;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .verified {
+      background: #e8f9ee;
+      border-left: 5px solid #00b36b;
+      color: #004422;
+      position: relative;
+    }
+
+    .invalid {
+      background: #fde8e8;
+      border-left: 5px solid #e60000;
+      color: #660000;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+
+    /* Tick animation */
+    .tick {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: block;
+      stroke-width: 2;
+      stroke: #00b36b;
+      stroke-miterlimit: 10;
+      margin: 15px auto;
+      box-shadow: inset 0px 0px 0px #00b36b;
+      animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+
+    .tick circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #00b36b;
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .tick path {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+    }
+
+    @keyframes stroke {
+      100% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes scale {
+      0%, 100% { transform: none; }
+      50% { transform: scale3d(1.1, 1.1, 1); }
+    }
+
+    @keyframes fill {
+      100% { box-shadow: inset 0px 0px 0px 60px #e8f9ee; }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #777;
+    }
   </style>
 </head>
 <body>
-  <h2>Cyber Buddy Academy Bill Verification</h2>
-  <input id="billid" placeholder="Enter Bill ID">
-  <button onclick="verifyBill()">Verify</button>
-  <div class="result" id="result"></div>
+  <div class="container">
+    <h1>Bill Verification</h1>
+    <input type="text" id="billIdInput" placeholder="Enter Bill Number (e.g. CBA-1731153476123)">
+    <button onclick="verifyBill()">Verify Bill</button>
+    <div id="result" class="result"></div>
+    <footer>Cyber Buddy Academy © 2025</footer>
+  </div>
 
   <script>
     async function verifyBill() {
-      const id = document.getElementById("billid").value.trim();
-      const res = await fetch("https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/bills.json");
-      const bills = await res.json();
-      const bill = bills.find(b => b.billId === id);
-      const result = document.getElementById("result");
-      if (bill) {
-        result.innerHTML = `
-          ✅ <b>Valid Bill</b><br>
-          <b>Name:</b> ${bill.name}<br>
-          <b>Course:</b> ${bill.course}<br>
-          <b>Amount:</b> ₹${bill.amount}<br>
-          <b>Date:</b> ${bill.date}<br><br>
-          <a href="${bill.verifyUrl}" target="_blank">🔗 Open Bill Link</a>
-        `;
-      } else {
-        result.innerHTML = "❌ Invalid or Unknown Bill ID.";
+      const billId = document.getElementById("billIdInput").value.trim();
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
+
+      if (!billId) {
+        resultDiv.className = "result invalid";
+        resultDiv.innerHTML = "⚠️ Please enter a bill number.";
+        return;
+      }
+
+      try {
+        const res = await fetch("https://mubyyy404.github.io/Cyber-Buddy/bills.json?" + new Date().getTime());
+        const bills = await res.json();
+        const bill = bills.find(b => b.billId === billId);
+
+        if (bill) {
+          resultDiv.className = "result verified";
+          resultDiv.innerHTML = `
+            <svg class="tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="25" fill="none"/>
+              <path fill="none" d="M14 27l7 7 17-17"/>
+            </svg>
+            <h2>Bill Verified</h2>
+            <p><strong>Bill ID:</strong> ${bill.billId}</p>
+            <p><strong>Name:</strong> ${bill.name}</p>
+            <p><strong>Course:</strong> ${bill.course}</p>
+            <p><strong>Amount:</strong> ₹${bill.amount}</p>
+            <p><strong>Date:</strong> ${bill.date}</p>
+            <a href="https://mubyyy404.github.io/Cyber-Buddy/${bill.billId}.pdf" target="_blank">
+              <button style="margin-top:15px;">Download Bill</button>
+            </a>
+          `;
+        } else {
+          resultDiv.className = "result invalid";
+          resultDiv.innerHTML = "❌ Invalid Bill Number. Please check and try again.";
+        }
+      } catch (error) {
+        resultDiv.className = "result invalid";
+        resultDiv.innerHTML = "⚠️ Unable to fetch bill data. Please try later.";
       }
     }
 
-    // Auto verify if ?billid= given in URL
+    // Auto verify from URL parameter
     const urlParams = new URLSearchParams(window.location.search);
-    const idFromUrl = urlParams.get("billid");
-    if (idFromUrl) {
-      document.getElementById("billid").value = idFromUrl;
+    const billIdParam = urlParams.get("billid");
+    if (billIdParam) {
+      document.getElementById("billIdInput").value = billIdParam;
       verifyBill();
     }
   </script>
