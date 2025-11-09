@@ -43,5 +43,14 @@
     "date": "11/10/2025",
     "paymentId": "TN20221330",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762713223568"
+  },
+  {
+    "billId": "CBA-1762713746347",
+    "name": "Mohamed Asim",
+    "course": "Networking",
+    "amount": "1599",
+    "date": "11/10/2025",
+    "paymentId": "TN202510203",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762713746347"
   }
 ]
