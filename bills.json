@@ -25,5 +25,14 @@
     "date": "11/9/2025",
     "paymentId": "id",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762710077926"
+  },
+  {
+    "billId": "CBA-1762710264938",
+    "name": "kada",
+    "course": "Web",
+    "amount": "1000",
+    "date": "11/9/2025",
+    "paymentId": "Tnx",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762710264938"
   }
 ]
