@@ -170,5 +170,14 @@
     "date": "11/11/2025",
     "paymentMode": "Other",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762806501546"
+  },
+  {
+    "billId": "CBA-1762806774461",
+    "name": "Naseer K",
+    "course": "Cybersecurity Basics",
+    "amount": "0.00",
+    "date": "11/11/2025",
+    "paymentMode": "Other",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762806774461"
   }
 ]
