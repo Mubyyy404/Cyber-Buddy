@@ -164,9 +164,20 @@
         resultDiv.innerHTML = "⚠️ Please enter a bill number.";
         return;
       }
+      
+      // Show loading state temporarily
+      resultDiv.className = "result";
+      resultDiv.innerHTML = "⏳ Verifying bill...";
 
       try {
+        // Fetch data from GitHub Pages and bypass cache using timestamp
         const res = await fetch("https://mubyyy404.github.io/Cyber-Buddy/bills.json?" + new Date().getTime());
+        
+        // Throw an error if the file can't be found or accessed
+        if (!res.ok) {
+            throw new Error(`Failed to fetch bills. Status: ${res.status}`);
+        }
+        
         const bills = await res.json();
         const bill = bills.find(b => b.billId === billId);
 
@@ -177,23 +188,22 @@
               <circle cx="26" cy="26" r="25" fill="none"/>
               <path fill="none" d="M14 27l7 7 17-17"/>
             </svg>
-            <h2>Bill Verified</h2>
+            <h2>✅ Bill Verified</h2>
             <p><strong>Bill ID:</strong> ${bill.billId}</p>
             <p><strong>Name:</strong> ${bill.name}</p>
             <p><strong>Course:</strong> ${bill.course}</p>
             <p><strong>Amount:</strong> ₹${bill.amount}</p>
+            <p><strong>Payment Mode:</strong> ${bill.paymentMode || 'N/A'}</p>
             <p><strong>Date:</strong> ${bill.date}</p>
-            <a href="https://mubyyy404.github.io/Cyber-Buddy/${bill.billId}.pdf" target="_blank">
-              <button style="margin-top:15px;">Download Bill</button>
-            </a>
-          `;
+            `;
         } else {
           resultDiv.className = "result invalid";
           resultDiv.innerHTML = "❌ Invalid Bill Number. Please check and try again.";
         }
       } catch (error) {
+        console.error("Verification Error:", error);
         resultDiv.className = "result invalid";
-        resultDiv.innerHTML = "⚠️ Unable to fetch bill data. Please try later.";
+        resultDiv.innerHTML = "⚠️ Unable to fetch bill data. Please try later or check console for details.";
       }
     }
 
