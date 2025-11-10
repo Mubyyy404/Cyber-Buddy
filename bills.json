@@ -106,5 +106,15 @@
     "date": "11/11/2025",
     "paymentId": "id",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762802365361"
+  },
+  {
+    "billId": "CBA-1762802653021",
+    "name": "Mohamed Mubeen S",
+    "course": "wertyui",
+    "amount": "2500",
+    "date": "11/11/2025",
+    "paymentId": "id",
+    "paymentMode": "Cash",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762802653021"
   }
 ]
