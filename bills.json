@@ -143,5 +143,14 @@
     "date": "11/11/2025",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762803762013"
+  },
+  {
+    "billId": "CBA-1762803839554",
+    "name": "Mohamed",
+    "course": "lkjhg",
+    "amount": "250",
+    "date": "11/11/2025",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762803839554"
   }
 ]
