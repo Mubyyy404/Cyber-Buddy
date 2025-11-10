@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cyber Buddy Academy - Bill Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      padding: 40px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 35px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      animation: fadeIn 1s ease-in-out;
+    }
+    h1 {
+      color: #0d47a1;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    button {
+      background: #0d47a1;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    button:hover {
+      background: #08306b;
+      transform: scale(1.02);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cyber Buddy Academy - Bill Generator</h1>
+    <label>Name:</label><input id="name" placeholder="Enter student name">
+    <label>Course:</label><input id="course" placeholder="Enter course name">
+    <label>Amount (INR):</label><input id="amount" type="number" placeholder="Enter amount">
+    <label>Payment Mode:</label> 
+    <select id="paymentMode">
+        <option value="">Select payment mode</option>
+        <option value="Cash">Cash</option>
+        <option value="UPI">UPI</option>
+        <option value="Credit Card">Credit Card</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+        <option value="Other">Other</option>
+    </select>
+    <button onclick="generateBill()">Generate Bill</button>
+  </div>
+  
+  <script>
+    // --- GitHub Configuration ---
+    const GITHUB_USERNAME = "Mubyyy404";
+    const REPO_NAME = "Cyber-Buddy";
+    const FILE_PATH = "bills.json";
+    const TOKEN = "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"; 
+
+    // --- Design Constants ---
+    const BLUE_PRIMARY = "#0d47a1"; 
+    const BLUE_LIGHT = "#e3f2fd"; 
+    const TEXT_DARK = "#212529"; 
+    const MARGIN = 20; 
+    const PAGE_BOTTOM_FOOTER_Y = 280; 
+    const COMPANY_NAME = "Cyber Buddy Academy"; 
+    const COMPANY_SLOGAN = "Empowering Future Cybersecurity Professionals"; 
+    const COMPANY_ADDRESS = "North Street, Pudukkottai - 622001"; 
+    const COMPANY_EMAIL = "cyberbuddyyy@gmail.com"; 
+    const COMPANY_CONTACT = "9345805940"; 
+
+    async function generateBill() {
+        // --- Data Collection ---
+        const name = document.getElementById('name').value.trim();
+        const course = document.getElementById('course').value.trim();
+        const amount = document.getElementById('amount').value.trim();
+        const paymentMode = document.getElementById('paymentMode').value;
+        
+        // FIX: Removed paymentId check
+        if (!name || !course || !amount || !paymentMode) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const billId = "CBA-" + Date.now();
+        const date = new Date().toLocaleDateString('en-IN');
+        const verifyUrl = `https://${GITHUB_USERNAME}.github.io/${REPO_NAME}/verifybill.html?billid=${billId}`;
+        
+        // Data object to be saved to bills.json (REMOVED: paymentId)
+        const bill = { billId, name, course, amount, date, paymentMode, verifyUrl };
+
+        // --- PDF Generation Setup ---
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const PAGE_WIDTH = pdf.internal.pageSize.getWidth();
+        const PAGE_HEIGHT = pdf.internal.pageSize.getHeight();
+        
+        const logoUrl = "https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png";
+        const logo = new Image();
+        logo.src = logoUrl;
+
+        // --- Start PDF Generation ---
+        logo.onload = async () => { 
+            // WATERMARK
+            pdf.setGState(new pdf.GState({opacity: 0.08}));      
+            pdf.setFont("helvetica", "bold");      
+            pdf.setFontSize(70); 
+            pdf.setTextColor(180, 180, 180);      
+            pdf.text(COMPANY_NAME, PAGE_WIDTH / 2, PAGE_HEIGHT / 2, { align: "center", angle: 45 });      
+            pdf.setGState(new pdf.GState({opacity: 1}));
+            
+            let currentY = 18;
+            
+            // HEADER & LOGO
+            pdf.setFillColor(BLUE_PRIMARY);        
+            pdf.rect(0, 0, 8, 45, "F");
+            pdf.setFont("helvetica", "bold");        
+            pdf.setFontSize(26);        
+            pdf.setTextColor(BLUE_PRIMARY);        
+            pdf.text("INVOICE", PAGE_WIDTH - MARGIN, currentY + 10, { align: "right" });
+            pdf.addImage(logo, "PNG", MARGIN, currentY, 28, 22);        
+            pdf.setFontSize(22);        
+            pdf.setTextColor(TEXT_DARK);        
+            pdf.setFont("helvetica", "bold");        
+            pdf.text(COMPANY_NAME, MARGIN + 32, currentY + 10);        
+            pdf.setFont("helvetica", "normal");        
+            pdf.setFontSize(10);        
+            pdf.setTextColor(100, 100, 100);        
+            pdf.text(COMPANY_SLOGAN, MARGIN + 32, currentY + 16);        
+            pdf.text(`${COMPANY_ADDRESS} | ${COMPANY_CONTACT} | ${COMPANY_EMAIL}`, MARGIN + 32, currentY + 21);
+            pdf.setDrawColor(BLUE_PRIMARY);        
+            pdf.setLineWidth(0.5);        
+            pdf.line(MARGIN, currentY + 30, PAGE_WIDTH - MARGIN, currentY + 30);        
+            currentY += 42;
+            
+            // METADATA BOX
+            pdf.setFillColor(BLUE_LIGHT);        
+            pdf.roundedRect(MARGIN, currentY, PAGE_WIDTH - 2*MARGIN, 24, 4, 4, "F");        
+            pdf.setFont("helvetica", "bold");        
+            pdf.setFontSize(11);        
+            pdf.setTextColor(BLUE_PRIMARY);
+            
+            const col1 = MARGIN + 10;
+            const col2 = MARGIN + 58;
+            const col3 = MARGIN + 104; 
+            const col4 = MARGIN + 152;
+            
+            pdf.text("INVOICE DATE", col1, currentY + 8);        
+            pdf.text("INVOICE #", col2, currentY + 8);        
+            pdf.text("PAYMENT MODE", col3, currentY + 8); 
+            pdf.text("STATUS", col4, currentY + 8);
+            
+            pdf.setFont("helvetica", "normal");        
+            pdf.setFontSize(11);        
+            pdf.setTextColor(TEXT_DARK);        
+            pdf.text(date, col1, currentY + 16);        
+            pdf.text(billId, col2, currentY + 16);        
+            pdf.text(paymentMode, col3 + 4, currentY + 16); 
+            pdf.setTextColor(0, 140, 0);        
+            pdf.setFont("helvetica", "bold");        
+            pdf.text("PAID", col4, currentY + 16);
+            
+            currentY += 34;
+            
+            // BILLED TO
+            pdf.setFont("helvetica", "bold");        
+            pdf.setFontSize(15);        
+            pdf.setTextColor(BLUE_PRIMARY);        
+            pdf.text("Billed To", MARGIN, currentY);        
+            currentY += 8;        
+            pdf.setFontSize(16);        
+            pdf.setTextColor(TEXT_DARK);        
+            pdf.text(name, MARGIN, currentY);        
+            currentY += 6;        
+            pdf.setFontSize(11);        
+            pdf.setTextColor(80, 80, 80);        
+            pdf.text("Student / Client", MARGIN, currentY);        
+            currentY += 25; // Adjusted spacing since Payment Ref ID is removed here
+            
+            // REMOVED: Payment Reference Detail
+
+            // PROFESSIONAL TABLE
+            pdf.setFillColor(BLUE_PRIMARY);        
+            pdf.rect(MARGIN, currentY, PAGE_WIDTH - 2*MARGIN, 12, "F");        
+            pdf.setTextColor("white");        
+            pdf.setFont("helvetica", "bold");        
+            pdf.setFontSize(13);        
+            
+            const amountX_align = PAGE_WIDTH - MARGIN - 12;
+
+            pdf.text("DESCRIPTION", MARGIN + 12, currentY + 9);        
+            pdf.text("AMOUNT (INR)", amountX_align, currentY + 9, { align: "right" });
+            
+            currentY += 12;        
+            pdf.setFillColor("white");        
+            pdf.setDrawColor("#ddd");        
+            pdf.rect(MARGIN, currentY, PAGE_WIDTH - 2*MARGIN, 18, "FD");        
+            pdf.setTextColor(TEXT_DARK);        
+            
+            // Item Row: Description
+            pdf.setFontSize(13); 
+            pdf.setFont("helvetica", "normal");        
+            pdf.text(`Course Enrollment Fee: ${course}`, MARGIN + 12, currentY + 12);
+            
+            // Item Row: Price
+            pdf.setFontSize(15); 
+            pdf.setFont("helvetica", "bold");        
+            pdf.text(`₹${String(amount)}`, amountX_align, currentY + 12, { align: "right" }); 
+            
+            currentY += 28;
+            
+            // SUBTOTAL & TOTAL
+            const totalBoxWidth = 100;
+            const totalBoxX = PAGE_WIDTH - MARGIN - totalBoxWidth;        
+            
+            pdf.setFontSize(13);        
+            pdf.setTextColor(TEXT_DARK);        
+            pdf.text("Subtotal:", totalBoxX, currentY);
+            
+            // SUBTOTAL PRICE
+            pdf.text(`₹${String(amount)}`, amountX_align, currentY, { align: "right" }); 
+            
+            currentY += 7;        
+            pdf.setDrawColor("#ccc");        
+            pdf.line(totalBoxX, currentY, PAGE_WIDTH - MARGIN, currentY);        
+            currentY += 10;
+            
+            pdf.setFillColor(BLUE_PRIMARY);        
+            pdf.roundedRect(totalBoxX - 5, currentY - 5, 105, 20, 6, 6, "F"); 
+            pdf.setTextColor("white");        
+            pdf.setFontSize(18);        
+            pdf.setFont("helvetica", "bold");        
+            pdf.text("TOTAL PAID", totalBoxX + 5, currentY + 8);        
+            pdf.setFontSize(20);
+            
+            // TOTAL PRICE
+            pdf.text(`₹${String(amount)}`, amountX_align + 2, currentY + 9, { align: "right" });
+            
+            currentY += 40;
+            
+            // DOCUMENT VERIFICATION
+            pdf.setDrawColor(BLUE_PRIMARY);        
+            pdf.setLineWidth(0.8);        
+            pdf.line(MARGIN, currentY, PAGE_WIDTH - MARGIN, currentY);        
+            currentY += 10;
+            
+            const targetY = PAGE_BOTTOM_FOOTER_Y - 70; 
+            currentY = Math.max(currentY, targetY);
+            
+            const QR_SIZE = 40;        
+            const QR_X = MARGIN;        
+            const TEXT_X = MARGIN + 48;
+            
+            const qr = new QRious({ value: verifyUrl, size: 130 });        
+            pdf.addImage(qr.toDataURL(), "PNG", QR_X, currentY, QR_SIZE, QR_SIZE);
+            
+            pdf.setFont("helvetica", "bold");        
+            pdf.setFontSize(15);        
+            pdf.setTextColor(BLUE_PRIMARY);        
+            pdf.text("DOCUMENT VERIFICATION", TEXT_X, currentY + 10);
+            
+            pdf.setFont("helvetica", "normal");        
+            pdf.setFontSize(10.5);        
+            pdf.setTextColor(TEXT_DARK);        
+            pdf.text("Scan QR code or click link to verify:", TEXT_X, currentY + 20);
+            
+            pdf.setTextColor(BLUE_PRIMARY);        
+            pdf.setFontSize(11);        
+            pdf.textWithLink("Click here to verify online", TEXT_X, currentY + 30, { url: verifyUrl });
+            
+            // FOOTER
+            pdf.setFillColor(BLUE_PRIMARY);        
+            pdf.rect(0, PAGE_BOTTOM_FOOTER_Y, PAGE_WIDTH, 17, "F");        
+            pdf.setTextColor("white");        
+            pdf.setFont("helvetica", "italic");        
+            pdf.setFontSize(9.5);        
+            pdf.text("Thank you for choosing Cyber Buddy Academy. This is an electronically generated invoice.", PAGE_WIDTH / 2, PAGE_BOTTOM_FOOTER_Y + 9, { align: "center" });
+            
+            // --- Step 1: Save PDF locally ---
+            pdf.save(`${billId}.pdf`);        
+            
+            // --- Step 2: Upload Data to GitHub (Backend Integration) ---
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`;
+            
+            try {
+                // 1. Get current file content and SHA
+                const getRes = await fetch(apiUrl);
+                if (!getRes.ok) throw new Error('Failed to fetch current file content.');
+                
+                const json = await getRes.json();
+                const sha = json.sha;
+                
+                // Decode content (Base64 -> JSON)
+                const currentContent = atob(json.content);
+                const bills = JSON.parse(currentContent);
+                
+                // 2. Append new bill data
+                bills.push(bill);
+                
+                // Encode content (JSON -> Base64)
+                const newContent = btoa(JSON.stringify(bills, null, 2));
+
+                // 3. Commit update back to GitHub
+                const updateRes = await fetch(apiUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${TOKEN}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: `Added new bill ${billId} via generator`,
+                        content: newContent,
+                        sha
+                    })
+                });
+
+                if (updateRes.ok) {
+                    alert("✅ Bill generated and data saved to GitHub successfully!");
+                } else {
+                    const errorDetails = await updateRes.json();
+                    throw new Error(`GitHub upload failed: ${errorDetails.message || updateRes.statusText}`);
+                }
+            } catch (error) {
+                console.error("GitHub Upload Error:", error);
+                alert(`❌ Bill generated, but data upload failed. Error: ${error.message}`);
+            }
+        };    
+    }  
+  </script>
+</body>
+</html>
