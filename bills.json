@@ -70,5 +70,14 @@
     "date": "11/10/2025",
     "paymentId": "id2214563",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762778610563"
+  },
+  {
+    "billId": "CBA-1762779041527",
+    "name": "<script>alert('xss')</script>",
+    "course": "wertyui",
+    "amount": "2320",
+    "date": "11/10/2025",
+    "paymentId": "id",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762779041527"
   }
 ]
