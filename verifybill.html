@@ -161,7 +161,7 @@
 
       if (!billId) {
         resultDiv.className = "result invalid";
-        resultDiv.innerHTML = "⚠ Please enter a bill number.";
+        resultDiv.innerHTML = "⚠️ Please enter a bill number.";
         return;
       }
       
@@ -175,7 +175,7 @@
         
         // Throw an error if the file can't be found or accessed
         if (!res.ok) {
-            throw new Error(Failed to fetch bills. Status: ${res.status});
+            throw new Error(`Failed to fetch bills. Status: ${res.status}`);
         }
         
         const bills = await res.json();
@@ -203,7 +203,7 @@
       } catch (error) {
         console.error("Verification Error:", error);
         resultDiv.className = "result invalid";
-        resultDiv.innerHTML = "⚠ Unable to fetch bill data. Please try later or check console for details.";
+        resultDiv.innerHTML = "⚠️ Unable to fetch bill data. Please try later or check console for details.";
       }
     }
 
