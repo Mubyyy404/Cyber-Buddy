@@ -2,270 +2,297 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Official Bill Verification - Cyber Buddy Academy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1e40af" />
+  <title>Verify Bill - Cyber Buddy Academy</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <style>
     :root {
       --primary: #1e40af;
-      --primary-light: #3b82f6;
+      --primary-light: #2563eb;
       --success: #059669;
       --danger: #dc2626;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-700: #374151;
-      --gray-900: #111827;
-      --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --gray-100: #f8fafc;
+      --gray-200: #e2e8f0;
+      --gray-700: #334155;
+      --gray-900: #0f172a;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     body {
-      font-family: 'Inter', sans-serif;
-      background: #f9fafb;
-      color: var(--gray-900);
-      line-height: 1.6;
-      padding: 20px;
+      font-family:'Inter',sans-serif;
+      background:#f1f5f9;
+      color:var(--gray-900);
+      line-height:1.5;
+      min-height:100dvh;
+      display:flex;
+      flex-direction:column;
+      padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     .container {
-      max-width: 520px;
-      margin: 40px auto;
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--gray-200);
+      flex:1;
+      max-width:500px;
+      margin:10px auto;
+      background:white;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 10px 25px rgba(0,0,0,0.1);
+      border:1px solid #e0e7ff;
     }
     header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      color: white;
-      padding: 32px 40px;
-      text-align: center;
+      background:linear-gradient(135deg,var(--primary),var(--primary-light));
+      color:white;
+      padding:30px 20px 25px;
+      text-align:center;
     }
     .logo {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      border: 5px solid rgba(255,255,255,0.25);
-      object-fit: cover;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width:78px;
+      height:78px;
+      border-radius:50%;
+      border:4px solid rgba(255,255,255,0.3);
+      object-fit:cover;
+      margin-bottom:12px;
+      box-shadow:0 6px 16px rgba(0,0,0,0.3);
     }
     h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 8px;
+      font-size:1.45rem;
+      font-weight:700;
+      margin-bottom:4px;
+      word-spacing:-2px;
     }
     .tagline {
-      font-size: 1rem;
-      opacity: 0.95;
-      font-weight: 500;
+      font-size:0.92rem;
+      opacity:0.95;
+      font-weight:500;
     }
     .main {
-      padding: 40px;
-    }
-    .form-group {
-      margin-bottom: 24px;
+      padding:28px 22px;
+      flex:1;
     }
     label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--gray-700);
-      font-size: 0.95rem;
+      display:block;
+      font-weight:600;
+      margin-bottom:9px;
+      color:var(--gray-700);
+      font-size:0.94rem;
     }
     .input-wrapper {
-      position: relative;
+      position:relative;
     }
     input {
-      width: 100%;
-      padding: 16px 20px 16px 52px;
-      border: 2px solid var(--gray-200);
-      border-radius: 12px;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
+      width:100%;
+      padding:17px 20px 17px 54px;
+      border:2px solid #dbeafe;
+      border-radius:16px;
+      font-size:1.06rem;
+      background:#fafbff;
+      letter-spacing:0.5px;
     }
     input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      outline:none;
+      border-color:var(--primary);
+      background:white;
+      box-shadow:0 0 0 4px rgba(37,99,235,0.18);
     }
     .input-icon {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--gray-700);
-      font-size: 1.2rem;
+      position:absolute;
+      left:19px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--primary);
+      font-size:1.25rem;
     }
     button {
-      background: var(--primary);
-      color: white;
-      padding: 16px 32px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      margin-top:12px;
+      background:var(--primary);
+      color:white;
+      padding:18px;
+      border:none;
+      border-radius:16px;
+      font-size:1.12rem;
+      font-weight:600;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      box-shadow:0 8px 20px rgba(37,99,235,0.3);
+      transition:all 0.3s ease;
     }
-    button:hover {
-      background: #1d4ed8;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
-    }
-    button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
-    }
+    button:active { transform:translateY(1px); }
+    button:disabled { opacity:0.7; }
     .result {
-      margin-top: 32px;
-      padding: 28px;
-      border-radius: 14px;
-      display: none;
-      animation: fadeIn 0.6s ease-out;
+      margin-top:26px;
+      padding:26px 22px;
+      border-radius:18px;
+      display:none;
     }
     .verified {
-      background: #f0fdf4;
-      border: 2px solid var(--success);
+      background:#f0fdf4;
+      border:2px solid #86efac;
     }
     .invalid {
-      background: #fef2f2;
-      border: 2px solid var(--danger);
-      animation: shake 0.5s ease-in-out;
+      background:#fef2f2;
+      border:2px solid #fca5a5;
+      animation:shake 0.5s ease-in-out;
     }
     .result-icon {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-    }
-    .verified .result-icon {
-      background: #dcfce7;
-      color: var(--success);
+      width:70px;
+      height:70px;
+      margin:0 auto 16px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2.2rem;
+      background:#86efac;
+      color:white;
     }
     .invalid .result-icon {
-      background: #fee2e2;
-      color: var(--danger);
+      background:#fca5a5;
     }
     .result h2 {
-      font-size: 1.5rem;
-      margin: 16px 0 12px;
-      text-align: center;
+      font-size:1.35rem;
+      text-align:center;
+      margin:12px 0;
+      font-weight:700;
+    }
+    .result p {
+      text-align:center;
+      font-size:0.94rem;
+      color:#1e293b;
+      margin-bottom:16px;
     }
     .bill-info {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      margin-top: 24px;
-      border: 1px solid var(--gray-200);
+      background:white;
+      border-radius:14px;
+      padding:20px;
+      margin-top:20px;
+      border:1.5px dashed #93c5fd;
+      font-size:0.95rem;
     }
     .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--gray-100);
-      font-size: 1rem;
+      display:flex;
+      justify-content:space-between;
+      padding:11px 0;
+      border-bottom:1px solid #f0f9ff;
+      word-break:break-all;
     }
-    .info-row:last-child { border-bottom: none; }
+    .info-row:last-child { border:none; }
     .label {
-      font-weight: 600;
-      color: var(--gray-700);
+      font-weight:600;
+      color:var(--gray-700);
+      min-width:105px;
     }
     .value {
-      color: var(--gray-900);
-      font-weight: 500;
+      font-weight:500;
+      color:var(--gray-900);
+      text-align:right;
+      flex:1;
+      margin-left:12px;
+      word-break:break-word;
     }
     .actions {
-      margin-top: 24px;
-      display: flex;
-      gap: 12px;
+      margin-top:22px;
+      display:flex;
+      gap:10px;
     }
     .btn-secondary {
-      background: var(--gray-100);
-      color: var(--gray-700);
-      flex: 1;
+      flex:1;
+      background:#f8fafc;
+      color:var(--primary);
+      border:2px solid #dbeafe;
+      padding:14px;
+      border-radius:14px;
+      font-weight:600;
+      font-size:0.98rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
     .security-note {
-      margin-top: 32px;
-      text-align: center;
-      font-size: 0.875rem;
-      color: var(--gray-700);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      margin-top:26px;
+      text-align:center;
+      font-size:0.82rem;
+      color:#64748b;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
     }
     footer {
-      text-align: center;
-      padding: 24px;
-      background: var(--gray-100);
-      color: var(--gray-700);
-      font-size: 0.9rem;
-      border-top: 1px solid var(--gray-200);
+      padding:18px;
+      background:#0f172a;
+      color:#94a3b8;
+      text-align:center;
+      font-size:0.82rem;
     }
+    footer a { color:#93c5fd; text-decoration:none; }
     .loading {
-      width: 20px;
-      height: 20px;
-      border: 2px solid #ffffff40;
-      border-top: 2px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      width:20px;
+      height:20px;
+      border:3px solid #ffffff50;
+      border-top:3px solid white;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
-    @media (max-width: 480px) {
-      .container { margin: 20px auto; }
-      .main { padding: 30px 24px; }
-      header { padding: 28px 24px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-9px)} 75%{transform:translateX(9px)} }
+
+    /* Ultra-mobile fixes */
+    @media (max-width:380px) {
+      .container { margin:6px; border-radius:16px; }
+      header { padding:24px 16px; }
+      .logo { width:70px; height:70px; }
+      h1 { font-size:1.35rem; }
+      .main { padding:24px 18px; }
+      input { padding:15px 16px 15px 50px; font-size:1rem; }
+      button { padding:16px; font-size:1.05rem; }
+      .info-row { flex-direction:column; gap:4px; }
+      .label { min-width:auto; }
+      .value { text-align:left; margin-left:0; }
+      .actions { flex-direction:column; }
+      .btn-secondary { width:100%; }
+    }
+    @media (max-width:340px) {
+      h1 { font-size:1.25rem; }
+      .tagline { font-size:0.88rem; }
+      label { font-size:0.9rem; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Academy" class="logo">
-      <h1>Official Bill Verification</h1>
-      <p class="tagline">Secure • Instant • Authentic</p>
+      <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Logo" class="logo">
+      <h1>Bill Verification</h1>
+      <p class="tagline">Instant • Secure • Official</p>
     </header>
 
     <div class="main">
-      <div class="form-group">
-        <label for="billIdInput">Enter Bill Reference Number</label>
-        <div class="input-wrapper">
-          <i class="fas fa-hashtag input-icon"></i>
-          <input type="text" id="billIdInput" placeholder="e.g. CBA-1731153476123" autocomplete="off" autofocus>
-        </div>
+      <label for="billIdInput">Bill Reference Number</label>
+      <div class="input-wrapper">
+        <i class="fas fa-barcode input-icon"></i>
+        <input type="text" id="billIdInput" placeholder="CBA-1731153476123" autocomplete="off" inputmode="text" autofocus>
       </div>
 
       <button id="verifyBtn" onclick="verifyBill()">
-        <span id="btnText">Verify Payment</span>
+        <span id="btnText">Verify Now</span>
         <span id="loader" class="loading" style="display:none;"></span>
       </button>
 
       <div id="result" class="result"></div>
 
       <div class="security-note">
-        <i class="fas fa-lock"></i>
-        <span>Encrypted connection • Official verification only</span>
+        <i class="fas fa-shield-halved"></i>
+        <span>256-bit SSL • Official Verification</span>
       </div>
     </div>
 
     <footer>
-      <p>© 2025 Cyber Buddy Academy • Tiruppur, Tamil Nadu • All Rights Reserved</p>
-      <p style="margin-top: 8px; font-size: 0.8rem;">
-        Verified by <strong>cyberbuddyacademy.in</strong> • Support: +91 98765 43210
-      </p>
+      <p>© 2025 Cyber Buddy Academy</p>
+      <p>Support: <a href="https://wa.me/919876543210">+91 98765 43210</a></p>
     </footer>
   </div>
 
@@ -280,108 +307,91 @@
       resultDiv.style.display = "none";
       resultDiv.innerHTML = "";
 
-      if (!billId || billId.length < 8) {
-        showResult("invalid", "Please enter a valid bill number.");
+      if (!billId || billId.length < 10) {
+        showResult("invalid", "Enter valid bill number");
         return;
       }
 
       btn.disabled = true;
-      btnText.style.display = "none";
+      btnText.textContent = "Checking...";
       loader.style.display = "inline-block";
 
       try {
         const res = await fetch("https://mubyyy404.github.io/Cyber-Buddy/bills.json?t=" + Date.now());
-        if (!res.ok) throw new Error("Server unreachable");
+        if (!res.ok) throw new Error();
 
         const bills = await res.json();
         const bill = bills.find(b => b.billId === billId);
 
         setTimeout(() => {
           btn.disabled = false;
-          btnText.style.display = "inline";
+          btnText.textContent = "Verify Now";
           loader.style.display = "none";
 
           if (bill) {
             showResult("verified", `
               <div class="result-icon"><i class="fas fa-check"></i></div>
-              <h2>Payment Verified Successfully</h2>
-              <p style="text-align:center; color:#059669; font-weight:600;">This transaction is 100% authentic</p>
+              <h2>Verified Successfully!</h2>
+              <p>Payment is 100% authentic</p>
               <div class="bill-info">
                 <div class="info-row"><span class="label">Bill ID</span><span class="value">${bill.billId}</span></div>
-                <div class="info-row"><span class="label">Student Name</span><span class="value">${bill.name}</span></div>
-                <div class="info-row"><span class="label">Course Enrolled</span><span class="value">${bill.course}</span></div>
-                <div class="info-row"><span class="label">Amount Paid</span><span class="value">₹${bill.amount.toLocaleString()}</span></div>
-                <div class="info-row"><span class="label">Payment Mode</span><span class="value">${bill.paymentMode || 'Online Transfer'}</span></div>
-                <div class="info-row"><span class="label">Transaction Date</span><span class="value">${bill.date}</span></div>
+                <div class="info-row"><span class="label">Name</span><span class="value">${bill.name}</span></div>
+                <div class="info-row"><span class="label">Course</span><span class="value">${bill.course}</span></div>
+                <div class="info-row"><span class="label">Amount</span><span class="value">₹${Number(bill.amount).toLocaleString('en-IN')}</span></div>
+                <div class="info-row"><span class="label">Mode</span><span class="value">${bill.paymentMode || 'UPI'}</span></div>
+                <div class="info-row"><span class="label">Date</span><span class="value">${bill.date}</span></div>
               </div>
               <div class="actions">
-                <button class="btn-secondary" onclick="copyBillId('${bill.billId}')"><i class="fas fa-copy"></i> Copy ID</button>
-                <button class="btn-secondary" onclick="shareProof('${bill.billId}')"><i class="fas fa-share-alt"></i> Share</button>
+                <button class="btn-secondary" onclick="copy('${bill.billId}')"><i class="fas fa-copy"></i> Copy ID</button>
+                <button class="btn-secondary" onclick="share('${bill.billId}')"><i class="fas fa-share-alt"></i> Share</button>
               </div>
             `);
           } else {
             showResult("invalid", `
               <div class="result-icon"><i class="fas fa-times"></i></div>
-              <h2>Invalid Bill Number</h2>
-              <p style="text-align:center;">This bill ID does not exist in our records.<br><br>
-              <strong>Possible reasons:</strong><br>
-              • Wrong bill number entered<br>
-              • Payment not yet processed<br>
-              • Fake/duplicate bill<br><br>
-              <a href="https://wa.me/919876543210" target="_blank" style="color:var(--primary); text-decoration:underline;">Contact Support →</a>
+              <h2>Invalid Bill</h2>
+              <p>Bill not found in records<br><br>
+              <a href="https://wa.me/919876543210?text=Bill%20not%20found:%20${billId}" style="color:#1e40af;font-weight:600;">WhatsApp Support →</a>
               </p>
             `);
           }
-        }, 1400);
+        }, 1200);
 
-      } catch (err) {
+      } catch {
         btn.disabled = false;
-        btnText.style.display = "inline";
+        btnText.textContent = "Retry";
         loader.style.display = "none";
         showResult("invalid", `
-          <div class="result-icon"><i class="fas fa-exclamation-triangle"></i></div>
-          <h2>Verification Failed</h2>
-          <p style="text-align:center;">Unable to connect to the server.<br><br>
-          Please check your internet connection or try again later.<br><br>
-          <small>Last checked: ${new Date().toLocaleString('en-IN')}</small>
-          </p>
+          <div class="result-icon"><i class="fas fa-wifi"></i></div>
+          <h2>No Internet</h2>
+          <p>Check connection & try again</p>
         `);
       }
     }
 
     function showResult(type, content) {
-      const resultDiv = document.getElementById("result");
-      resultDiv.className = `result ${type}`;
-      resultDiv.innerHTML = content;
-      resultDiv.style.display = "block";
+      const r = document.getElementById("result");
+      r.className = `result ${type}`;
+      r.innerHTML = content;
+      r.style.display = "block";
+      r.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
-    function copyBillId(id) {
-      navigator.clipboard.writeText(id);
-      alert("Bill ID copied: " + id);
+    function copy(id) { navigator.clipboard.writeText(id); alert("Copied: " + id); }
+    function share(id) {
+      const url = location.href.split('?')[0] + "?billid=" + id;
+      navigator.share ? navigator.share({url}) : (navigator.clipboard.writeText(url), alert("Link copied!"));
     }
 
-    function shareProof(id) {
-      const url = location.origin + location.pathname + "?billid=" + encodeURIComponent(id);
-      if (navigator.share) {
-        navigator.share({ title: "My Cyber Buddy Academy Payment", url });
-      } else {
-        prompt("Share this official link:", url);
-      }
-    }
-
-    // Auto-fill from URL
+    // Auto-fill
     const params = new URLSearchParams(location.search);
-    const autoId = params.get("billid");
-    if (autoId) {
-      document.getElementById("billIdInput").value = autoId;
-      setTimeout(verifyBill, 1000);
+    const id = params.get("billid");
+    if (id) {
+      document.getElementById("billIdInput").value = id;
+      setTimeout(verifyBill, 700);
     }
 
-    // Enter key
-    document.getElementById("billIdInput").addEventListener("keypress", e => {
-      if (e.key === "Enter") verifyBill();
-    });
+    document.getElementById("billIdInput").addEventListener("keypress", e => e.key === "Enter" && verifyBill());
   </script>
 </body>
 </html>
