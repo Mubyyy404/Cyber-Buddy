@@ -341,5 +341,14 @@
     "date": "11/11/2025",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762845897526"
+  },
+  {
+    "billId": "CBA-1762845953841",
+    "name": "Mohamed Mubeen S",
+    "course": "Web Aplication Pentesting",
+    "amount": "999",
+    "date": "11/11/2025",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762845953841"
   }
 ]
