@@ -368,5 +368,14 @@
     "date": "11/11/2025",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762846659600"
+  },
+  {
+    "billId": "CBA-1762850074721",
+    "name": "Ahamed Umair Khan",
+    "course": "Network Pentesting",
+    "amount": "2999",
+    "date": "11/11/2025",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762850074721"
   }
 ]
