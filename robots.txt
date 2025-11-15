@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mubyyy404.github.io/Cyber-Buddy/sitemap.xml
