@@ -16,5 +16,14 @@
     "date": "11/11/2025",
     "paymentMode": "Cash",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1762880075726"
+  },
+  {
+    "billId": "CBA-1764578188671",
+    "name": "Aravind S",
+    "course": "Introduction to Cybersecurity",
+    "amount": "800",
+    "date": "1/12/2025",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1764578188671"
   }
 ]
