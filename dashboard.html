@@ -1,553 +1,211 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Cyber Buddy Academy | Secure LMS Dashboard</title>
-
-<!-- ================= GOOGLE FONT ================= -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<!-- ================= GLOBAL STYLES ================= -->
-<style>
-
-/* =====================================================
-   GLOBAL RESET & BASE
-===================================================== */
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#06080f,#121826);
-  color:#e6f6f8;
-  min-height:100vh;
-}
-
-/* =====================================================
-   HEADER / NAVBAR
-===================================================== */
-header{
-  position:sticky;
-  top:0;
-  z-index:50;
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:space-between;
-  padding:14px 20px;
-  background:rgba(0,0,0,.9);
-  border-bottom:1px solid #00ffe0;
-}
-
-.logo{
-  height:46px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.brand h1{
-  font-size:20px;
-  color:#00ffe0;
-  font-weight:600;
-}
-
-.user-info{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.avatar{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid #00ffe0;
-}
-
-#userName{
-  font-size:14px;
-  color:#00ffe0;
-}
-
-nav{
-  display:flex;
-  gap:14px;
-}
-
-nav button{
-  background:none;
-  border:none;
-  color:#ccc;
-  font-size:14px;
-  cursor:pointer;
-}
-
-nav button:hover{
-  color:#00ffe0;
-}
-
-/* =====================================================
-   MAIN LAYOUT
-===================================================== */
-main{
-  padding:30px 22px;
-  max-width:1300px;
-  margin:auto;
-}
-
-.section{
-  display:none;
-  animation:fade .3s ease;
-}
-
-.section.active{
-  display:block;
-}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(5px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* =====================================================
-   TITLES
-===================================================== */
-.section h2{
-  margin-bottom:20px;
-  color:#00ffe0;
-}
-
-/* =====================================================
-   DASHBOARD CARDS
-===================================================== */
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
-  margin-bottom:30px;
-}
-
-.stat-card{
-  background:#121826;
-  padding:20px;
-  border-radius:12px;
-  border:1px solid rgba(0,255,224,.2);
-}
-
-.stat-card h3{
-  font-size:14px;
-  color:#bbb;
-}
-
-.stat-card p{
-  font-size:28px;
-  font-weight:700;
-  color:#00ffe0;
-  margin-top:6px;
-}
-
-/* =====================================================
-   COURSE GRID
-===================================================== */
-.course-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:22px;
-}
-
-.course-card{
-  background:#1a1f2e;
-  border-radius:14px;
-  overflow:hidden;
-  border:1px solid rgba(0,255,224,.15);
-  transition:.3s;
-}
-
-.course-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 0 28px rgba(0,255,224,.25);
-}
-
-.course-card img{
-  width:100%;
-  height:150px;
-  object-fit:cover;
-}
-
-.course-body{
-  padding:16px;
-}
-
-.course-body h4{
-  color:#00ffe0;
-  font-size:16px;
-}
-
-.course-body p{
-  font-size:13px;
-  color:#bbb;
-  margin:10px 0;
-  min-height:50px;
-}
-
-.course-body button{
-  width:100%;
-  padding:9px;
-  background:#00ffe0;
-  color:#000;
-  border:none;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.course-body button.locked{
-  background:#444;
-  color:#999;
-  cursor:not-allowed;
-}
-
-/* =====================================================
-   PROFILE FORM
-===================================================== */
-.profile-box{
-  max-width:520px;
-  background:#121826;
-  border-radius:14px;
-  padding:22px;
-  border:1px solid rgba(0,255,224,.2);
-}
-
-.profile-box label{
-  display:block;
-  font-size:13px;
-  margin-top:14px;
-  color:#bbb;
-}
-
-.profile-box input{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  background:#0b1220;
-  border:1px solid #00ffe0;
-  border-radius:6px;
-  color:#fff;
-}
-
-.profile-box button{
-  margin-top:18px;
-  width:100%;
-  padding:12px;
-  background:#00ffe0;
-  border:none;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-/* =====================================================
-   FOOTER
-===================================================== */
-footer{
-  margin-top:60px;
-  padding:18px;
-  text-align:center;
-  background:#000;
-  border-top:1px solid #00ffe0;
-  font-size:13px;
-  color:#bbb;
-}
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-@media(max-width:600px){
-  nav{flex-wrap:wrap}
-  .brand h1{font-size:17px}
-}
-
-</style>
-</head>
-
-<body>
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
-<header>
-  <div class="brand">
-    <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png">
-    <h1>Cyber Buddy Academy</h1>
-  </div>
-
-  <div class="user-info">
-    <img id="avatar" class="avatar">
-    <span id="userName">Loading...</span>
-  </div>
-
-  <nav>
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('courses')">My Courses</button>
-    <button onclick="showSection('profile')">Profile</button>
-    <button onclick="logout()">Logout</button>
-  </nav>
-</header>
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
-<main>
-
-<!-- ================= DASHBOARD ================= -->
-<section id="dashboard" class="section active">
-  <h2>Dashboard Overview</h2>
-
-  <div class="stats">
-    <div class="stat-card">
-      <h3>Total Courses</h3>
-      <p id="totalCourses">0</p>
-    </div>
-    <div class="stat-card">
-      <h3>Purchased Courses</h3>
-      <p id="purchasedCourses">0</p>
-    </div>
-    <div class="stat-card">
-      <h3>Completed</h3>
-      <p id="completedCourses">0</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= COURSES ================= -->
-<section id="courses" class="section">
-  <h2>Your Courses</h2>
-  <div id="courseGrid" class="course-grid"></div>
-</section>
-
-<!-- ================= PROFILE ================= -->
-<section id="profile" class="section">
-  <h2>Your Profile</h2>
-
-  <div class="profile-box">
-    <label>Name</label>
-    <input id="nameInput">
-
-    <label>Email</label>
-    <input id="emailInput" readonly>
-
-    <label>Phone</label>
-    <input id="phoneInput">
-
-    <button onclick="saveProfile()">Save Changes</button>
-  </div>
-</section>
-
-</main>
-
-<footer>
-© 2025 Cyber Buddy Academy — Secure Learning Platform
-</footer>
-
-<!-- =====================================================
-     FIREBASE + LOGIC (SINGLE SCRIPT)
-===================================================== -->
-<script type="module">
-
-/* =====================================================
-   FIREBASE IMPORTS
-===================================================== */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { 
-  getAuth,
-  onAuthStateChanged,
-  signOut,
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-/* =====================================================
-   FIREBASE CONFIG (REPLACE)
-===================================================== */
-const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-/* =====================================================
-   DOM ELEMENTS
-===================================================== */
-const avatar = document.getElementById("avatar");
-const userName = document.getElementById("userName");
-
-const totalCoursesEl = document.getElementById("totalCourses");
-const purchasedCoursesEl = document.getElementById("purchasedCourses");
-const completedCoursesEl = document.getElementById("completedCourses");
-
-const courseGrid = document.getElementById("courseGrid");
-
-const nameInput = document.getElementById("nameInput");
-const emailInput = document.getElementById("emailInput");
-const phoneInput = document.getElementById("phoneInput");
-
-/* =====================================================
-   GLOBAL STATE
-===================================================== */
-let currentUser = null;
-let userData = {};
-let allCourses = [];
-
-/* =====================================================
-   AUTH GUARD
-===================================================== */
-onAuthStateChanged(auth, async (user)=>{
-  if(!user){
-    location.href="login.html";
-    return;
-  }
-
-  currentUser = user;
-  avatar.src = user.photoURL || "https://i.pravatar.cc/150";
-  userName.textContent = user.displayName || user.email;
-
-  emailInput.value = user.email;
-
-  await loadUserData();
-  await loadCourses();
-  renderDashboard();
-});
-
-/* =====================================================
-   LOAD USER DATA
-===================================================== */
-async function loadUserData(){
-  const snap = await getDoc(doc(db,"users",currentUser.uid));
-  if(snap.exists()){
-    userData = snap.data();
-    nameInput.value = userData.name || "";
-    phoneInput.value = userData.phone || "";
-  }else{
-    userData = { purchasedCourses:[], progress:{} };
-  }
-}
-
-/* =====================================================
-   LOAD COURSES
-===================================================== */
-async function loadCourses(){
-  const snap = await getDocs(collection(db,"courses"));
-  allCourses = [];
-  snap.forEach(d=>{
-    allCourses.push({id:d.id,...d.data()});
-  });
-
-  renderCourses();
-}
-
-/* =====================================================
-   RENDER DASHBOARD STATS
-===================================================== */
-function renderDashboard(){
-  totalCoursesEl.textContent = allCourses.length;
-  purchasedCoursesEl.textContent = (userData.purchasedCourses || []).length;
-
-  let completed = 0;
-  for(const id in userData.progress || {}){
-    if(userData.progress[id] === 100) completed++;
-  }
-  completedCoursesEl.textContent = completed;
-}
-
-/* =====================================================
-   RENDER COURSES
-===================================================== */
-function renderCourses(){
-  courseGrid.innerHTML = "";
-
-  allCourses.forEach(course=>{
-    const purchased = (userData.purchasedCourses||[]).includes(course.id);
-
-    const card = document.createElement("div");
-    card.className="course-card";
-
-    card.innerHTML = `
-      <img src="${course.image || 'https://via.placeholder.com/300'}">
-      <div class="course-body">
-        <h4>${course.title}</h4>
-        <p>${course.description}</p>
-        <button class="${purchased ? '' : 'locked'}">
-          ${purchased ? "Access Course" : "Locked"}
-        </button>
-      </div>
-    `;
-
-    const btn = card.querySelector("button");
-    if(purchased){
-      btn.onclick = ()=>location.href=course.id+".html";
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Buddy Academy - Courses Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #080808, #121826);
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.85);
+      border-bottom: 1px solid #00ffe0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+    header img.logo { height: 50px; }
+    header h2 {
+      font-size: 22px;
+      color: #00ffe0;
+      margin: 0;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #00ffe0;
+      transition: transform 0.3s ease;
+    }
+    .profile-pic:hover { transform: scale(1.1); }
+    #userName {
+      font-size: 1rem;
+      color: #00ffe0;
+      text-shadow: 0 0 5px rgba(0, 255, 224, 0.5);
+      word-break: break-word;
+    }
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    nav a, nav button {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    nav a:hover, nav button:hover {
+      color: #00ffe0;
+      text-shadow: 0 0 8px rgba(0, 255, 224, 0.7);
+    }
+    .container {
+      padding: 30px 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #00ffe0;
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+    .no-courses {
+      text-align: center;
+      padding: 20px;
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff4d4d;
+      border-radius: 8px;
+      color: #ff4d4d;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #1a1f2e;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 224, 0.1);
+      overflow: hidden;
+      transition: 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(0, 255, 224, 0.3);
+    }
+    .card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 15px;
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #00ffe0;
+      font-size: 16px;
+    }
+    .card p {
+      color: #bbb;
+      font-size: 13px;
+      line-height: 1.4;
+      min-height: 50px;
+    }
+    .card button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      background: #00ffe0;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .card button:hover { background: #00cfa9; }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border-top: 1px solid #00ffe0;
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 50px;
     }
 
-    courseGrid.appendChild(card);
-  });
-}
+    /* Mobile adjustments */
+    @media screen and (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .user-info {
+        margin-top: 5px;
+      }
+      nav {
+        flex-direction: row;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .container {
+        padding: 20px 15px;
+      }
+      h1 { font-size: 1.8em; }
+      .grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+      .card img { height: 120px; }
+      .card h3 { font-size: 15px; }
+      .card p { font-size: 12px; min-height: 45px; }
+      .card button { font-size: 0.9rem; padding: 7px 12px; }
+    }
 
-/* =====================================================
-   PROFILE SAVE
-===================================================== */
-async function saveProfile(){
-  const newName = nameInput.value.trim();
-  const newPhone = phoneInput.value.trim();
+    @media screen and (max-width: 480px) {
+      header h2 { font-size: 18px; }
+      #userName { font-size: 0.9rem; }
+      nav a, nav button { font-size: 0.85rem; }
+      h1 { font-size: 1.5em; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo" src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" alt="Cyber Buddy Logo">
+    <h2>Cyber Buddy Academy</h2>
+    <div class="user-info">
+      <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
+      <span id="userName"></span>
+    </div>
+    <nav>
+      <a href="course.html">My Courses</a>
+      <a href="profile.html">Profile</a>
+      <button id="logoutBtn">Logout</button>
+    </nav>
+  </header>
 
-  await updateDoc(doc(db,"users",currentUser.uid),{
-    name:newName,
-    phone:newPhone
-  });
+  <div class="container">
+    <h1>Available Courses</h1>
+    <div id="noCourses" class="no-courses" style="display: none;">
+      <p>No courses available at the moment.</p>
+    </div>
+    <div class="grid" id="courseGrid"></div>
+  </div>
 
-  await updateProfile(currentUser,{displayName:newName});
-  alert("Profile updated");
-}
+  <footer>
+    © 2025 Cyber Buddy Academy — All Rights Reserved
+  </footer>
 
-/* =====================================================
-   NAVIGATION
-===================================================== */
-window.showSection = function(id){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-};
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-window.logout = async function(){
-  await signOut(auth);
-  location.href="login.html";
-};
-
-</script>
-
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
