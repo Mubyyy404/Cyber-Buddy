@@ -1,153 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Forensics - Cyber Buddy Academy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script>
-        tailwind.config = {
-            theme: { extend: { colors: { accent: '#00ffe0' } } }
-        }
-    </script>
-    <style>
-        body { font-family: 'Poppins', sans-serif; background: #0b1220; color: #e6f6f8; }
-        .glow { text-shadow: 0 0 15px rgba(0, 255, 224, 0.4); color: #00ffe0; }
-        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 224, 0.2); backdrop-filter: blur(10px); }
-        .watermark { position: absolute; top: 15px; left: 15px; background: rgba(0, 0, 0, 0.6); color: #00ffe0; padding: 4px 10px; font-size: 11px; border-radius: 4px; pointer-events: none; z-index: 50; }
-        .video-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 16px; overflow: hidden; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Forensics – Cyber Buddy Academy</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { accent: '#00ffe0' }
+    }
+  }
+}
+</script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; background:#0b1220; color:#e6f6f8 }
+.glow { text-shadow:0 0 18px rgba(0,255,224,.35); color:#00ffe0 }
+.glass { background:rgba(255,255,255,.04); border:1px solid rgba(0,255,224,.2); backdrop-filter:blur(8px) }
+.watermark {
+  position:absolute; top:12px; left:12px;
+  background:rgba(0,0,0,.65);
+  color:#00ffe0; font-size:11px;
+  padding:4px 10px; border-radius:4px;
+  pointer-events:none; z-index:20;
+}
+</style>
 </head>
-<body class="min-h-screen p-4 md:p-10">
-    
-    <header class="flex justify-between items-center max-w-6xl mx-auto mb-10">
-        <div class="flex items-center gap-4">
-            <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="Logo" class="w-12 h-12">
-            <h1 class="text-2xl font-bold glow">Digital Forensics</h1>
-        </div>
-        <button onclick="window.location.href='../dashboard.html'" class="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-lg text-white font-medium">Dashboard</button>
-    </header>
 
-    <main class="max-w-5xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 glass-card p-6 rounded-xl gap-4">
-            <div class="text-left">
-                <h2 id="moduleTitle" class="text-xl font-bold text-accent">Loading...</h2>
-                <p id="moduleCount" class="text-sm text-gray-400">Step 1 of 1</p>
-            </div>
-            <div class="flex gap-2">
-                <button id="prevBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded disabled:opacity-30">Previous</button>
-                <button id="nextBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded disabled:opacity-30">Next</button>
-            </div>
-        </div>
+<body class="min-h-screen p-4 md:p-8">
 
-        <div class="video-container shadow-2xl border border-gray-800 mb-8">
-            <div id="watermark" class="watermark">User: Loading...</div>
-            <div id="player"></div>
-        </div>
+<header class="max-w-6xl mx-auto flex justify-between items-center mb-8">
+  <div class="flex items-center gap-4">
+    <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png"
+         class="w-12 h-12">
+    <h1 class="text-2xl font-bold glow">Digital Forensics</h1>
+  </div>
+  <button onclick="location.href='../dashboard.html'"
+    class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">
+    Dashboard
+  </button>
+</header>
 
-        <div class="glass-card p-6 rounded-xl">
-            <div class="flex justify-between items-end mb-4">
-                <h3 class="text-lg font-semibold">Course Progress</h3>
-                <span id="progressPercent" class="text-2xl font-bold text-accent">0%</span>
-            </div>
-            <div class="w-full bg-gray-800 h-4 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-accent h-full transition-all duration-700 shadow-[0_0_15px_#00ffe0]" style="width: 0%"></div>
-            </div>
-        </div>
-    </main>
+<main class="max-w-5xl mx-auto">
 
-    <script type="module">
-        import { auth, db } from './js/firebase.js';
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!-- ACCESS DENIED -->
+<div id="denied" class="hidden text-center glass p-8 rounded-xl text-red-400">
+  <h2 class="text-2xl font-bold mb-2">Access Denied</h2>
+  <p>You have not purchased this course.</p>
+</div>
 
-        // CONFIGURATION: Add your Video IDs here
-        const modules = [
-            { id: "dxQvBzGAiDg", title: "Introduction: Digital Forensics Case Study" }
-        ];
+<!-- LOADING -->
+<div id="loading" class="text-center glass p-8 rounded-xl">
+  <p class="text-gray-400">Loading course…</p>
+</div>
 
-        let player;
-        let currentIndex = 0;
-        let completedModules = new Array(modules.length).fill(false);
-        let userUID = null;
+<!-- COURSE CONTENT -->
+<div id="content" class="hidden">
 
-        // CRITICAL FIX: Attach YouTube events to window for GitHub Pages
-        window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('player', {
-                height: '100%',
-                width: '100%',
-                videoId: modules[0].id,
-                playerVars: { 
-                    'rel': 0, 
-                    'modestbranding': 1,
-                    'origin': window.location.origin, // Prevents IDOR/Origin block
-                    'enablejsapi': 1 
-                },
-                events: {
-                    'onReady': () => {
-                        updateUI();
-                        document.getElementById('moduleTitle').innerText = modules[0].title;
-                    },
-                    'onStateChange': (event) => {
-                        if (event.data === YT.PlayerState.ENDED) {
-                            markComplete();
-                        }
-                    }
-                }
-            });
-        };
+  <!-- MODULE HEADER -->
+  <div class="glass p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+    <div>
+      <h2 id="moduleTitle" class="text-xl font-bold text-accent"></h2>
+      <p id="moduleCount" class="text-sm text-gray-400"></p>
+    </div>
+    <div class="flex gap-2">
+      <button id="prevBtn" class="bg-gray-800 px-4 py-2 rounded disabled:opacity-30">Previous</button>
+      <button id="nextBtn" class="bg-gray-800 px-4 py-2 rounded disabled:opacity-30">Next</button>
+    </div>
+  </div>
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userUID = user.uid;
-                document.getElementById('watermark').innerText = `ID: ${user.email}`;
-                
-                // Fetch Saved Progress
-                const docRef = doc(db, "userProgress", userUID + "_forensics");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    completedModules = docSnap.data().completedModules;
-                }
-                updateUI();
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+  <!-- VIDEO -->
+  <div class="relative mb-6 rounded-xl overflow-hidden border border-gray-800 shadow-xl">
+    <div id="watermark" class="watermark"></div>
+    <div id="player" class="w-full aspect-video bg-black"></div>
+  </div>
 
-        async function markComplete() {
-            if (!completedModules[currentIndex]) {
-                completedModules[currentIndex] = true;
-                updateUI();
-                await setDoc(doc(db, "userProgress", userUID + "_forensics"), {
-                    completedModules: completedModules,
-                    lastUpdated: new Date()
-                });
-            }
-        }
+  <!-- PROGRESS -->
+  <div class="glass p-6 rounded-xl">
+    <div class="flex justify-between mb-2">
+      <span>Progress</span>
+      <span id="progressPercent" class="font-bold text-accent">0%</span>
+    </div>
+    <div class="w-full bg-gray-800 h-4 rounded-full overflow-hidden">
+      <div id="progressBar"
+        class="bg-accent h-full transition-all duration-700"
+        style="width:0%"></div>
+    </div>
+  </div>
 
-        function updateUI() {
-            const finishedCount = completedModules.filter(x => x === true).length;
-            const percentage = (finishedCount / modules.length) * 100;
-            document.getElementById('progressBar').style.width = percentage + '%';
-            document.getElementById('progressPercent').innerText = Math.round(percentage) + '%';
-        }
+</div>
+</main>
 
-        // Module Switcher logic
-        window.changeModule = (step) => {
-            let next = currentIndex + step;
-            if (next >= 0 && next < modules.length) {
-                currentIndex = next;
-                player.loadVideoById(modules[next].id);
-                document.getElementById('moduleTitle').innerText = modules[next].title;
-                document.getElementById('moduleCount').innerText = `Step ${next + 1} of ${modules.length}`;
-            }
-        };
+<!-- ================= SCRIPT ================= -->
+<script type="module">
+import { auth, db } from "../js/firebase.js";
+import { onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { doc, getDoc, setDoc }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-        // Attach listeners to buttons
-        document.getElementById('prevBtn').onclick = () => window.changeModule(-1);
-        document.getElementById('nextBtn').onclick = () => window.changeModule(1);
-    </script>
+/* COURSE CONFIG */
+const COURSE_ID = "digital-forensics";
+const modules = [
+  { id:"dxQvBzGAiDg", title:"Intro to Digital Forensics" },
+  { id:"9bZkp7q19f0", title:"Evidence Handling & Chain of Custody" },
+  { id:"3tmd-ClpJxA", title:"Disk & File System Analysis" },
+  { id:"L_jWHffIx5E", title:"Memory Forensics Basics" }
+];
+
+let player, userUID, index = 0;
+let completed = new Array(modules.length).fill(false);
+
+/* DOM */
+const denied = document.getElementById("denied");
+const loading = document.getElementById("loading");
+const content = document.getElementById("content");
+const titleEl = document.getElementById("moduleTitle");
+const countEl = document.getElementById("moduleCount");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressPercent");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const watermark = document.getElementById("watermark");
+
+/* AUTH + ACCESS */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    location.href = "../login.html";
+    return;
+  }
+
+  userUID = user.uid;
+  watermark.textContent = user.email;
+
+  const userDoc = await getDoc(doc(db,"users",user.uid));
+  const purchased = userDoc.exists()
+    ? userDoc.data().purchasedCourses || []
+    : [];
+
+  if (!purchased.includes(COURSE_ID)) {
+    loading.classList.add("hidden");
+    denied.classList.remove("hidden");
+    return;
+  }
+
+  // Load saved progress
+  const progRef = doc(db,"userProgress",`${user.uid}_${COURSE_ID}`);
+  const progSnap = await getDoc(progRef);
+  if (progSnap.exists()) completed = progSnap.data().completed || completed;
+
+  loading.classList.add("hidden");
+  content.classList.remove("hidden");
+});
+
+/* YOUTUBE */
+window.onYouTubeIframeAPIReady = () => {
+  player = new YT.Player("player",{
+    videoId: modules[0].id,
+    playerVars:{ rel:0, modestbranding:1 },
+    events:{
+      onReady:()=>loadModule(0),
+      onStateChange:(e)=>{
+        if(e.data === YT.PlayerState.ENDED) markComplete();
+      }
+    }
+  });
+};
+
+/* FUNCTIONS */
+function loadModule(i){
+  index = i;
+  const m = modules[i];
+  player.loadVideoById(m.id);
+  titleEl.textContent = m.title;
+  countEl.textContent = `Module ${i+1} of ${modules.length}`;
+  prevBtn.disabled = i === 0;
+  nextBtn.disabled = i === modules.length - 1;
+  updateProgress();
+}
+
+async function markComplete(){
+  if(!completed[index]){
+    completed[index] = true;
+    await setDoc(
+      doc(db,"userProgress",`${userUID}_${COURSE_ID}`),
+      { completed, updated:new Date() }
+    );
+    updateProgress();
+  }
+}
+
+function updateProgress(){
+  const done = completed.filter(Boolean).length;
+  const pct = Math.round((done/modules.length)*100);
+  progressBar.style.width = pct+"%";
+  progressText.textContent = pct+"%";
+}
+
+/* NAV */
+prevBtn.onclick = ()=>loadModule(index-1);
+nextBtn.onclick = ()=>loadModule(index+1);
+</script>
+
 </body>
 </html>
