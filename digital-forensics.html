@@ -1,193 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Digital Forensics – Cyber Buddy Academy</title>
 
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <script>
 tailwind.config = {
-  theme: { extend: { colors: { accent:"#00ffe0" } } }
-}
+  theme: { extend: { colors: { accent: "#00ffe0" } } }
+};
 </script>
 
 <style>
-body { font-family:'Poppins',sans-serif; background:#0b1220; color:#e6f6f8 }
-.glass { background:rgba(255,255,255,.04); border:1px solid rgba(0,255,224,.2); backdrop-filter:blur(8px) }
-.glow { color:#00ffe0; text-shadow:0 0 16px rgba(0,255,224,.35) }
-video::-webkit-media-controls-panel { background-color:#0b1220 }
+body {
+  font-family: "Poppins", sans-serif;
+  background: #0b1220;
+  color: #e6f6f8;
+}
+.glass {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(0,255,224,.2);
+  backdrop-filter: blur(8px);
+}
+.glow {
+  color:#00ffe0;
+  text-shadow:0 0 16px rgba(0,255,224,.35);
+}
 </style>
 </head>
 
 <body class="min-h-screen p-4 md:p-8">
 
-<header class="max-w-6xl mx-auto flex justify-between items-center mb-6">
+<!-- HEADER -->
+<header class="max-w-6xl mx-auto flex justify-between items-center mb-8">
   <div class="flex items-center gap-4">
-    <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" class="w-12 h-12">
+    <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png"
+         class="w-12 h-12" alt="Logo">
     <h1 class="text-2xl font-bold glow">Digital Forensics</h1>
   </div>
-  <button onclick="location.href='dashboard.html'" class="bg-gray-700 px-4 py-2 rounded">Dashboard</button>
+  <button onclick="location.href='../dashboard.html'"
+    class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">
+    Dashboard
+  </button>
 </header>
 
 <main class="max-w-5xl mx-auto">
 
-<div id="denied" class="hidden glass p-8 rounded-xl text-center text-red-400">
-  <h2 class="text-2xl font-bold">Access Denied</h2>
+<!-- LOADING -->
+<div id="loading" class="glass p-8 rounded-xl text-center">
+  <p class="text-gray-400">Loading course…</p>
 </div>
 
+<!-- ACCESS DENIED -->
+<div id="denied" class="hidden glass p-8 rounded-xl text-center text-red-400">
+  <h2 class="text-2xl font-bold mb-2">Access Denied</h2>
+  <p>You have not purchased this course.</p>
+</div>
+
+<!-- COURSE CONTENT -->
 <div id="content" class="hidden">
 
-<!-- MODULE HEADER -->
-<div class="glass p-5 rounded-xl flex justify-between items-center mb-4">
-  <div>
-    <h2 id="moduleTitle" class="text-xl font-bold text-accent"></h2>
-    <p id="moduleCount" class="text-sm text-gray-400"></p>
+  <!-- MODULE HEADER -->
+  <div class="glass p-6 rounded-xl flex justify-between items-center mb-6">
+    <div>
+      <h2 id="moduleTitle" class="text-xl font-bold text-accent"></h2>
+      <p id="moduleCount" class="text-sm text-gray-400"></p>
+    </div>
+    <div class="flex gap-2">
+      <button id="prevBtn"
+        class="bg-gray-800 px-4 py-2 rounded disabled:opacity-30">
+        Previous
+      </button>
+      <button id="nextBtn"
+        class="bg-gray-800 px-4 py-2 rounded disabled:opacity-30">
+        Next
+      </button>
+    </div>
   </div>
-  <div class="flex gap-2">
-    <button id="prevBtn" class="bg-gray-800 px-4 py-2 rounded">Prev</button>
-    <button id="nextBtn" class="bg-gray-800 px-4 py-2 rounded">Next</button>
-  </div>
-</div>
 
-<!-- VIDEO -->
-<div class="rounded-xl overflow-hidden border border-gray-800 shadow-xl mb-4">
-  <video id="video" class="w-full" controls playsinline></video>
-</div>
-
-<!-- PROGRESS -->
-<div class="glass p-5 rounded-xl mb-4">
-  <div class="flex justify-between mb-2">
-    <span>Progress</span>
-    <span id="progressText" class="font-bold text-accent">0%</span>
+  <!-- VIDEO -->
+  <div class="rounded-xl overflow-hidden border border-gray-800 shadow-xl mb-6">
+    <iframe
+      id="videoFrame"
+      class="w-full aspect-video"
+      src=""
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
   </div>
-  <div class="w-full bg-gray-800 h-3 rounded-full">
-    <div id="progressBar" class="bg-accent h-full transition-all" style="width:0%"></div>
-  </div>
-</div>
 
-<!-- NOTES -->
-<div class="glass p-5 rounded-xl">
-  <h3 class="font-semibold mb-2">📝 Your Notes</h3>
-  <textarea id="notes" class="w-full p-3 bg-[#0b1220] border border-gray-700 rounded text-white"
-    placeholder="Write notes for this module..."></textarea>
-  <button id="saveNote" class="mt-3 bg-accent text-black px-4 py-2 rounded font-semibold">
-    Save Notes
-  </button>
-</div>
+  <!-- PROGRESS -->
+  <div class="glass p-6 rounded-xl">
+    <div class="flex justify-between mb-2">
+      <span>Progress</span>
+      <span id="progressText" class="font-bold text-accent">0%</span>
+    </div>
+    <div class="w-full bg-gray-800 h-3 rounded-full overflow-hidden">
+      <div id="progressBar"
+        class="bg-accent h-full transition-all"
+        style="width:0%"></div>
+    </div>
+  </div>
 
 </div>
 </main>
 
-<!-- ================= FIREBASE LOGIC ================= -->
+<!-- ================= SCRIPT ================= -->
 <script type="module">
-import { auth, db } from "./js/firebase.js";
-import { onAuthStateChanged } from
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { doc, getDoc, setDoc, updateDoc } from
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { auth, db } from "../js/firebase.js";
+import { onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { doc, getDoc }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+/* CONFIG */
 const COURSE_ID = "digital-forensics";
 
-/* MULTI-SOURCE VIDEOS */
 const modules = [
-  {
-    title:"Intro to Digital Forensics",
-    sources:[
-      "https://raw.githubusercontent.com/yourrepo/videos/main/intro.mp4",
-      "https://drive.google.com/uc?export=download&id=FILE_ID"
-    ]
-  },
-  {
-    title:"Evidence Handling",
-    sources:[
-      "https://raw.githubusercontent.com/yourrepo/videos/main/evidence.mp4"
-    ]
-  }
+  { title: "Introduction to Digital Forensics", video: "dxQvBzGAiDg" },
+  { title: "Evidence Handling & Chain of Custody", video: "9bZkp7q19f0" },
+  { title: "Disk & File System Analysis", video: "3tmd-ClpJxA" },
+  { title: "Memory Forensics Basics", video: "L_jWHffIx5E" }
 ];
 
-let userUID, index = 0, progressData = {};
-const video = document.getElementById("video");
+let index = 0;
 
-/* AUTH */
-onAuthStateChanged(auth, async user => {
-  if(!user){ location.href="login.html"; return; }
-  userUID = user.uid;
+/* DOM */
+const loading = document.getElementById("loading");
+const denied = document.getElementById("denied");
+const content = document.getElementById("content");
+const frame = document.getElementById("videoFrame");
+const titleEl = document.getElementById("moduleTitle");
+const countEl = document.getElementById("moduleCount");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-  const userDoc = await getDoc(doc(db,"users",user.uid));
-  if(!userDoc.data().purchasedCourses.includes(COURSE_ID)){
-    document.getElementById("denied").classList.remove("hidden");
+/* AUTH + ACCESS */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    location.href = "../login.html";
     return;
   }
 
-  const ref = doc(db,"userCourseProgress",`${userUID}_${COURSE_ID}`);
-  const snap = await getDoc(ref);
-  progressData = snap.exists() ? snap.data() : { modules:{} };
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const purchased = userDoc.exists()
+    ? userDoc.data().purchasedCourses || []
+    : [];
 
-  document.getElementById("content").classList.remove("hidden");
-  index = progressData.currentModule || 0;
-  loadModule(index);
+  loading.classList.add("hidden");
+
+  if (!purchased.includes(COURSE_ID)) {
+    denied.classList.remove("hidden");
+    return;
+  }
+
+  content.classList.remove("hidden");
+  loadModule(0);
 });
 
-/* LOAD MODULE */
-function loadModule(i){
-  index=i;
-  const m=modules[i];
-  document.getElementById("moduleTitle").innerText=m.title;
-  document.getElementById("moduleCount").innerText=`Module ${i+1}/${modules.length}`;
+/* FUNCTIONS */
+function loadModule(i) {
+  index = i;
+  const m = modules[i];
 
-  loadVideo(m.sources);
-  restoreProgress();
-  updateUI();
+  titleEl.textContent = m.title;
+  countEl.textContent = `Module ${i + 1} of ${modules.length}`;
+  frame.src = `https://www.youtube.com/embed/${m.video}?rel=0`;
+
+  prevBtn.disabled = i === 0;
+  nextBtn.disabled = i === modules.length - 1;
+
+  updateProgress();
 }
 
-/* VIDEO SOURCE FALLBACK */
-function loadVideo(sources){
-  let idx=0;
-  video.src=sources[idx];
-  video.onerror=()=>{ if(++idx<sources.length) video.src=sources[idx]; };
+function updateProgress() {
+  const pct = Math.round(((index + 1) / modules.length) * 100);
+  progressBar.style.width = pct + "%";
+  progressText.textContent = pct + "%";
 }
-
-/* SAVE WATCH TIME */
-video.addEventListener("timeupdate", async ()=>{
-  if(!userUID) return;
-  progressData.modules[index]={ lastTime: video.currentTime };
-  await updateDoc(doc(db,"userCourseProgress",`${userUID}_${COURSE_ID}`),{
-    modules:progressData.modules,
-    currentModule:index,
-    updatedAt:new Date()
-  });
-});
-
-/* RESTORE */
-function restoreProgress(){
-  const data=progressData.modules?.[index];
-  if(data?.lastTime) video.currentTime=data.lastTime;
-  document.getElementById("notes").value =
-    progressData.notes?.[index] || "";
-}
-
-/* NOTES */
-document.getElementById("saveNote").onclick=async()=>{
-  progressData.notes=progressData.notes||{};
-  progressData.notes[index]=notes.value;
-  await updateDoc(doc(db,"userCourseProgress",`${userUID}_${COURSE_ID}`),{
-    notes:progressData.notes
-  });
-  alert("Notes saved");
-};
 
 /* NAV */
-prevBtn.onclick=()=>loadModule(Math.max(0,index-1));
-nextBtn.onclick=()=>loadModule(Math.min(modules.length-1,index+1));
-
-function updateUI(){
-  const percent=Math.round(((index+1)/modules.length)*100);
-  progressBar.style.width=percent+"%";
-  progressText.innerText=percent+"%";
-}
+prevBtn.onclick = () => loadModule(index - 1);
+nextBtn.onclick = () => loadModule(index + 1);
 </script>
 
 </body>
