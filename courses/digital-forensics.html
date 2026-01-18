@@ -13,7 +13,7 @@
         }
     </script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #0b1220; color: #e6f6f8; overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; background: #0b1220; color: #e6f6f8; }
         .glow { text-shadow: 0 0 15px rgba(0, 255, 224, 0.4); color: #00ffe0; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 224, 0.2); backdrop-filter: blur(10px); }
         .watermark { position: absolute; top: 15px; left: 15px; background: rgba(0, 0, 0, 0.6); color: #00ffe0; padding: 4px 10px; font-size: 11px; border-radius: 4px; pointer-events: none; z-index: 50; }
@@ -27,22 +27,21 @@
             <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="Logo" class="w-12 h-12">
             <h1 class="text-2xl font-bold glow">Digital Forensics</h1>
         </div>
-        <button onclick="window.location.href='../dashboard.html'" class="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-lg text-white">Back</button>
+        <button onclick="window.location.href='../dashboard.html'" class="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-lg text-white font-medium">Dashboard</button>
     </header>
 
     <main class="max-w-5xl mx-auto">
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 glass-card p-6 rounded-xl gap-4">
             <div class="text-left">
-                <h2 id="moduleTitle" class="text-xl font-bold text-accent">Loading Module...</h2>
-                <p id="moduleCount" class="text-sm text-gray-400">Step 1 of 4</p>
+                <h2 id="moduleTitle" class="text-xl font-bold text-accent">Loading...</h2>
+                <p id="moduleCount" class="text-sm text-gray-400">Step 1 of 1</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="changeModule(-1)" id="prevBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded disabled:opacity-30">Previous</button>
-                <button onclick="changeModule(1)" id="nextBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded disabled:opacity-30">Next</button>
+                <button id="prevBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded disabled:opacity-30">Previous</button>
+                <button id="nextBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded disabled:opacity-30">Next</button>
             </div>
         </div>
 
-        
         <div class="video-container shadow-2xl border border-gray-800 mb-8">
             <div id="watermark" class="watermark">User: Loading...</div>
             <div id="player"></div>
@@ -50,10 +49,7 @@
 
         <div class="glass-card p-6 rounded-xl">
             <div class="flex justify-between items-end mb-4">
-                <div>
-                    <h3 class="text-lg font-semibold">Course Progress</h3>
-                    <p class="text-xs text-gray-400">Finish the video to automatically update progress.</p>
-                </div>
+                <h3 class="text-lg font-semibold">Course Progress</h3>
                 <span id="progressPercent" class="text-2xl font-bold text-accent">0%</span>
             </div>
             <div class="w-full bg-gray-800 h-4 rounded-full overflow-hidden">
@@ -67,12 +63,9 @@
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 1. CONFIGURATION: Add your YouTube Video IDs here
+        // CONFIGURATION: Add your Video IDs here
         const modules = [
-            { id: "dxQvBzGAiDg", title: "Introduction to Digital Forensics" },
-            { id: "eekzaI0UFDA", title: "Beginners DFIR Roadmap" },
-            { id: "vD7uJ8aP0zA", title: "Forensics Full Course" },
-            { id: "u2zgEFm5RHQ", title: "Advanced Extraction Techniques" }
+            { id: "dxQvBzGAiDg", title: "Introduction: Digital Forensics Case Study" }
         ];
 
         let player;
@@ -80,91 +73,81 @@
         let completedModules = new Array(modules.length).fill(false);
         let userUID = null;
 
-        // 2. INITIALIZE YOUTUBE PLAYER
+        // CRITICAL FIX: Attach YouTube events to window for GitHub Pages
         window.onYouTubeIframeAPIReady = function() {
             player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
                 videoId: modules[0].id,
-                playerVars: { 'rel': 0, 'modestbranding': 1 },
+                playerVars: { 
+                    'rel': 0, 
+                    'modestbranding': 1,
+                    'origin': window.location.origin, // Prevents IDOR/Origin block
+                    'enablejsapi': 1 
+                },
                 events: {
-                    'onStateChange': onPlayerStateChange
+                    'onReady': () => {
+                        updateUI();
+                        document.getElementById('moduleTitle').innerText = modules[0].title;
+                    },
+                    'onStateChange': (event) => {
+                        if (event.data === YT.PlayerState.ENDED) {
+                            markComplete();
+                        }
+                    }
                 }
             });
         };
 
-        // 3. AUTH & LOAD SAVED PROGRESS
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 userUID = user.uid;
                 document.getElementById('watermark').innerText = `ID: ${user.email}`;
                 
-                // Fetch existing progress from Firestore
+                // Fetch Saved Progress
                 const docRef = doc(db, "userProgress", userUID + "_forensics");
                 const docSnap = await getDoc(docRef);
-                
                 if (docSnap.exists()) {
                     completedModules = docSnap.data().completedModules;
-                    updateUI();
                 }
-                loadModule(0);
+                updateUI();
             } else {
                 window.location.href = 'login.html';
             }
         });
 
-        // 4. TRACK VIDEO COMPLETION
-        function onPlayerStateChange(event) {
-            // event.data === 0 means the video has ended
-            if (event.data === YT.PlayerState.ENDED) {
-                markCurrentModuleComplete();
-            }
-        }
-
-        async function markCurrentModuleComplete() {
+        async function markComplete() {
             if (!completedModules[currentIndex]) {
                 completedModules[currentIndex] = true;
                 updateUI();
-                // Save to Firebase
                 await setDoc(doc(db, "userProgress", userUID + "_forensics"), {
                     completedModules: completedModules,
-                    courseName: "Digital Forensics",
                     lastUpdated: new Date()
                 });
             }
         }
 
-        // 5. NAVIGATION & UI
-        window.loadModule = function(index) {
-            currentIndex = index;
-            const module = modules[index];
-            
-            if (player && player.loadVideoById) {
-                player.loadVideoById(module.id);
-            }
-
-            document.getElementById('moduleTitle').innerText = module.title;
-            document.getElementById('moduleCount').innerText = `Step ${index + 1} of ${modules.length}`;
-            
-            document.getElementById('prevBtn').disabled = (index === 0);
-            document.getElementById('nextBtn').disabled = (index === modules.length - 1);
-            updateUI();
-        };
-
         function updateUI() {
             const finishedCount = completedModules.filter(x => x === true).length;
             const percentage = (finishedCount / modules.length) * 100;
-            
             document.getElementById('progressBar').style.width = percentage + '%';
             document.getElementById('progressPercent').innerText = Math.round(percentage) + '%';
         }
 
-        window.changeModule = function(step) {
+        // Module Switcher logic
+        window.changeModule = (step) => {
             let next = currentIndex + step;
             if (next >= 0 && next < modules.length) {
-                loadModule(next);
+                currentIndex = next;
+                player.loadVideoById(modules[next].id);
+                document.getElementById('moduleTitle').innerText = modules[next].title;
+                document.getElementById('moduleCount').innerText = `Step ${next + 1} of ${modules.length}`;
             }
         };
+
+        // Attach listeners to buttons
+        document.getElementById('prevBtn').onclick = () => window.changeModule(-1);
+        document.getElementById('nextBtn').onclick = () => window.changeModule(1);
     </script>
 </body>
 </html>
