@@ -1,4 +1,4 @@
-import { auth, db, storage } from './firebase.js';
+import { auth, db } from './firebase.js';
 import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
@@ -92,20 +92,25 @@ logoutBtn.addEventListener('click', async () => {
     try {
         console.log('Logging out user');
         await signOut(auth);
-        window.location.href = 'login.html';
+        window.location.replace('login.html');
     } catch (error) {
         console.error('Error signing out:', error);
     }
 });
 
 // ✅ Fixed Auth Check using onAuthStateChanged
+let authResolved = false;
+
 onAuthStateChanged(auth, async (user) => {
+
     if (user) {
-        console.log('User logged in:', user.uid, 'Email:', user.email, 'DisplayName:', user.displayName);
+        authResolved = true;
+        console.log('User logged in:', user.uid);
 
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             let displayName = user.displayName;
+
             if (!displayName && userDoc.exists()) {
                 displayName = userDoc.data().name || user.email || 'User';
             } else if (!displayName) {
@@ -114,16 +119,20 @@ onAuthStateChanged(auth, async (user) => {
 
             userName.textContent = `Welcome, ${displayName}`;
             profilePic.src = user.photoURL || defaultAvatar;
-            profilePic.onerror = () => {
-                profilePic.src = defaultAvatar;
-                console.log('Profile picture fallback to default avatar');
-            };
+            profilePic.onerror = () => profilePic.src = defaultAvatar;
+
             await loadCourses();
+            return;
         } catch (error) {
             console.error('Error initializing dashboard:', error);
         }
-    } else {
-        console.log('No user logged in, redirecting to login');
-        window.location.href = 'login.html';
     }
+
+    // ⛔ DO NOT redirect immediately
+    setTimeout(() => {
+        if (!authResolved && !auth.currentUser) {
+            console.log('Auth not resolved, redirecting to login');
+            window.location.replace('login.html');
+        }
+    }, 1500);
 });
