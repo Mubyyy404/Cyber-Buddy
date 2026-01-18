@@ -76,7 +76,7 @@ window.startCourse = async (courseId) => {
 
         if (purchasedCourses.includes(courseId)) {
             console.log('User authorized, redirecting to course:', courseId);
-            window.location.href = `${courseId}.html`;
+            window.location.href = `courses/${courseId}.html`;
         } else {
             console.log('User not authorized for course:', courseId);
             alert('Access Denied: You have not purchased this course.');
@@ -136,3 +136,4 @@ onAuthStateChanged(auth, async (user) => {
         }
     }, 1500);
 });
+
