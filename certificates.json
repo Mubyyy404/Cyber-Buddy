@@ -35,6 +35,15 @@
       "mode": "Online",
       "duration": "1 mothn",
       "issuedOn": "31/1/2026"
+    },
+    {
+      "certId": "CBA-CERT-1769880389104",
+      "name": "chumma",
+      "course": "intern",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "issuedOn": "31/1/2026"
     }
   ]
 }
