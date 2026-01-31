@@ -34,5 +34,14 @@
     "date": "31/1/2026",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1769865997256"
+  },
+  {
+    "billId": "CBA-1769866528941",
+    "name": "M.Adhi kesavan",
+    "course": "Cybersecurity Internship",
+    "amount": "2000",
+    "date": "31/1/2026",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1769866528941"
   }
 ]
