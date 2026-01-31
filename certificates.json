@@ -44,6 +44,15 @@
       "mode": "Online",
       "duration": "1 month",
       "issuedOn": "31/1/2026"
+    },
+    {
+      "certId": "CBA-CERT-1769880644165",
+      "name": "Sachin Kanna T",
+      "course": "API Pentesting",
+      "type": "Completion",
+      "mode": "Online",
+      "duration": "3 months",
+      "issuedOn": "31/1/2026"
     }
   ]
 }
