@@ -17,6 +17,15 @@
       "mode": "Online",
       "duration": "1 month",
       "date": "31/1/2026"
+    },
+    {
+      "certId": "CBA-CERT-1769879377081",
+      "name": "mubst",
+      "course": "wertyui",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "date": "31/1/2026"
     }
   ]
 }
