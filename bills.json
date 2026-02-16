@@ -61,5 +61,14 @@
     "date": "16/2/2026",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1771250562622"
+  },
+  {
+    "billId": "CBA-1771250674353",
+    "name": "Vijay Rishyanth K S",
+    "course": "Cybersecurity Internship",
+    "amount": "2000",
+    "date": "16/2/2026",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1771250674353"
   }
 ]
