@@ -53,6 +53,15 @@
       "mode": "Online",
       "duration": "3 months",
       "issuedOn": "15/1/2026"
+    },
+    {
+      "certId": "CBA-CERT-1771335860650",
+      "name": "Mohamed Mubeen S",
+      "course": "wertyui",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "issuedOn": "17/2/2026"
     }
   ]
 }
