@@ -80,6 +80,15 @@
       "mode": "Online",
       "duration": "1 month",
       "issuedOn": "17/2/2026"
+    },
+    {
+      "certId": "CBA-CERT-1772035897869",
+      "name": "Adhi Kesavan M",
+      "course": "Cybersecurity",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "issuedOn": "25/2/2026"
     }
   ]
 }
