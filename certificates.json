@@ -125,6 +125,15 @@
       "mode": "Online",
       "duration": "1",
       "issuedOn": "25/2/2026"
+    },
+    {
+      "certId": "CBA-CERT-1772038417688",
+      "name": "Vijay Rishyanth K S",
+      "course": "Cybersecurity",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1",
+      "issuedOn": "25/2/2026"
     }
   ]
 }
