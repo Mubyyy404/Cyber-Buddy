@@ -134,6 +134,15 @@
       "mode": "Online",
       "duration": "1",
       "issuedOn": "25/2/2026"
+    },
+    {
+      "certId": "CBA-CERT-1772093393869",
+      "name": "Mohammed Jubair J",
+      "course": "Cybersecurity",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "issuedOn": "26/2/2026"
     }
   ]
 }
