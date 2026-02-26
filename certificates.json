@@ -143,6 +143,15 @@
       "mode": "Online",
       "duration": "1 month",
       "issuedOn": "26/2/2026"
+    },
+    {
+      "certId": "CBA-CERT-1772094837179",
+      "name": "Mohamed Salman M",
+      "course": "Cybersecurity",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "issuedOn": "26/2/2026"
     }
   ]
 }
