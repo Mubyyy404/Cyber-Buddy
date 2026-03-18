@@ -12,42 +12,6 @@
       "issuedOn": "30/1/2026"
     },
     {
-      "certId": "CBA-CERT-1769877449630",
-      "name": "Mohamed Mubeen S",
-      "course": "Intro to cybersecurity",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "date": "31/1/2026"
-    },
-    {
-      "certId": "CBA-CERT-1769879377081",
-      "name": "mubst",
-      "course": "wertyui",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "date": "31/1/2026"
-    },
-    {
-      "certId": "CBA-CERT-1769880168513",
-      "name": "Mohamed Mubeen",
-      "course": "1",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 mothn",
-      "issuedOn": "31/1/2026"
-    },
-    {
-      "certId": "CBA-CERT-1769880389104",
-      "name": "chumma",
-      "course": "intern",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "issuedOn": "31/1/2026"
-    },
-    {
       "certId": "CBA-CERT-1769880644165",
       "name": "Sachin Kanna T",
       "course": "Web & API PENTESTING",
@@ -57,75 +21,12 @@
       "issuedOn": "15/1/2026"
     },
     {
-      "certId": "CBA-CERT-1771335860650",
-      "name": "Mohamed Mubeen S",
-      "course": "wertyui",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "issuedOn": "17/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1771335862532",
-      "name": "Mohamed Mubeen S",
-      "course": "wertyui",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "issuedOn": "17/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1771335864221",
-      "name": "Mohamed Mubeen S",
-      "course": "wertyui",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "issuedOn": "17/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1772035897869",
-      "name": "Adhi Kesavan M",
-      "course": "Cybersecurity",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "issuedOn": "25/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1772035900820",
-      "name": "Adhi Kesavan M",
-      "course": "Cybersecurity",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "issuedOn": "25/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1772035930535",
-      "name": "Mohamed Mubeen S",
-      "course": "wertyui",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1",
-      "issuedOn": "25/2/2026"
-    },
-    {
       "certId": "CBA-CERT-1772036412534",
       "name": "Adhi Kesavan M",
       "course": "Cybersecurity",
       "type": "Internship",
       "mode": "Online",
       "duration": "1 month",
-      "issuedOn": "25/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1772037049422",
-      "name": "Mohamed Mubeen S",
-      "course": "wertyui",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1",
       "issuedOn": "25/2/2026"
     },
     {
