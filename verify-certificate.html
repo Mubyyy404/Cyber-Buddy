@@ -317,7 +317,7 @@ function verify() {
 
 // Auto-run if ID is in URL
 const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
+const certId = params.get("certid");
 
 if(certId){
     document.getElementById("certInput").value = certId;
