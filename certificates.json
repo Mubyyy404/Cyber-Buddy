@@ -154,6 +154,16 @@
       "mode": "Online",
       "duration": "1 month",
       "issuedOn": "26/2/2026"
+    },
+    {
+      "certId": "CBA-CERT-1773852531532",
+      "name": "Mohamed Mubeen",
+      "course": "123456",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "111",
+      "email": "new@gmail.com",
+      "issuedOn": "18/3/2026"
     }
   ]
 }
