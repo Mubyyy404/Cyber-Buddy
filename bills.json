@@ -72,5 +72,14 @@
     "date": "16/2/2026",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1771250674353"
+  },
+  {
+    "billId": "CBA-1773857238492",
+    "name": "kasim",
+    "course": "web",
+    "amount": "2000",
+    "date": "18/3/2026",
+    "paymentMode": "Cash",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1773857238492"
   }
 ]
