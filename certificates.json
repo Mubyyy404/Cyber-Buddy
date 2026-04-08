@@ -13,6 +13,17 @@
     },
     {
       "certId": "CBA-CERT-1769880644165",
+      "name": "Mohamed Mubeen S",
+      "course": "IoT Hacking",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "email": "maemubeen576@gmail.com",
+      "download": "https://raw.githubusercontent.com/MUbxx/get-certificate/main/certificates/CBA-CERT-1769880644165",
+      "issuedOn": "30/1/2026"
+    },
+    {
+      "certId": "CBA-CERT-1769880644165",
       "name": "Sachin Kanna T",
       "course": "Web & API PENTESTING",
       "type": "Completion",
