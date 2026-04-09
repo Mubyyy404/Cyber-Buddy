@@ -1051,65 +1051,62 @@
  }
  requestAnimationFrame(heroLoop);
 
- // Courses with search and filtering
- const courses = [
- { title: 'Certified Ethical Hacker - 01:00 Hours', desc: 'Master penetration testing & exploit development.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Certified%20Ethical%20Hacker.png', price: '₹999', category: 'ethical-hacking', outline: [''] },
- { title: 'Course & Internship - 20:00 Hours', desc: 'Learn, Hack and secure the Digital World .', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Gemini_Generated_Image_i2qur1i2qur1i2qu.png', price: '₹2000', category: 'network-security', outline: [''] },
- { title: 'Penetration Testing Pro - 01:30 Hours', desc: 'Full workflow of advanced pentesting.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Penetration%20Testing%20Pro.png', price: '₹999', category: 'ethical-hacking', outline: [''] },
- { title: 'Malware Analysis Fundamentals - 02:30 Hours', desc: 'Static & dynamic techniques for malware.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Malware%20Analysis.png', price: '₹2599', category: 'ethical-hacking', outline: [''] },
- { title: 'Cloud Security Expert - 01:00 Hours', desc: 'Secure cloud architectures & infra.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Cloud%20Security.png', price: '₹4499', category: 'cloud-security', outline: [''] },
- { title: 'SOC Analyst Program - 08:00 Hours', desc: 'Threat detection, triage & hunting.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/SOC%20Analyst.png', price: '₹1499', category: 'network-security', outline: [''] },
- ];
- const coursesGrid = $('#courses-grid');
- const courseSearch = $('#course-search');
- function renderCourses(filter = 'all', search = '') {
- try {
-  coursesGrid.innerHTML = '';
-  const filteredCourses = courses.filter(c => {
-   const matchesFilter = filter === 'all' || c.category === filter;
-   const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) || c.desc.toLowerCase().includes(search.toLowerCase());
-   return matchesFilter && matchesSearch;
-  });
-  if (filteredCourses.length === 0) {
-   coursesGrid.innerHTML = '<p class="text-center text-slate-300 col-span-full">No courses found.</p>';
-   return;
-  }
-  filteredCourses.forEach((c, i) => {
-   const el = document.createElement('article');
-   el.className = 'glass-card course p-6 rounded-lg shadow-md relative';
-   el.innerHTML = `
-   <img loading="lazy" src="${c.img}" alt="${c.title}" class="w-full h-48 object-cover rounded-md mb-6">
-   <h3 class="text-xl font-semibold text-cyan-400">${c.title}</h3>
-   <p class="mt-3 text-slate-300">${c.desc}</p>
-   <p class="mt-3 text-cyan-400 font-semibold">Price: ${c.price}</p>
-   <div class="mt-6">
-  <a href="pay.html?title=${encodeURIComponent(c.title)}&price=${c.price.replace('₹','').replace(',','')}&upi=mohamedmubeen576-1@okaxis"
-     class="inline-block px-8 py-3 rounded bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-900 font-semibold hover:from-sky-300 hover:to-cyan-300 transition pulse-cta">
-    Enroll Now (${c.price})
-  </a>
-</div>
-   <div class="course-tooltip"><ul class="list-disc pl-5 text-slate-300 text-sm">${c.outline.map(item => `<li>${item}</li>`).join('')}</ul></div>
-   `;
-   coursesGrid.appendChild(el);
-  });
- } catch (error) {
-  console.error('Error rendering courses:', error);
-  coursesGrid.innerHTML = '<p class="text-center text-red-400 col-span-full">Error loading courses. Please try again.</p>';
- }
- }
- renderCourses();
- $$('.filter-btn').forEach(btn => {
- btn.addEventListener('click', () => {
-  $$('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderCourses(btn.dataset.filter, courseSearch.value);
- });
- });
- $$('.filter-btn')[0].classList.add('active');
- courseSearch.addEventListener('input', () => {
-  const activeFilter = $$('.filter-btn').find(b => b.classList.contains('active'))?.dataset.filter || 'all';
-  renderCourses(activeFilter, courseSearch.value);
- });
+ // COURSE DATA
+    // =====================================================
+    const courses = [
+      { title: 'Certified Ethical Hacker', hours: '1 Hour', desc: 'Master penetration testing & exploit development with hands-on labs.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Certified%20Ethical%20Hacker.png', price: '₹999', priceRaw: '999', category: 'ethical-hacking', badge: 'Bestseller' },
+      { title: 'Course & Internship', hours: '20 Hours', desc: 'Learn, hack and secure the digital world with full internship support.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Gemini_Generated_Image_i2qur1i2qur1i2qu.png', price: '₹2,000', priceRaw: '2000', category: 'network-security', badge: 'Popular' },
+      { title: 'Penetration Testing Pro', hours: '1.5 Hours', desc: 'Full workflow of advanced pentesting techniques and tools.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Penetration%20Testing%20Pro.png', price: '₹999', priceRaw: '999', category: 'ethical-hacking', badge: '' },
+      { title: 'Malware Analysis Fundamentals', hours: '2.5 Hours', desc: 'Static & dynamic techniques for analysing malware samples.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Malware%20Analysis.png', price: '₹2,599', priceRaw: '2599', category: 'ethical-hacking', badge: 'Advanced' },
+      { title: 'Cloud Security Expert', hours: '1 Hour', desc: 'Secure cloud architectures & infrastructure across AWS, Azure & GCP.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/Cloud%20Security.png', price: '₹4,499', priceRaw: '4499', category: 'cloud-security', badge: '' },
+      { title: 'SOC Analyst Program', hours: '8 Hours', desc: 'Threat detection, triage and threat hunting for SOC professionals.', img: 'https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/SOC%20Analyst.png', price: '₹1,499', priceRaw: '1499', category: 'network-security', badge: 'New' },
+    ];
+    const coursesGrid = $('#courses-grid'), courseSearch = $('#course-search');
+    function renderCourses(filter = 'all', search = '') {
+      coursesGrid.innerHTML = '';
+      const filtered = courses.filter(c => (filter === 'all' || c.category === filter) && (c.title.toLowerCase().includes(search.toLowerCase()) || c.desc.toLowerCase().includes(search.toLowerCase())));
+      if (!filtered.length) { coursesGrid.innerHTML = '<p class="text-center text-slate-300 col-span-full py-12">No courses found.</p>'; return; }
+      filtered.forEach(c => {
+        const el = document.createElement('article');
+        el.className = 'course-card';
+        el.innerHTML = `
+          <div class="course-card-img-wrap">
+            <img loading="lazy" src="${c.img}" alt="${c.title} course at Cyber Buddy Academy">
+            <div class="course-card-img-overlay"></div>
+            ${c.badge ? `<div class="course-card-badge">${c.badge}</div>` : ''}
+          </div>
+          <div class="course-card-body">
+            <h3 class="course-card-title">${c.title}</h3>
+            <div class="course-card-hours">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ${c.hours}
+            </div>
+            <p class="course-card-desc">${c.desc}</p>
+            <div class="course-card-footer">
+              <div class="course-price-tag">
+                <span class="course-price-label">Course Fee</span>
+                <span class="course-price-amount">${c.price}</span>
+              </div>
+              <a href="pay.html?title=${encodeURIComponent(c.title)}&price=${c.priceRaw}&upi=mohamedmubeen576-1@okaxis" class="course-enroll-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                Enroll Now
+              </a>
+            </div>
+          </div>`;
+        coursesGrid.appendChild(el);
+      });
+    }
+    renderCourses();
+    $$('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+      $$('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCourses(btn.dataset.filter, courseSearch.value);
+    }));
+    $$('.filter-btn')[0].classList.add('active');
+    courseSearch.addEventListener('input', () => {
+      const active = $$('.filter-btn').find(b => b.classList.contains('active'))?.dataset.filter || 'all';
+      renderCourses(active, courseSearch.value);
+    });
 
  // Lab slider
  const labs = [
