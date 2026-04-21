@@ -1,0 +1,370 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+.page{
+  background:#040d1f;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 16px;
+  position:relative;
+  overflow:hidden;
+  font-family:'Inter',sans-serif;
+}
+.bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.bg-orb1{
+  position:absolute;width:500px;height:500px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,100,255,0.18) 0%,transparent 70%);
+  top:-100px;left:-100px;
+}
+.bg-orb2{
+  position:absolute;width:400px;height:400px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,255,0.12) 0%,transparent 70%);
+  bottom:-80px;right:-80px;
+}
+.card{
+  position:relative;
+  width:100%;max-width:520px;
+  text-align:center;
+  z-index:2;
+}
+
+.logo-wrap{
+  margin-bottom:28px;
+  display:flex;justify-content:center;
+}
+.logo-ring{
+  width:90px;height:90px;
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(0,100,255,0.1));
+  border:1.5px solid rgba(0,229,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.logo-ring::after{
+  content:'';
+  position:absolute;inset:-3px;
+  border-radius:26px;
+  border:1px solid rgba(0,229,255,0.12);
+}
+.logo-ring img{width:60px;height:60px;object-fit:contain;}
+
+.tag-row{display:flex;justify-content:center;gap:8px;margin-bottom:18px;}
+.tag{
+  font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 14px;border-radius:50px;
+}
+.tag-free{background:rgba(0,200,83,0.12);color:#00e676;border:1px solid rgba(0,200,83,0.25);}
+.tag-live{background:rgba(255,50,50,0.12);color:#ff5252;border:1px solid rgba(255,50,50,0.25);
+  display:flex;align-items:center;gap:5px;}
+.tag-live-dot{width:6px;height:6px;background:#ff5252;border-radius:50%;animation:pulse 1.4s infinite;}
+
+.title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:26px;font-weight:700;
+  color:#fff;line-height:1.25;
+  margin-bottom:8px;letter-spacing:-0.3px;
+}
+.title span{color:#00e5ff;}
+.subtitle{font-size:13px;color:rgba(255,255,255,0.45);font-weight:400;margin-bottom:36px;letter-spacing:0.3px;}
+
+/* === COUNTDOWN === */
+.cd-section{margin-bottom:32px;}
+.cd-heading{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(0,229,255,0.5);margin-bottom:14px;font-weight:500;}
+
+.cd-grid{display:flex;justify-content:center;align-items:center;gap:10px;}
+.cd-block{
+  width:96px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%);
+  border:1px solid rgba(0,229,255,0.18);
+  border-radius:16px;
+  padding:18px 8px 14px;
+  position:relative;
+  overflow:hidden;
+}
+.cd-block::before{
+  content:'';position:absolute;
+  top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,255,0.4),transparent);
+}
+.cd-block::after{
+  content:'';position:absolute;
+  bottom:50%;left:0;right:0;height:1px;
+  background:rgba(0,229,255,0.06);
+}
+.cd-num{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:40px;font-weight:700;
+  color:#fff;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-2px;
+}
+.cd-unit-label{
+  font-size:9px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;
+  color:rgba(0,229,255,0.5);
+  margin-top:8px;
+}
+.cd-colon{
+  font-size:32px;font-weight:700;color:rgba(0,229,255,0.3);
+  animation:blink 1s step-end infinite;
+  margin-bottom:24px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.7);opacity:0.5}}
+
+.cd-status{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;color:rgba(0,229,255,0.6);font-weight:500;
+  margin-top:14px;letter-spacing:0.5px;
+}
+.cd-pulse{width:6px;height:6px;background:#00e5ff;border-radius:50%;animation:pulse 1.4s ease-in-out infinite;}
+
+/* === INFO PANEL === */
+.info-panel{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;
+  padding:6px;
+  margin-bottom:20px;
+}
+.info-row{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;
+  border-radius:14px;
+  transition:background 0.2s;
+}
+.info-row:hover{background:rgba(255,255,255,0.04);}
+.info-icon{
+  width:38px;height:38px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.ic-cal{background:rgba(0,229,255,0.1);}
+.ic-time{background:rgba(255,213,79,0.1);}
+.ic-mode{background:rgba(100,149,237,0.12);}
+.info-text{text-align:left;}
+.info-label{font-size:10px;color:rgba(255,255,255,0.35);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.info-val{font-size:14px;color:#fff;font-weight:500;}
+.info-sep{height:1px;background:rgba(255,255,255,0.05);margin:0 16px;}
+
+/* === BUTTON === */
+.btn-wrap{margin-bottom:20px;}
+.btn-remind{
+  width:100%;padding:0;border:none;cursor:pointer;
+  border-radius:16px;
+  background:transparent;
+  position:relative;
+  transition:transform 0.2s;
+}
+.btn-remind:hover{transform:translateY(-2px);}
+.btn-remind:active{transform:scale(0.98);}
+.btn-inner{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 28px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#00e5ff 0%,#0062ff 60%,#6200ea 100%);
+  position:relative;overflow:hidden;
+}
+.btn-inner::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.15) 0%,transparent 60%);
+}
+.btn-shimmer{
+  position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  animation:shimmer 2.5s infinite;
+}
+@keyframes shimmer{0%{left:-100%}100%{left:200%}}
+.btn-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.btn-text-wrap{text-align:left;}
+.btn-main{font-size:15px;font-weight:700;color:#fff;letter-spacing:0.3px;display:block;}
+.btn-sub{font-size:11px;color:rgba(255,255,255,0.7);display:block;margin-top:1px;}
+.btn-arrow{
+  margin-left:auto;
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;
+}
+
+/* === SECONDARY BTNS === */
+.sec-btns{display:flex;gap:10px;margin-bottom:24px;}
+.btn-sec{
+  flex:1;padding:12px;border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.6);
+  font-size:12px;font-weight:500;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-family:'Inter',sans-serif;
+}
+.btn-sec:hover{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.15);}
+
+/* === FOOTER === */
+.footer{font-size:12px;color:rgba(255,255,255,0.25);line-height:2;}
+.footer a{color:rgba(0,229,255,0.6);text-decoration:none;}
+.footer a:hover{color:#00e5ff;}
+</style>
+
+<div class="page">
+  <div class="bg-grid"></div>
+  <div class="bg-orb1"></div>
+  <div class="bg-orb2"></div>
+
+  <div class="card">
+    <div class="logo-wrap">
+      <div class="logo-ring">
+        <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="Cyber Buddy">
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag tag-free">Free Webinar</span>
+      <span class="tag tag-live"><span class="tag-live-dot"></span>Registrations Open</span>
+    </div>
+
+    <div class="title">Introduction to<br><span>Cybersecurity</span></div>
+    <div class="subtitle">Cyber Buddy Academy &nbsp;·&nbsp; Beginners Welcome</div>
+
+    <div class="cd-section">
+      <div class="cd-heading">Starts in</div>
+      <div class="cd-grid">
+        <div class="cd-block">
+          <div class="cd-num" id="d">00</div>
+          <div class="cd-unit-label">Days</div>
+        </div>
+        <div class="cd-colon">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="h">00</div>
+          <div class="cd-unit-label">Hours</div>
+        </div>
+        <div class="cd-colon">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="m">00</div>
+          <div class="cd-unit-label">Mins</div>
+        </div>
+        <div class="cd-colon">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="s">00</div>
+          <div class="cd-unit-label">Secs</div>
+        </div>
+      </div>
+      <div class="cd-status"><span class="cd-pulse"></span> Live countdown to event</div>
+    </div>
+
+    <div class="info-panel">
+      <div class="info-row">
+        <div class="info-icon ic-cal">📅</div>
+        <div class="info-text">
+          <div class="info-label">Date</div>
+          <div class="info-val">Tuesday, 22 April 2026</div>
+        </div>
+      </div>
+      <div class="info-sep"></div>
+      <div class="info-row">
+        <div class="info-icon ic-time">⏰</div>
+        <div class="info-text">
+          <div class="info-label">Time</div>
+          <div class="info-val">6:30 PM IST</div>
+        </div>
+      </div>
+      <div class="info-sep"></div>
+      <div class="info-row">
+        <div class="info-icon ic-mode">🖥️</div>
+        <div class="info-text">
+          <div class="info-label">Platform</div>
+          <div class="info-val">Microsoft Teams &mdash; Online</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn-remind" onclick="setReminder()">
+        <div class="btn-inner">
+          <div class="btn-shimmer"></div>
+          <div class="btn-icon">🔔</div>
+          <div class="btn-text-wrap">
+            <span class="btn-main">Set Reminder</span>
+            <span class="btn-sub">Add to Google Calendar instantly</span>
+          </div>
+          <div class="btn-arrow">→</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="sec-btns">
+      <button class="btn-sec" onclick="copyLink()">🔗 Copy Event Link</button>
+      <button class="btn-sec" onclick="shareWA()">💬 Share on WhatsApp</button>
+    </div>
+
+    <div class="footer">
+      Questions? We're happy to help<br>
+      <a href="mailto:cyberbuddyyyy@gmail.com">cyberbuddyyyy@gmail.com</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+      <a href="tel:+919345805940">+91 93458 05940</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const target = new Date("April 22, 2026 18:30:00").getTime();
+function pad(n){return String(n).padStart(2,'0');}
+function tick(){
+  const diff = target - Date.now();
+  if(diff<=0){
+    ['d','h','m','s'].forEach(id=>document.getElementById(id).textContent='00');
+    document.querySelector('.cd-status').innerHTML='<span style="width:6px;height:6px;background:#00e676;border-radius:50%;display:inline-block;animation:pulse 1.4s ease-in-out infinite;"></span> Webinar is live now!';
+    return;
+  }
+  document.getElementById('d').textContent=pad(Math.floor(diff/86400000));
+  document.getElementById('h').textContent=pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('m').textContent=pad(Math.floor((diff%3600000)/60000));
+  document.getElementById('s').textContent=pad(Math.floor((diff%60000)/1000));
+}
+tick();setInterval(tick,1000);
+
+function setReminder(){
+  const s='20260422T130000Z',e='20260422T150000Z';
+  const t=encodeURIComponent('Intro to Cybersecurity — Cyber Buddy Webinar');
+  const d=encodeURIComponent('Free webinar on cybersecurity basics hosted by Cyber Buddy Academy. Join via Microsoft Teams.');
+  window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${t}&dates=${s}/${e}&details=${d}`,'_blank');
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href).then(()=>{
+    const b=document.querySelectorAll('.btn-sec')[0];
+    const orig=b.innerHTML;
+    b.innerHTML='✅ Copied!';
+    b.style.color='#00e676';
+    setTimeout(()=>{b.innerHTML=orig;b.style.color='';},2000);
+  }).catch(()=>{
+    const b=document.querySelectorAll('.btn-sec')[0];
+    const orig=b.innerHTML;
+    b.innerHTML='✅ Done!';
+    setTimeout(()=>{b.innerHTML=orig;},2000);
+  });
+}
+
+function shareWA(){
+  const msg=encodeURIComponent('Join me for a FREE Cybersecurity Webinar by Cyber Buddy Academy!\n📅 22 April 2026 | ⏰ 6:30 PM IST | 🖥️ Microsoft Teams\nRegister now!');
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
+}
+</script>
