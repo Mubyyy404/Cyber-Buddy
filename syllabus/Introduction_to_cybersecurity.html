@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cyber Buddy Academy — Cybersecurity Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04070f;
+  --s1:#080e1a;
+  --s2:#0b1220;
+  --glass:rgba(255,255,255,0.03);
+  --glass2:rgba(255,255,255,0.06);
+  --w1:#22d3ee;
+  --w2:#c084fc;
+  --w3:#f87171;
+  --w4:#fb923c;
+  --w5:#4ade80;
+  --gold:#f5c542;
+  --white:#f0f4ff;
+  --dim:#4b6480;
+  --dim2:#2a3a50;
+  --ff-head:'Syne',sans-serif;
+  --ff-mono:'DM Mono',monospace;
+  --ff-body:'Inter',sans-serif;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:var(--ff-body);
+  overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════
+   GLOBAL BG
+═══════════════════════════════════ */
+.bg-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+}
+.bg-blob{
+  position:absolute;border-radius:50%;filter:blur(120px);opacity:0.12;
+  animation:drift 20s ease-in-out infinite alternate;
+}
+.bg-blob:nth-child(1){width:700px;height:700px;background:#22d3ee;top:-200px;left:-200px;animation-delay:0s}
+.bg-blob:nth-child(2){width:600px;height:600px;background:#c084fc;bottom:-150px;right:-100px;animation-delay:-7s}
+.bg-blob:nth-child(3){width:400px;height:400px;background:#f87171;top:50%;left:60%;animation-delay:-14s;opacity:0.07}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,30px) scale(1.1)}}
+
+/* dot grid */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.07) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+}
+
+/* ═══════════════════════════════════
+   HERO
+═══════════════════════════════════ */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:80px 24px 60px;
+  text-align:center;
+}
+
+.hero-inner{max-width:860px;margin:0 auto;}
+
+.badge-row{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.2);
+  border-radius:100px;
+  padding:6px 16px 6px 8px;
+  margin-bottom:36px;
+  font-family:var(--ff-mono);font-size:11px;letter-spacing:2px;color:var(--w1);
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--w1);box-shadow:0 0 8px var(--w1);animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.logo-mark{
+  width:90px;height:90px;margin:0 auto 28px;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.logo-mark img{
+  width:80px;height:80px;border-radius:50%;object-fit:contain;
+  position:relative;z-index:2;
+  border:2px solid rgba(34,211,238,0.3);
+}
+.logo-mark::before{
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  background:conic-gradient(var(--w1),var(--w2),var(--w1));
+  animation:spin 6s linear infinite;opacity:0.5;
+}
+.logo-mark::after{
+  content:'';position:absolute;inset:-4px;border-radius:50%;background:var(--bg);z-index:1;
+}
+.logo-mark-fallback{
+  position:absolute;z-index:2;
+  font-family:var(--ff-head);font-size:26px;font-weight:900;
+  color:var(--w1);display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.academy-sup{
+  font-family:var(--ff-mono);font-size:12px;letter-spacing:5px;
+  color:var(--dim);text-transform:uppercase;margin-bottom:12px;
+}
+
+.hero-h1{
+  font-family:var(--ff-head);
+  font-size:clamp(48px,9vw,100px);
+  font-weight:900;
+  line-height:0.95;
+  letter-spacing:-3px;
+  text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-h1 .t1{
+  display:block;color:var(--white);
+}
+.hero-h1 .t2{
+  display:block;
+  background:linear-gradient(135deg,var(--w1) 0%,var(--w2) 50%,var(--w1) 100%);
+  background-size:200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 4s linear infinite;
+}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+
+.hero-desc{
+  font-size:16px;color:var(--dim);line-height:1.7;
+  max-width:520px;margin:0 auto 48px;font-weight:300;
+}
+.hero-desc em{color:var(--white);font-style:normal;font-weight:500;}
+
+.kpi-row{
+  display:flex;gap:1px;flex-wrap:wrap;justify-content:center;margin-bottom:56px;
+}
+.kpi{
+  background:var(--glass2);
+  border:1px solid rgba(255,255,255,0.07);
+  backdrop-filter:blur(20px);
+  padding:20px 32px;
+  flex:1;min-width:110px;max-width:160px;
+  position:relative;overflow:hidden;
+}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--kc),transparent);
+}
+.kpi:nth-child(1){--kc:var(--w1)}
+.kpi:nth-child(2){--kc:var(--w2)}
+.kpi:nth-child(3){--kc:var(--w3)}
+.kpi:nth-child(4){--kc:var(--w5)}
+.kpi-n{
+  font-family:var(--ff-head);font-size:36px;font-weight:900;
+  color:var(--kc);display:block;line-height:1;
+}
+.kpi-l{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:2px;
+  color:var(--dim);text-transform:uppercase;margin-top:4px;display:block;
+}
+
+.scroll-cue{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:3px;color:var(--dim);
+  cursor:pointer;
+  animation:bob 2.5s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.scroll-cue .arrow{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.1);
+  display:grid;place-items:center;color:var(--w1);
+}
+
+/* ═══════════════════════════════════
+   NAV
+═══════════════════════════════════ */
+.sidenav{
+  position:fixed;left:0;top:50%;transform:translateY(-50%);
+  z-index:100;padding:0 0 0 20px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.sidenav-item{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  text-decoration:none;
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:2px;
+  color:var(--dim);transition:color 0.2s;padding:4px 0;
+  opacity:0.6;
+  transition:opacity 0.2s;
+}
+.sidenav-item:hover{opacity:1;}
+.sidenav-item .pip{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--nc);
+  transition:all 0.2s;flex-shrink:0;
+}
+.sidenav-item:hover .pip,.sidenav-item.active .pip{
+  width:18px;height:4px;border-radius:2px;
+  box-shadow:0 0 8px var(--nc);
+}
+.sidenav-item.active{opacity:1;color:var(--nc);}
+.sidenav-item .label{display:none;}
+.sidenav-item:hover .label,.sidenav-item.active .label{display:inline;}
+
+.sidenav-item:nth-child(1){--nc:var(--w1)}
+.sidenav-item:nth-child(2){--nc:var(--w2)}
+.sidenav-item:nth-child(3){--nc:var(--w3)}
+.sidenav-item:nth-child(4){--nc:var(--w4)}
+.sidenav-item:nth-child(5){--nc:var(--w5)}
+
+@media(max-width:768px){.sidenav{display:none}}
+
+/* top nav mobile */
+.topnav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(4,7,15,0.85);backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  padding:0 24px;
+  display:flex;gap:0;overflow-x:auto;scrollbar-width:none;
+}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{
+  padding:14px 18px;
+  font-family:var(--ff-mono);font-size:11px;letter-spacing:1px;
+  color:var(--dim);white-space:nowrap;text-decoration:none;
+  border-bottom:2px solid transparent;
+  transition:all 0.2s;
+}
+.topnav a:hover,.topnav a.active{color:var(--white);}
+.topnav a:nth-child(1):hover,.topnav a:nth-child(1).active{border-bottom-color:var(--w1);color:var(--w1)}
+.topnav a:nth-child(2):hover,.topnav a:nth-child(2).active{border-bottom-color:var(--w2);color:var(--w2)}
+.topnav a:nth-child(3):hover,.topnav a:nth-child(3).active{border-bottom-color:var(--w3);color:var(--w3)}
+.topnav a:nth-child(4):hover,.topnav a:nth-child(4).active{border-bottom-color:var(--w4);color:var(--w4)}
+.topnav a:nth-child(5):hover,.topnav a:nth-child(5).active{border-bottom-color:var(--w5);color:var(--w5)}
+
+/* ═══════════════════════════════════
+   MAIN
+═══════════════════════════════════ */
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 32px 120px;}
+
+/* ═══════════════════════════════════
+   WEEK SECTION
+═══════════════════════════════════ */
+.week{
+  margin-bottom:100px;
+  opacity:0;transform:translateY(40px);
+  transition:opacity 0.7s cubic-bezier(.16,1,.3,1),transform 0.7s cubic-bezier(.16,1,.3,1);
+}
+.week.vis{opacity:1;transform:translateY(0)}
+
+/* Week label row */
+.week-label-row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:32px;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.week-num-big{
+  font-family:var(--ff-head);
+  font-size:clamp(80px,14vw,160px);
+  font-weight:900;
+  line-height:0.85;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,0.06);
+  user-select:none;
+  letter-spacing:-6px;
+  flex-shrink:0;
+}
+.week-meta{flex:1;padding-bottom:10px;}
+.week-tag{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:4px;
+  color:var(--wc);text-transform:uppercase;margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;
+}
+.week-tag::before{content:'';display:inline-block;width:28px;height:1px;background:var(--wc);opacity:0.5;}
+.week-name{
+  font-family:var(--ff-head);
+  font-size:clamp(28px,5vw,52px);
+  font-weight:900;
+  text-transform:uppercase;
+  line-height:1;
+  letter-spacing:-1px;
+  color:var(--white);
+}
+.week-count{
+  font-family:var(--ff-mono);font-size:11px;
+  color:var(--dim);letter-spacing:2px;margin-top:8px;
+}
+
+/* separator line */
+.week-sep{
+  height:1px;
+  background:linear-gradient(90deg,var(--wc),rgba(255,255,255,0.04) 60%,transparent);
+  margin-bottom:32px;
+  opacity:0.4;
+}
+
+/* ═══════════════════════════════════
+   TOPIC CARDS
+═══════════════════════════════════ */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:12px;
+}
+
+.card{
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  cursor:default;
+  transition:transform 0.3s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.3s;
+  opacity:0;transform:translateY(20px);
+}
+.card.vis{opacity:1;transform:translateY(0)}
+
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(var(--wcr),0.08),transparent 60%);
+  opacity:0;transition:opacity 0.3s;border-radius:inherit;pointer-events:none;
+}
+.card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(var(--wcr),0.3);
+  box-shadow:0 20px 60px rgba(var(--wcr),0.1),0 0 0 1px rgba(var(--wcr),0.1);
+}
+.card:hover::before{opacity:1}
+
+.card-accent{
+  height:2px;
+  background:linear-gradient(90deg,rgba(var(--wcr),0.8),rgba(var(--wcr),0.1));
+}
+
+.card-head{
+  padding:16px 18px 12px;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.card-num{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:2px;
+  color:rgba(var(--wcr),0.7);
+  background:rgba(var(--wcr),0.08);
+  padding:3px 8px;border-radius:4px;
+  white-space:nowrap;margin-top:1px;flex-shrink:0;
+}
+.card-title{
+  font-family:var(--ff-head);font-size:15px;font-weight:700;
+  color:var(--white);line-height:1.3;
+}
+
+.card-body{
+  padding:0 18px 16px 18px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.card-item{
+  display:flex;align-items:baseline;gap:8px;
+  font-size:12.5px;color:#5b7a96;
+  font-family:var(--ff-body);font-weight:300;line-height:1.4;
+}
+.card-item::before{
+  content:'';display:inline-block;flex-shrink:0;
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(var(--wcr),0.5);margin-top:1px;
+}
+
+/* week color helpers */
+.w1{--wc:var(--w1);--wcr:34,211,238}
+.w2{--wc:var(--w2);--wcr:192,132,252}
+.w3{--wc:var(--w3);--wcr:248,113,113}
+.w4{--wc:var(--w4);--wcr:251,146,60}
+.w5{--wc:var(--w5);--wcr:74,222,128}
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+.footer{
+  position:relative;z-index:1;
+  border-top:1px solid rgba(255,255,255,0.05);
+  padding:64px 32px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:16px;text-align:center;
+}
+.footer-name{
+  font-family:var(--ff-head);font-size:13px;font-weight:800;
+  letter-spacing:8px;text-transform:uppercase;color:var(--white);
+  opacity:0.4;
+}
+.footer-line{
+  width:60px;height:1px;
+  background:linear-gradient(90deg,var(--w1),var(--w2));
+  opacity:0.4;
+}
+.footer-text{
+  font-size:12px;color:var(--dim);line-height:1.8;max-width:480px;
+}
+.footer-text strong{color:var(--w1);}
+
+/* ═══════════════════════════════════
+   PROGRESS BAR (top of page)
+═══════════════════════════════════ */
+.progress-bar{
+  position:fixed;top:0;left:0;height:2px;z-index:999;
+  background:linear-gradient(90deg,var(--w1),var(--w2),var(--w3));
+  width:0%;transition:width 0.1s linear;
+  box-shadow:0 0 8px var(--w1);
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+</div>
+
+<div class="progress-bar" id="prog"></div>
+
+<!-- ── SIDE NAV (desktop) ── -->
+<nav class="sidenav" id="sidenav">
+  <a class="sidenav-item w1" href="#w1"><span class="pip"></span><span class="label">Fundamentals</span></a>
+  <a class="sidenav-item w2" href="#w2"><span class="pip"></span><span class="label">Recon</span></a>
+  <a class="sidenav-item w3" href="#w3"><span class="pip"></span><span class="label">Vuln & Web</span></a>
+  <a class="sidenav-item w4" href="#w4"><span class="pip"></span><span class="label">Exploitation</span></a>
+  <a class="sidenav-item w5" href="#w5"><span class="pip"></span><span class="label">VAPT</span></a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+
+    <div class="badge-row">
+      <span class="badge-dot"></span>
+      LIVE SYLLABUS &nbsp;·&nbsp; 2025 EDITION
+    </div>
+
+    <div class="logo-mark">
+      <img
+        src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png"
+        alt="Cyber Buddy"
+        onerror="this.style.display='none';document.querySelector('.logo-mark-fallback').style.display='flex'"
+      />
+      <span class="logo-mark-fallback">CB</span>
+    </div>
+
+    <p class="academy-sup">Cyber Buddy Academy</p>
+
+    <h1 class="hero-h1">
+      <span class="t1">Intro to</span>
+      <span class="t2">Cyber<wbr/>security</span>
+    </h1>
+
+    <p class="hero-desc">
+      A <em>5-week intensive</em> journey from absolute beginner to
+      conducting real <em>penetration tests</em> — covering networking,
+      exploitation, web attacks, and VAPT workflows.
+    </p>
+
+    <div class="kpi-row">
+      <div class="kpi"><span class="kpi-n">5</span><span class="kpi-l">Weeks</span></div>
+      <div class="kpi"><span class="kpi-n">40+</span><span class="kpi-l">Topics</span></div>
+      <div class="kpi"><span class="kpi-n">8</span><span class="kpi-l">Labs</span></div>
+      <div class="kpi"><span class="kpi-n">∞</span><span class="kpi-l">Practice</span></div>
+    </div>
+
+    <div class="scroll-cue" onclick="document.getElementById('w1').scrollIntoView({behavior:'smooth'})">
+      <span>EXPLORE SYLLABUS</span>
+      <div class="arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── TOP NAV ── -->
+<nav class="topnav" id="topnav">
+  <a href="#w1">01 · Fundamentals</a>
+  <a href="#w2">02 · Recon &amp; Enum</a>
+  <a href="#w3">03 · Vuln &amp; Web</a>
+  <a href="#w4">04 · Exploitation</a>
+  <a href="#w5">05 · VAPT &amp; Career</a>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- ═════ WEEK 1 ═════ -->
+<section class="week w1" id="w1">
+  <div class="week-label-row">
+    <div class="week-num-big">01</div>
+    <div class="week-meta">
+      <div class="week-tag">🧠 &nbsp; Week One</div>
+      <div class="week-name">Fundamentals</div>
+      <div class="week-count">8 modules &nbsp;·&nbsp; Foundation layer</div>
+    </div>
+  </div>
+  <div class="week-sep"></div>
+  <div class="cards">
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.1</span><span class="card-title">Cybersecurity Basics</span></div>
+      <div class="card-body">
+        <div class="card-item">Definition of cybersecurity</div>
+        <div class="card-item">Types of attackers — script kiddie → APT</div>
+        <div class="card-item">Types of attacks: network, web, social</div>
+        <div class="card-item">Ethical hacking vs malicious hacking</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.2</span><span class="card-title">CIA Triad</span></div>
+      <div class="card-body">
+        <div class="card-item">Confidentiality</div>
+        <div class="card-item">Integrity</div>
+        <div class="card-item">Availability</div>
+        <div class="card-item">Real-world examples of each</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.3</span><span class="card-title">Networking Basics</span></div>
+      <div class="card-body">
+        <div class="card-item">What is a network</div>
+        <div class="card-item">IP address — IPv4 basics</div>
+        <div class="card-item">Public vs Private IP</div>
+        <div class="card-item">MAC address</div>
+        <div class="card-item">Ports and services</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.4</span><span class="card-title">OSI &amp; TCP/IP Models</span></div>
+      <div class="card-body">
+        <div class="card-item">OSI 7 layers</div>
+        <div class="card-item">TCP/IP model</div>
+        <div class="card-item">Mapping between OSI and TCP/IP</div>
+        <div class="card-item">Real-world packet flow</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.5</span><span class="card-title">Protocols</span></div>
+      <div class="card-body">
+        <div class="card-item">HTTP / HTTPS</div>
+        <div class="card-item">DNS</div>
+        <div class="card-item">FTP</div>
+        <div class="card-item">SSH</div>
+        <div class="card-item">SMTP</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.6</span><span class="card-title">Web Basics</span></div>
+      <div class="card-body">
+        <div class="card-item">Client-server architecture</div>
+        <div class="card-item">Request / response cycle</div>
+        <div class="card-item">Headers, cookies, sessions</div>
+        <div class="card-item">Authentication basics</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.7</span><span class="card-title">OWASP Top 10 Overview</span></div>
+      <div class="card-body">
+        <div class="card-item">Injection</div>
+        <div class="card-item">Broken authentication</div>
+        <div class="card-item">Sensitive data exposure</div>
+        <div class="card-item">Security misconfiguration</div>
+        <div class="card-item">Cross-site scripting (XSS)</div>
+      </div>
+    </div>
+    <div class="card w1"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">1.8</span><span class="card-title">Lab Environment Setup</span></div>
+      <div class="card-body">
+        <div class="card-item">Virtualization basics</div>
+        <div class="card-item">Kali Linux setup</div>
+        <div class="card-item">Target machine setup</div>
+        <div class="card-item">Network config — Host-only / NAT</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ WEEK 2 ═════ -->
+<section class="week w2" id="w2">
+  <div class="week-label-row">
+    <div class="week-num-big">02</div>
+    <div class="week-meta">
+      <div class="week-tag">🕵️ &nbsp; Week Two</div>
+      <div class="week-name">Reconnaissance &amp; Enumeration</div>
+      <div class="week-count">8 modules &nbsp;·&nbsp; Information gathering</div>
+    </div>
+  </div>
+  <div class="week-sep"></div>
+  <div class="cards">
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.1</span><span class="card-title">Intro to Recon</span></div>
+      <div class="card-body">
+        <div class="card-item">Passive vs Active recon</div>
+        <div class="card-item">Importance in attack lifecycle</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.2</span><span class="card-title">Passive Reconnaissance</span></div>
+      <div class="card-body">
+        <div class="card-item">WHOIS lookup</div>
+        <div class="card-item">DNS records — A, MX, TXT</div>
+        <div class="card-item">Search engine reconnaissance</div>
+        <div class="card-item">Public information gathering</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.3</span><span class="card-title">Active Reconnaissance</span></div>
+      <div class="card-body">
+        <div class="card-item">Network scanning basics</div>
+        <div class="card-item">Host discovery</div>
+        <div class="card-item">Port scanning</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.4</span><span class="card-title">Nmap Deep Dive</span></div>
+      <div class="card-body">
+        <div class="card-item">Scan types — SYN, TCP, UDP</div>
+        <div class="card-item">Service / version detection</div>
+        <div class="card-item">OS detection</div>
+        <div class="card-item">Script scanning (NSE)</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.5</span><span class="card-title">Service Enumeration</span></div>
+      <div class="card-body">
+        <div class="card-item">FTP enumeration</div>
+        <div class="card-item">SSH enumeration</div>
+        <div class="card-item">SMB enumeration</div>
+        <div class="card-item">HTTP enumeration</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.6</span><span class="card-title">Web Enumeration</span></div>
+      <div class="card-body">
+        <div class="card-item">Directory brute forcing</div>
+        <div class="card-item">Hidden files discovery</div>
+        <div class="card-item">Technology fingerprinting</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.7</span><span class="card-title">Subdomain Enumeration</span></div>
+      <div class="card-body">
+        <div class="card-item">DNS brute force</div>
+        <div class="card-item">Subdomain discovery methods</div>
+      </div>
+    </div>
+    <div class="card w2"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">2.8</span><span class="card-title">Information Analysis</span></div>
+      <div class="card-body">
+        <div class="card-item">Identifying attack surface</div>
+        <div class="card-item">Prioritizing targets</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ WEEK 3 ═════ -->
+<section class="week w3" id="w3">
+  <div class="week-label-row">
+    <div class="week-num-big">03</div>
+    <div class="week-meta">
+      <div class="week-tag">🔍 &nbsp; Week Three</div>
+      <div class="week-name">Vulnerability Analysis &amp; Web Exploitation</div>
+      <div class="week-count">8 modules &nbsp;·&nbsp; Attack techniques</div>
+    </div>
+  </div>
+  <div class="week-sep"></div>
+  <div class="cards">
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.1</span><span class="card-title">Vulnerability Concepts</span></div>
+      <div class="card-body">
+        <div class="card-item">What is a vulnerability</div>
+        <div class="card-item">CVE basics</div>
+        <div class="card-item">Vulnerability scoring — CVSS</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.2</span><span class="card-title">Web Application Structure</span></div>
+      <div class="card-body">
+        <div class="card-item">Frontend vs backend</div>
+        <div class="card-item">Parameters and inputs</div>
+        <div class="card-item">Authentication flows</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.3</span><span class="card-title">SQL Injection</span></div>
+      <div class="card-body">
+        <div class="card-item">Introduction to SQL</div>
+        <div class="card-item">Error-based injection</div>
+        <div class="card-item">Union-based injection</div>
+        <div class="card-item">Blind — Boolean &amp; Time-based</div>
+        <div class="card-item">Authentication bypass</div>
+        <div class="card-item">Database extraction concepts</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.4</span><span class="card-title">Cross-Site Scripting (XSS)</span></div>
+      <div class="card-body">
+        <div class="card-item">Reflected XSS</div>
+        <div class="card-item">Stored XSS</div>
+        <div class="card-item">DOM-based XSS</div>
+        <div class="card-item">Payload crafting basics</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.5</span><span class="card-title">Auth &amp; Session Attacks</span></div>
+      <div class="card-body">
+        <div class="card-item">Weak credentials</div>
+        <div class="card-item">Session hijacking</div>
+        <div class="card-item">Cookie manipulation</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.6</span><span class="card-title">File Inclusion</span></div>
+      <div class="card-body">
+        <div class="card-item">Local File Inclusion — LFI</div>
+        <div class="card-item">Remote File Inclusion — RFI</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.7</span><span class="card-title">Command Injection</span></div>
+      <div class="card-body">
+        <div class="card-item">OS command execution</div>
+        <div class="card-item">Input validation flaws</div>
+      </div>
+    </div>
+    <div class="card w3"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">3.8</span><span class="card-title">Automated vs Manual Testing</span></div>
+      <div class="card-body">
+        <div class="card-item">Manual testing methodology</div>
+        <div class="card-item">Tool-based exploitation concepts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ WEEK 4 ═════ -->
+<section class="week w4" id="w4">
+  <div class="week-label-row">
+    <div class="week-num-big">04</div>
+    <div class="week-meta">
+      <div class="week-tag">💣 &nbsp; Week Four</div>
+      <div class="week-name">Exploitation &amp; Post-Exploitation</div>
+      <div class="week-count">8 modules &nbsp;·&nbsp; Getting shells</div>
+    </div>
+  </div>
+  <div class="week-sep"></div>
+  <div class="cards">
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.1</span><span class="card-title">Exploitation Basics</span></div>
+      <div class="card-body">
+        <div class="card-item">Exploit vs vulnerability</div>
+        <div class="card-item">Payload concepts</div>
+        <div class="card-item">Shell types — bind vs reverse</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.2</span><span class="card-title">Metasploit Framework</span></div>
+      <div class="card-body">
+        <div class="card-item">Modules — exploit, payload, auxiliary</div>
+        <div class="card-item">Searching exploits</div>
+        <div class="card-item">Configuring targets</div>
+        <div class="card-item">Running exploits</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.3</span><span class="card-title">Gaining Access</span></div>
+      <div class="card-body">
+        <div class="card-item">Exploiting services</div>
+        <div class="card-item">Web exploitation to shell</div>
+        <div class="card-item">Reverse shell techniques</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.4</span><span class="card-title">Post Exploitation</span></div>
+      <div class="card-body">
+        <div class="card-item">Shell stabilization</div>
+        <div class="card-item">System enumeration</div>
+        <div class="card-item">User privilege analysis</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.5</span><span class="card-title">Privilege Escalation</span></div>
+      <div class="card-body">
+        <div class="card-item">Linux privesc basics</div>
+        <div class="card-item">SUID files</div>
+        <div class="card-item">Misconfigurations</div>
+        <div class="card-item">Weak permissions</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.6</span><span class="card-title">Maintaining Access</span></div>
+      <div class="card-body">
+        <div class="card-item">Persistence basics</div>
+        <div class="card-item">Backdoor concepts</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.7</span><span class="card-title">Covering Tracks</span></div>
+      <div class="card-body">
+        <div class="card-item">Logs overview</div>
+        <div class="card-item">Detection awareness</div>
+      </div>
+    </div>
+    <div class="card w4"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">4.8</span><span class="card-title">Social Engineering (Intro)</span></div>
+      <div class="card-body">
+        <div class="card-item">Phishing basics</div>
+        <div class="card-item">Human factor exploitation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ WEEK 5 ═════ -->
+<section class="week w5" id="w5">
+  <div class="week-label-row">
+    <div class="week-num-big">05</div>
+    <div class="week-meta">
+      <div class="week-tag">🏆 &nbsp; Week Five</div>
+      <div class="week-name">Real-World Practice &amp; VAPT Workflow</div>
+      <div class="week-count">7 modules &nbsp;·&nbsp; Career ready</div>
+    </div>
+  </div>
+  <div class="week-sep"></div>
+  <div class="cards">
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.1</span><span class="card-title">Pen Testing Methodology</span></div>
+      <div class="card-body">
+        <div class="card-item">Recon → Scan → Exploit → Post-exploit → Report</div>
+        <div class="card-item">Black box vs white box vs grey box</div>
+      </div>
+    </div>
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.2</span><span class="card-title">VAPT Workflow</span></div>
+      <div class="card-body">
+        <div class="card-item">Planning phase</div>
+        <div class="card-item">Scoping</div>
+        <div class="card-item">Execution</div>
+        <div class="card-item">Reporting</div>
+      </div>
+    </div>
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.3</span><span class="card-title">Bug Bounty Basics</span></div>
+      <div class="card-body">
+        <div class="card-item">Scope understanding</div>
+        <div class="card-item">Target selection</div>
+        <div class="card-item">Responsible disclosure</div>
+      </div>
+    </div>
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.4</span><span class="card-title">Real Case Studies</span></div>
+      <div class="card-body">
+        <div class="card-item">Common real-world vulnerabilities</div>
+        <div class="card-item">Attack chain breakdown</div>
+      </div>
+    </div>
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.5</span><span class="card-title">Reporting</span></div>
+      <div class="card-body">
+        <div class="card-item">Vulnerability description</div>
+        <div class="card-item">Proof of concept</div>
+        <div class="card-item">Impact analysis</div>
+        <div class="card-item">Remediation</div>
+      </div>
+    </div>
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.6</span><span class="card-title">CTF &amp; Practice Strategy</span></div>
+      <div class="card-body">
+        <div class="card-item">Problem-solving approach</div>
+        <div class="card-item">Time management</div>
+        <div class="card-item">Tool selection strategy</div>
+      </div>
+    </div>
+    <div class="card w5"><div class="card-accent"></div>
+      <div class="card-head"><span class="card-num">5.7</span><span class="card-title">Final Assessment</span></div>
+      <div class="card-body">
+        <div class="card-item">Full penetration test simulation</div>
+        <div class="card-item">Documentation submission</div>
+        <div class="card-item">LinkedIn profile development</div>
+        <div class="card-item">Job searching portals setup</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-line"></div>
+  <div class="footer-name">Cyber Buddy Academy</div>
+  <p class="footer-text">
+    All techniques taught are for <strong>educational &amp; authorized testing only</strong>.<br/>
+    Unauthorized access is illegal. Always hack ethically and responsibly.
+  </p>
+  <div class="footer-line"></div>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  document.getElementById('prog').style.width=pct+'%';
+});
+
+// Scroll reveal — weeks
+const weekObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
+},{threshold:0.05});
+document.querySelectorAll('.week').forEach(w=>weekObs.observe(w));
+
+// Scroll reveal — cards with stagger
+const cardObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const cards=e.target.querySelectorAll('.card');
+      cards.forEach((c,i)=>{
+        setTimeout(()=>{
+          c.style.transition=`opacity .5s cubic-bezier(.16,1,.3,1) ${i*55}ms, transform .5s cubic-bezier(.16,1,.3,1) ${i*55}ms, border-color .3s, box-shadow .3s`;
+          c.classList.add('vis');
+        },0);
+      });
+    }
+  });
+},{threshold:0.05});
+document.querySelectorAll('.week').forEach(w=>cardObs.observe(w));
+
+// Active nav highlight
+const sections=document.querySelectorAll('.week');
+const sideItems=document.querySelectorAll('.sidenav-item');
+const topItems=document.querySelectorAll('.topnav a');
+
+const navObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id=e.target.id;
+      sideItems.forEach(i=>{i.classList.toggle('active',i.getAttribute('href')==='#'+id)});
+      topItems.forEach(i=>{i.classList.toggle('active',i.getAttribute('href')==='#'+id)});
+    }
+  });
+},{threshold:0.4});
+sections.forEach(s=>navObs.observe(s));
+</script>
+</body>
+</html>
