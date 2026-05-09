@@ -86,6 +86,17 @@
       "duration": "10",
       "issuedOn": "9/5/2026",
       "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1778347583197"
+    },
+    {
+      "certId": "CBA-CERT-1778348214830",
+      "name": "Abdul Kader",
+      "course": "Monster",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "email": "maemubeen576@gmail.com",
+      "issuedOn": "9/5/2026",
+      "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1778348214830"
     }
   ]
 }
