@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cyber Buddy Academy – Certificate Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+<style>
+body {
+  margin:0;
+  padding:40px;
+  background:#0b1117;
+  font-family: Poppins, sans-serif;
+  color:#fff;
+}
+.container {
+  max-width:520px;
+  margin:auto;
+  background:#111a21;
+  border-radius:12px;
+  padding:32px;
+  border:1px solid #00e6d0;
+}
+label { display:block; margin-top:14px; color:#cceff2; }
+input, select {
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:6px;
+  border:none;
+}
+button {
+  margin-top:22px;
+  width:100%;
+  padding:14px;
+  background:#00e6d0;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <label>Name</label>
+  <input id="name">
+
+  <label>Program</label>
+  <input id="course">
+
+  <label>Certificate Type</label>
+  <select id="type">
+    <option>Internship</option>
+    <option>Completion</option>
+    <option>Participation</option>
+  </select>
+
+  <label>Mode</label>
+  <select id="mode">
+    <option>Online</option>
+    <option>Offline</option>
+  </select>
+
+  <label>Duration</label>
+  <input id="duration">
+
+  <button onclick="generate()">Generate Certificate</button>
+</div>
+
+<script>
+/* ================= GITHUB CONFIG (LOCALHOST ONLY) ================= */
+const GITHUB_TOKEN = "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";
+const OWNER = "Mubyyy404";
+const REPO = "Cyber-Buddy";
+const FILE_PATH = "certificates.json";
+function generate() {
+
+async function saveCertificateToGitHub(certData) {
+  const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
+
+  // 1️⃣ Read existing JSON
+  const res = await fetch(apiUrl, {
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json"
+    }
+  });
+
+  if (!res.ok) {
+    alert("❌ Cannot read certificates.json");
+    return;
+  }
+
+  const file = await res.json();
+  const json = JSON.parse(atob(file.content));
+
+  // 2️⃣ Add new certificate
+  json.certificates.push(certData);
+
+  // 3️⃣ Write back to GitHub
+  const update = await fetch(apiUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: `Add certificate ${certData.certId}`,
+      content: btoa(JSON.stringify(json, null, 2)),
+      sha: file.sha
+    })
+  });
+
+  if (!update.ok) {
+    alert("❌ Failed to update GitHub JSON");
+  }
+}
+
+
+const name = document.getElementById("name").value.trim();
+const course = document.getElementById("course").value.trim();
+const type = document.getElementById("type").value;
+const mode = document.getElementById("mode").value;
+const duration = document.getElementById("duration").value.trim();
+
+if (!name || !course || !duration) {
+  alert("Fill all fields");
+  return;
+}
+
+const certId = "CBA-CERT-" + Date.now();
+const date = new Date().toLocaleDateString("en-IN");
+const verifyUrl =
+  `https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=${certId}`;
+
+let l1="", l2="", l3="";
+
+if (type === "Internship") {
+  l1 = "has successfully completed the cybersecurity internship program";
+  l2 = `“${course.toUpperCase()}”`;
+  l3 = "demonstrating hands-on experience in security fundamentals, threat analysis, and applied defensive practices";
+} else if (type === "Completion") {
+  l1 = "has successfully completed the certified program";
+  l2 = `“${course.toUpperCase()}”`;
+  l3 = "demonstrating competency in security fundamentals, threat awareness, and defensive methodologies";
+} else {
+  l1 = "has actively participated in the professional training program";
+  l2 = `“${course.toUpperCase()}”`;
+  l3 = "gaining foundational exposure to cybersecurity concepts, threat awareness, and industry-relevant practices";
+}
+
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF("landscape","mm","a4");
+
+const W = 297, H = 210;
+
+/* ================= BACKGROUND ================= */
+pdf.setFillColor(11,17,23);
+pdf.rect(0,0,W,H,"F");
+
+/* ================= WATERMARK ================= */
+pdf.setFont("helvetica","bold");
+pdf.setFontSize(60);
+pdf.setTextColor(255,255,255);
+pdf.setGState(new pdf.GState({opacity:0.02}));
+pdf.text("CYBER BUDDY ACADEMY",W/2,H/2,{align:"center",angle:30});
+pdf.setGState(new pdf.GState({opacity:1}));
+
+/* ================= BORDER ================= */
+pdf.setDrawColor(0,230,208);
+pdf.setLineWidth(1);
+pdf.rect(18,18,W-36,H-36);
+
+/* ================= ALL TEXT WHITE ================= */
+pdf.setTextColor(255,255,255);
+
+/* ================= HEADER ================= */
+const logo = new Image();
+logo.src =
+  "https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png";
+
+logo.onload = () => {
+
+  pdf.addImage(logo,"PNG",W/2 - 120,30,24,24);
+
+  pdf.setFont("helvetica","bold");
+  pdf.setFontSize(24);
+  pdf.text("CYBER BUDDY ACADEMY",W/2,42,{align:"center"});
+
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica","normal");
+  pdf.text(
+    "Empowering Future Cybersecurity Professionals",
+    W/2,
+    50,
+    {align:"center"}
+  );
+
+  pdf.line(60,56,W-60,56);
+
+  /* ================= TITLE ================= */
+  pdf.setFontSize(22);
+  pdf.text(`CERTIFICATE OF ${type.toUpperCase()}`,W/2,72,{align:"center"});
+
+  /* ================= NAME ================= */
+  pdf.setFontSize(32);
+  pdf.setFont("helvetica","bold");
+  pdf.text(name.toUpperCase(),W/2,98,{align:"center"});
+  pdf.line(W/2-70,102,W/2+70,102);
+
+  /* ================= CONTENT ================= */
+  pdf.setFont("helvetica","normal");
+  pdf.setFontSize(15);
+  pdf.text(l1,W/2,120,{align:"center"});
+
+  pdf.setFont("helvetica","bold");
+  pdf.text(l2,W/2,134,{align:"center"});
+
+  pdf.setFont("helvetica","normal");
+  pdf.text(l3,W/2,148,{align:"center",maxWidth:180});
+
+  pdf.line(60,156,W-60,156);
+
+  /* ================= META LEFT ================= */
+  pdf.setFontSize(11);
+  pdf.text(`Issued On : ${date}`,32,172);
+  pdf.text(`Mode      : ${mode}`,32,180);
+  pdf.text(`Duration  : ${duration}`,32,188);
+
+  /* ================= CERT ID ================= */
+  pdf.text("Certificate ID",W/2,172,{align:"center"});
+  pdf.text(certId,W/2,180,{align:"center"});
+
+  /* ================= QR ================= */
+  const qr = new QRious({value:verifyUrl,size:140});
+  pdf.addImage(qr.toDataURL(),"PNG",W-74,164,36,36);
+
+  pdf.setFontSize(9);
+  pdf.text("Scan to Verify",W-56,204,{align:"center"});
+
+  /* ================= FOOTER ================= */
+  pdf.setFontSize(9.5);
+  pdf.text(
+    "Digitally generated & QR-verifiable certificate",
+    W/2,
+    H-10,
+    {align:"center"}
+  );
+
+  pdf.save(certId + ".pdf");
+};
+}
+</script>
+
+</body>
+</html>
