@@ -76,6 +76,16 @@
       "duration": "111",
       "email": "new@gmail.com",
       "issuedOn": "18/3/2026"
+    },
+    {
+      "certId": "CBA-CERT-1778347583197",
+      "name": "Mooo",
+      "course": "102",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "10",
+      "issuedOn": "9/5/2026",
+      "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1778347583197"
     }
   ]
 }
