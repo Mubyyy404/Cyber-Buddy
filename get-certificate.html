@@ -6,120 +6,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+
+*{
+    box-sizing:border-box;
 }
 
-.container {
-    background: rgba(0,0,0,0.65);
-    padding: 40px;
-    border-radius: 20px;
-    width: 95%;
-    max-width: 520px;
-    text-align: center;
-    box-shadow: 0 0 30px #00f2ff;
-    backdrop-filter: blur(12px);
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#0f0f0f,#1a1a2e);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
 }
 
-.logo {
-    width: 120px;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 0 15px #00f2ff);
+.container{
+    background:rgba(0,0,0,0.65);
+    padding:40px;
+    border-radius:20px;
+    width:100%;
+    max-width:520px;
+    text-align:center;
+    box-shadow:0 0 30px #00f2ff;
+    backdrop-filter:blur(12px);
 }
 
-h1 {
-    color: #00f2ff;
-    margin-top: 5px;
+.logo{
+    width:120px;
+    margin-bottom:15px;
+    filter:drop-shadow(0 0 15px #00f2ff);
 }
 
-p {
-    color: #ccc;
+h1{
+    color:#00f2ff;
+    margin-top:5px;
+    margin-bottom:10px;
 }
 
-input {
-    width: 100%;
-    padding: 14px;
-    margin-top: 20px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 15px;
+p{
+    color:#ccc;
+    margin-bottom:20px;
 }
 
-.btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 15px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.3s;
+input{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    font-size:15px;
+    background:#f5f5f5;
 }
 
-.get-btn {
-    background: #00f2ff;
-    color: black;
+.btn{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border-radius:10px;
+    border:none;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.3s;
 }
 
-.get-btn:hover {
-    background: #00c3cc;
-    transform: scale(1.05);
+.get-btn{
+    background:#00f2ff;
+    color:black;
 }
 
-.verify-btn {
-    background: #ff9800;
-    color: black;
+.get-btn:hover{
+    background:#00c3cc;
+    transform:scale(1.03);
 }
 
-.verify-btn:hover {
-    background: #e68900;
-    transform: scale(1.05);
+.verify-btn{
+    background:#ff9800;
+    color:black;
 }
 
-.download-btn {
-    display: none;
-    width: 100%;
-    padding: 14px;
-    margin-top: 15px;
-    border-radius: 10px;
-    background: #00ff88;
-    color: black;
-    font-weight: bold;
-    text-decoration: none;
+.verify-btn:hover{
+    background:#e68900;
+    transform:scale(1.03);
 }
 
-.success {
-    color: #00ff88;
-    margin-top: 15px;
+.download-btn{
+    display:none;
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border-radius:10px;
+    background:#00ff88;
+    color:black;
+    font-weight:bold;
+    text-decoration:none;
+    transition:0.3s;
 }
 
-.error {
-    color: red;
-    margin-top: 15px;
+.download-btn:hover{
+    background:#00cc6d;
+    transform:scale(1.03);
 }
 
-.loading {
-    color: #00f2ff;
-    margin-top: 15px;
+.success{
+    color:#00ff88;
+    margin-top:15px;
+    font-weight:bold;
 }
 
-iframe {
-    margin-top: 20px;
-    width: 100%;
-    height: 420px;
-    border-radius: 12px;
-    border: none;
-    display: none;
+.error{
+    color:#ff4b4b;
+    margin-top:15px;
+    font-weight:bold;
 }
+
+.loading{
+    color:#00f2ff;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+iframe{
+    margin-top:20px;
+    width:100%;
+    height:420px;
+    border-radius:12px;
+    border:none;
+    display:none;
+    background:white;
+}
+
+.cert-details{
+    margin-top:20px;
+    text-align:left;
+    background:rgba(255,255,255,0.06);
+    padding:15px;
+    border-radius:12px;
+    display:none;
+}
+
+.cert-details p{
+    margin:8px 0;
+    color:white;
+    font-size:14px;
+}
+
+.cert-details span{
+    color:#00f2ff;
+    font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -128,68 +167,182 @@ iframe {
 <div class="container">
 
     <!-- LOGO -->
-    <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/main/mylogo.png" class="logo" alt="Cyber Buddy Academy Logo">
+    <img 
+        src="https://raw.githubusercontent.com/Mubyyy404/photo-2/main/mylogo.png" 
+        class="logo" 
+        alt="Cyber Buddy Academy Logo"
+    >
 
     <h1>Cyber Buddy Academy</h1>
+
     <p>Download or Verify Your Certificate</p>
 
-    <input type="text" id="billNumber" placeholder="Enter Bill Number (CBA-XXXXXXXXXXXX)">
+    <input 
+        type="text" 
+        id="billNumber" 
+        placeholder="Enter Certificate ID (CBA-CERT-XXXXXXXX)"
+    >
 
-    <!-- Get Certificate Button -->
-    <button class="btn get-btn" onclick="getCertificate()">Get Certificate</button>
+    <!-- GET CERTIFICATE -->
+    <button class="btn get-btn" onclick="getCertificate()">
+        Get Certificate
+    </button>
 
-    <!-- Verify Certificate Redirect Button -->
-    <button class="btn verify-btn" onclick="redirectVerify()">Verify Certificate</button>
+    <!-- VERIFY PAGE -->
+    <button class="btn verify-btn" onclick="redirectVerify()">
+        Verify Certificate
+    </button>
 
+    <!-- MESSAGE -->
     <div id="message"></div>
 
-    <!-- Download Button -->
-    <a id="downloadBtn" class="download-btn" target="_blank">
+    <!-- CERTIFICATE DETAILS -->
+    <div class="cert-details" id="certDetails"></div>
+
+    <!-- DOWNLOAD BUTTON -->
+    <a 
+        id="downloadBtn" 
+        class="download-btn" 
+        target="_blank"
+    >
         Download Certificate
     </a>
 
-    <!-- PDF Preview -->
+    <!-- PDF VIEWER -->
     <iframe id="pdfViewer"></iframe>
 
 </div>
 
 <script>
-async function getCertificate() {
-    const bill = document.getElementById("billNumber").value.trim();
+
+async function getCertificate(){
+
+    const certId = document.getElementById("billNumber").value.trim();
+
     const message = document.getElementById("message");
+
     const viewer = document.getElementById("pdfViewer");
+
     const downloadBtn = document.getElementById("downloadBtn");
 
+    const certDetails = document.getElementById("certDetails");
+
+    // RESET
     viewer.style.display = "none";
     downloadBtn.style.display = "none";
-    message.innerHTML = "<div class='loading'>Checking certificate...</div>";
+    certDetails.style.display = "none";
 
-    try {
-        const response = await fetch("certificates_download.json");
+    message.innerHTML = `
+        <div class='loading'>
+            Checking certificate...
+        </div>
+    `;
+
+    if(certId === ""){
+
+        message.innerHTML = `
+            <div class='error'>
+                Please enter Certificate ID ❌
+            </div>
+        `;
+
+        return;
+    }
+
+    try{
+
+        // FETCH certificates.json
+        const response = await fetch("certificates.json");
+
         const data = await response.json();
 
-        if(data[bill]) {
-            const pdfURL = data[bill];
+        // FIND CERTIFICATE
+        const certificate = data.certificates.find(
+            cert => cert.certId === certId
+        );
 
-            message.innerHTML = "<div class='success'>Certificate Found ✅</div>";
+        // FOUND
+        if(certificate){
 
-            viewer.src = "https://docs.google.com/gview?url=" + encodeURIComponent(pdfURL) + "&embedded=true";
-            viewer.style.display = "block";
+            message.innerHTML = `
+                <div class='success'>
+                    Certificate Found ✅
+                </div>
+            `;
 
-            downloadBtn.href = pdfURL;
-            downloadBtn.style.display = "block";
-        } else {
-            message.innerHTML = "<div class='error'>Invalid Bill Number ❌</div>";
+            // SHOW DETAILS
+            certDetails.innerHTML = `
+                <p><span>Name:</span> ${certificate.name || "N/A"}</p>
+
+                <p><span>Course:</span> ${certificate.course || "N/A"}</p>
+
+                <p><span>Type:</span> ${certificate.type || "N/A"}</p>
+
+                <p><span>Mode:</span> ${certificate.mode || "N/A"}</p>
+
+                <p><span>Duration:</span> ${certificate.duration || "N/A"}</p>
+
+                <p><span>Issued On:</span> ${certificate.issuedOn || "N/A"}</p>
+
+                <p><span>Certificate ID:</span> ${certificate.certId}</p>
+            `;
+
+            certDetails.style.display = "block";
+
+            // CHECK DOWNLOAD URL
+            if(certificate.download){
+
+                const pdfURL = certificate.download;
+
+                // PDF PREVIEW
+                viewer.src =
+                    "https://docs.google.com/gview?url=" +
+                    encodeURIComponent(pdfURL) +
+                    "&embedded=true";
+
+                viewer.style.display = "block";
+
+                // DOWNLOAD BUTTON
+                downloadBtn.href = pdfURL;
+
+                downloadBtn.style.display = "block";
+
+            }else{
+
+                message.innerHTML += `
+                    <div class='error'>
+                        PDF not uploaded yet ❌
+                    </div>
+                `;
+            }
+
+        }else{
+
+            message.innerHTML = `
+                <div class='error'>
+                    Invalid Certificate ID ❌
+                </div>
+            `;
         }
 
-    } catch (error) {
-        message.innerHTML = "<div class='error'>Error loading certificates.</div>";
+    }catch(error){
+
+        console.error(error);
+
+        message.innerHTML = `
+            <div class='error'>
+                Error loading certificates.json ❌
+            </div>
+        `;
     }
 }
 
-function redirectVerify() {
-    window.location.href = "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html";
+function redirectVerify(){
+
+    window.location.href =
+        "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html";
 }
+
 </script>
 
 </body>
