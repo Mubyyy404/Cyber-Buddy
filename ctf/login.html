@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTF Academy — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07090f;--surface:#0d1117;--surface2:#161b22;--surface3:#21262d;
+  --border:#30363d;--border-subtle:#21262d;
+  --accent:#58a6ff;--accent2:#bc8cff;--accent3:#ff7b72;
+  --success:#3fb950;--warn:#d29922;--danger:#f85149;
+  --text:#e6edf3;--text-muted:#8b949e;--text-dim:#484f58;
+  --radius:10px;--radius-lg:16px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+body.loading{visibility:hidden;}
+
+/* Background */
+.bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border-subtle) 1px,transparent 1px),linear-gradient(90deg,var(--border-subtle) 1px,transparent 1px);background-size:32px 32px;opacity:.4;}
+.bg-glow{position:absolute;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.12;}
+.bg-glow.g1{background:#58a6ff;top:-200px;right:-100px;}
+.bg-glow.g2{background:#bc8cff;bottom:-200px;left:-100px;}
+
+/* Card */
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.card{
+  position:relative;z-index:10;
+  width:min(440px,96vw);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:32px 28px 28px;
+  box-shadow:0 16px 48px rgba(0,0,0,.6);
+  animation:slideUp .4s ease forwards;
+}
+
+/* Header */
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.brand-logo{
+  width:36px;height:36px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;color:#fff;flex-shrink:0;
+}
+.brand-name{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-.5px;}
+.brand-name em{color:var(--accent);font-style:normal;}
+.brand-sub{font-size:.72rem;color:var(--text-muted);margin-bottom:24px;font-family:'Fira Code',monospace;}
+
+/* Tabs */
+.tab-bar{display:flex;background:var(--surface2);border-radius:9px;padding:3px;margin-bottom:20px;border:1px solid var(--border-subtle);}
+.tab-btn{flex:1;padding:8px;border-radius:7px;border:none;background:transparent;color:var(--text-muted);font-family:'Inter',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;transition:all .18s;}
+.tab-btn.active{background:var(--surface3);color:var(--text);border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+/* Fields */
+.field{margin-bottom:14px;}
+.field-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.field-label label{font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.field-label .req{color:var(--danger);margin-left:2px;}
+.field-label .aux{font-size:.72rem;color:var(--accent);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;font-weight:500;transition:opacity .15s;}
+.field-label .aux:hover{opacity:.7;text-decoration:underline;}
+.inp-wrap{position:relative;}
+.inp-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:.78rem;pointer-events:none;transition:color .15s;}
+.inp-wrap:focus-within .inp-icon{color:var(--accent);}
+.inp{width:100%;padding:9px 12px 9px 34px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Inter',sans-serif;font-size:.875rem;outline:none;transition:border-color .15s,box-shadow .15s;}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,.12);}
+.inp::placeholder{color:var(--text-dim);}
+.inp.no-icon{padding-left:12px;}
+.eye-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.78rem;padding:2px;transition:color .15s;}
+.eye-btn:hover{color:var(--text-muted);}
+.phone-row{display:flex;gap:7px;}
+.phone-code{width:90px;flex-shrink:0;padding:9px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Inter',sans-serif;font-size:.82rem;outline:none;transition:border-color .15s;}
+.phone-code:focus{border-color:var(--accent);}
+.phone-code option{background:var(--surface2);}
+.field-hint{font-size:.67rem;color:var(--text-dim);margin-top:4px;}
+
+/* Buttons */
+.btn-main{width:100%;padding:10px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Inter',sans-serif;font-weight:600;font-size:.875rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;}
+.btn-main:hover:not(:disabled){opacity:.9;transform:translateY(-1px);box-shadow:0 4px 16px rgba(88,166,255,.3);}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.sep{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text-dim);font-size:.72rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--border);}
+.btn-oauth{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:9px;}
+.btn-oauth:hover{background:var(--surface3);border-color:var(--accent);}
+
+/* Alert */
+.alert{border-radius:var(--radius);padding:10px 13px;font-size:.78rem;margin-bottom:14px;display:none;align-items:flex-start;gap:8px;line-height:1.5;}
+.alert.show{display:flex;}
+.alert.err{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.25);color:#ff7b72;}
+.alert.ok{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.25);color:#3fb950;}
+.alert.info{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.25);color:var(--accent);}
+
+/* Special screens */
+.special-screen{display:none;text-align:center;padding:20px 0 8px;}
+.special-screen.show{display:block;}
+.special-icon{font-size:2.8rem;margin-bottom:12px;display:block;}
+.special-title{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:6px;}
+.special-body{font-size:.8rem;color:var(--text-muted);line-height:1.7;margin-bottom:20px;}
+.pending-ring{width:56px;height:56px;border-radius:50%;border:3px solid rgba(210,153,34,.25);border-top-color:var(--warn);animation:spin 1s linear infinite;margin:0 auto 16px;}
+
+/* 2FA Overlay */
+.twofa-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px);}
+.twofa-bg.show{display:flex;}
+.twofa-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;width:min(360px,94vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.8);}
+.twofa-icon{font-size:2.4rem;margin-bottom:12px;display:block;}
+.twofa-title{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:6px;}
+.twofa-sub{font-size:.8rem;color:var(--text-muted);margin-bottom:18px;line-height:1.6;}
+.twofa-input{width:100%;padding:14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Fira Code',monospace;font-size:1.6rem;text-align:center;letter-spacing:12px;outline:none;transition:border-color .15s;margin-bottom:6px;}
+.twofa-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,.12);}
+.twofa-err{font-size:.75rem;color:var(--danger);min-height:18px;margin-bottom:12px;font-family:'Fira Code',monospace;}
+.twofa-resend{background:none;border:none;font-family:'Inter',sans-serif;font-size:.75rem;color:var(--text-muted);cursor:pointer;transition:color .15s;margin-top:8px;display:block;width:100%;}
+.twofa-resend:hover{color:var(--accent);}
+.twofa-cancel{color:var(--danger);margin-top:4px;}
+
+@keyframes spin{to{transform:rotate(360deg);}}.spin{animation:spin .7s linear infinite;}
+@media(max-width:480px){.card{padding:24px 16px 20px;}}
+</style>
+</head>
+<body class="loading">
+<div class="bg-wrap"><div class="bg-grid"></div><div class="bg-glow g1"></div><div class="bg-glow g2"></div></div>
+
+<!-- 2FA overlay -->
+<div class="twofa-bg" id="twofa-bg">
+  <div class="twofa-box">
+    <span class="twofa-icon">🔐</span>
+    <div class="twofa-title">2-Step Verification</div>
+    <div class="twofa-sub" id="twofa-sub">Enter the 6-digit code sent to your email.</div>
+    <input class="twofa-input" type="tel" id="twofa-code" maxlength="6" placeholder="000000" inputmode="numeric" autocomplete="one-time-code">
+    <div class="twofa-err" id="twofa-err"></div>
+    <button class="btn-main" id="twofa-btn" onclick="verify2FA()"><i class="fas fa-shield-check"></i> Verify</button>
+    <button class="twofa-resend" id="twofa-resend" onclick="resend2FA()">Didn't receive it? Resend code</button>
+    <button class="twofa-resend twofa-cancel" onclick="cancel2FA()">Cancel & sign out</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-logo"><i class="fas fa-flag"></i></div>
+    <div class="brand-name">CTF<em>_</em>Academy</div>
+  </div>
+  <p class="brand-sub">&gt; capture · exploit · dominate · learn</p>
+
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+    <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+  </div>
+
+  <div id="alert-box" class="alert err"></div>
+
+  <!-- LOGIN -->
+  <div id="form-login">
+    <div class="field">
+      <div class="field-label"><label>Email</label></div>
+      <div class="inp-wrap"><i class="fas fa-at inp-icon"></i><input class="inp" type="email" id="l-email" placeholder="you@example.com" autocomplete="email"></div>
+    </div>
+    <div class="field">
+      <div class="field-label">
+        <label>Password</label>
+        <button class="aux" onclick="doForgot()">Forgot password?</button>
+      </div>
+      <div class="inp-wrap">
+        <i class="fas fa-lock inp-icon"></i>
+        <input class="inp" type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
+        <button class="eye-btn" onclick="togglePw('l-pass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <button class="btn-main" id="login-btn" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+    <div class="sep">or continue with</div>
+    <button class="btn-oauth" onclick="doGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="form-register" style="display:none">
+    <div class="field">
+      <div class="field-label"><label>Display Name <span class="req">*</span></label></div>
+      <div class="inp-wrap"><i class="fas fa-user inp-icon"></i><input class="inp" type="text" id="r-name" placeholder="h4cker_pro" autocomplete="username"></div>
+    </div>
+    <div class="field">
+      <div class="field-label"><label>Email <span class="req">*</span></label></div>
+      <div class="inp-wrap"><i class="fas fa-at inp-icon"></i><input class="inp" type="email" id="r-email" placeholder="you@example.com" autocomplete="email"></div>
+    </div>
+    <div class="field">
+      <div class="field-label"><label>Mobile Number <span class="req">*</span></label></div>
+      <div class="phone-row">
+        <select class="phone-code" id="r-code">
+          <option value="+91">🇮🇳 +91</option><option value="+1">🇺🇸 +1</option>
+          <option value="+44">🇬🇧 +44</option><option value="+61">🇦🇺 +61</option>
+          <option value="+49">🇩🇪 +49</option><option value="+65">🇸🇬 +65</option>
+          <option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option>
+          <option value="+971">🇦🇪 +971</option><option value="+33">🇫🇷 +33</option>
+        </select>
+        <div class="inp-wrap" style="flex:1"><i class="fas fa-mobile-alt inp-icon"></i><input class="inp" type="tel" id="r-phone" placeholder="9876543210" autocomplete="tel"></div>
+      </div>
+      <p class="field-hint">Required for 2FA and account recovery</p>
+    </div>
+    <div class="field">
+      <div class="field-label"><label>Password <span class="req">*</span></label></div>
+      <div class="inp-wrap">
+        <i class="fas fa-lock inp-icon"></i>
+        <input class="inp" type="password" id="r-pass" placeholder="Min 8 chars + number" autocomplete="new-password">
+        <button class="eye-btn" onclick="togglePw('r-pass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label"><label>Confirm Password <span class="req">*</span></label></div>
+      <div class="inp-wrap">
+        <i class="fas fa-lock inp-icon"></i>
+        <input class="inp" type="password" id="r-pass2" placeholder="Repeat password" autocomplete="new-password">
+        <button class="eye-btn" onclick="togglePw('r-pass2',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <button class="btn-main" id="reg-btn" onclick="doRegister()"><i class="fas fa-user-plus"></i> Create Account</button>
+    <div class="sep">or register with</div>
+    <button class="btn-oauth" onclick="doGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Register with Google
+    </button>
+  </div>
+
+  <!-- VERIFY EMAIL -->
+  <div id="screen-verify" class="special-screen">
+    <span class="special-icon">📧</span>
+    <div class="special-title">Verify Your Email</div>
+    <p class="special-body">We sent a verification link to <strong id="verify-email"></strong>.<br>Click it to activate your account, then sign in.</p>
+    <button class="btn-main" onclick="backToLogin()"><i class="fas fa-arrow-left"></i> Back to Sign In</button>
+  </div>
+
+  <!-- PENDING APPROVAL -->
+  <div id="screen-pending" class="special-screen">
+    <div class="pending-ring"></div>
+    <div class="special-title" style="color:var(--warn);">Pending Approval</div>
+    <p class="special-body">Your registration is awaiting admin review. You'll be notified once approved.</p>
+    <button class="btn-main" onclick="doLogout()" style="background:var(--surface3);color:var(--text-muted);box-shadow:none;"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</div>
+
+<script type="module">
+import { auth, db } from "./js/firebase.js";
+import {
+  signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signInWithPopup, GoogleAuthProvider, onAuthStateChanged,
+  updateProfile, sendEmailVerification, sendPasswordResetEmail, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  doc, getDoc, setDoc, updateDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ── EMAILJS (fill in your keys from emailjs.com) ─────────────
+const EJS_KEY      = "YOUR_EMAILJS_PUBLIC_KEY";
+const EJS_SERVICE  = "YOUR_EMAILJS_SERVICE_ID";
+const EJS_TEMPLATE = "YOUR_EMAILJS_TEMPLATE_ID";
+let ejsReady = false;
+try {
+  if (typeof emailjs !== "undefined" && !EJS_KEY.startsWith("YOUR")) {
+    emailjs.init({ publicKey: EJS_KEY });
+    ejsReady = true;
+  }
+} catch(e) {}
+
+// ── STATE ─────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+let redirecting = false, twoFAUser = null, twoFACode = null, twoFAExpiry = 0, resendLock = false;
+
+// ── UI HELPERS ────────────────────────────────────────────────
+function alert_(msg, type="err") {
+  const b = $("alert-box");
+  const icons={err:"fa-circle-exclamation",ok:"fa-circle-check",info:"fa-circle-info"};
+  b.innerHTML = `<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  b.className = `alert show ${type}`;
+}
+function clearAlert() { $("alert-box").className="alert"; }
+window.togglePw = (id,btn) => {
+  const el=$(id); el.type=el.type==="text"?"password":"text";
+  btn.innerHTML=`<i class="fas fa-eye${el.type==="password"?"":"-slash"}"></i>`;
+};
+function hideAll() {
+  ["form-login","form-register"].forEach(id=>$(id).style.display="none");
+  ["screen-verify","screen-pending"].forEach(id=>$(id).classList.remove("show"));
+  $("tab-bar").style.display="none";
+}
+function showVerify(email) { hideAll(); $("verify-email").textContent=email||""; $("screen-verify").classList.add("show"); }
+function showPending()      { hideAll(); $("screen-pending").classList.add("show"); }
+window.backToLogin = function() { $("tab-bar").style.display="flex"; switchTab("login"); };
+window.doLogout = async () => { await signOut(auth); location.reload(); };
+
+// ── AUTH STATE ────────────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  document.body.classList.remove("loading");
+  if (!user || redirecting) return;
+
+  const isGoogle = user.providerData?.some(p=>p.providerId==="google.com");
+
+  // Email verification gate (non-Google only)
+  if (!isGoogle && !user.emailVerified) { showVerify(user.email); return; }
+
+  // Load or create Firestore doc
+  let data = {};
+  try {
+    let snap = await getDoc(doc(db,"users",user.uid));
+    if (!snap.exists()) {
+      await ensureUserDoc(user, { name: user.displayName||user.email.split("@")[0], mobile: user.phoneNumber||"", photo: user.photoURL||"" });
+      snap = await getDoc(doc(db,"users",user.uid));
+    }
+    data = snap.data()||{};
+  } catch(e) { alert_("Connection error. Check your internet.","err"); return; }
+
+  // ADMIN → skip approval gate entirely and redirect straight to admin
+  if (data.role === "admin") { doRedirect("admin.html"); return; }
+
+  // Non-admin: check approval
+  if (data.status === "pending")  { showPending(); return; }
+  if (data.status === "rejected") { alert_("Your access was rejected. Contact admin.","err"); await signOut(auth); return; }
+
+  // 2FA gate (manual accounts only)
+  if (data.twoFA && !isGoogle) {
+    twoFAUser = user;
+    await send2FACode(user.email, data.name||user.displayName||"User");
+    return;
+  }
+
+  doRedirect("dashboard.html");
+});
+
+function doRedirect(page) {
+  if (redirecting) return; redirecting = true;
+  window.location.href = page;
+}
+
+// ── 2FA ───────────────────────────────────────────────────────
+async function send2FACode(email, name) {
+  twoFACode = String(Math.floor(100000 + Math.random()*900000));
+  twoFAExpiry = Date.now() + 600000;
+  $("twofa-err").textContent = "";
+  $("twofa-code").value = "";
+
+  if (ejsReady) {
+    try {
+      await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, { to_email:email, to_name:name, otp_code:twoFACode, expiry_min:"10" });
+      $("twofa-sub").innerHTML = `Code sent to <strong>${email}</strong>. Valid for 10 minutes.`;
+    } catch(e) {
+      $("twofa-sub").innerHTML = `<span style="color:var(--warn)">EmailJS not configured — dev code: <strong style="font-family:'Fira Code';color:var(--success);font-size:1.1rem">${twoFACode}</strong></span>`;
+    }
+  } else {
+    $("twofa-sub").innerHTML = `<span style="color:var(--warn)">EmailJS not set up yet. Dev code: <strong style="font-family:'Fira Code';color:var(--success);font-size:1.2rem;letter-spacing:4px">${twoFACode}</strong></span>`;
+  }
+  $("twofa-bg").classList.add("show");
+  setTimeout(()=>$("twofa-code").focus(),100);
+}
+
+window.verify2FA = async function() {
+  const entered=$("twofa-code").value.trim(), errEl=$("twofa-err"), btn=$("twofa-btn");
+  if (!twoFACode)               { errEl.textContent="Session expired. Log in again."; return; }
+  if (Date.now()>twoFAExpiry)   { errEl.textContent="Code expired. Request a new one."; return; }
+  if (entered.length!==6)       { errEl.textContent="Enter the full 6-digit code."; return; }
+  if (entered!==twoFACode)      { errEl.textContent="Incorrect code. Try again."; $("twofa-code").value=""; $("twofa-code").focus(); return; }
+  btn.innerHTML='<i class="fas fa-spinner spin"></i> Verifying…'; btn.disabled=true; errEl.textContent="";
+  try { doRedirect("dashboard.html"); } catch(e) { btn.innerHTML='<i class="fas fa-shield-check"></i> Verify'; btn.disabled=false; errEl.textContent="Error. Try again."; }
+};
+window.resend2FA = async function() {
+  if (resendLock) return; resendLock=true;
+  const btn=$("twofa-resend"); btn.textContent="Sending…";
+  try { const snap=await getDoc(doc(db,"users",twoFAUser.uid)); await send2FACode(twoFAUser.email, snap.data()?.name||"User"); } catch(e){}
+  setTimeout(()=>{ resendLock=false; btn.textContent="Didn't receive it? Resend code"; }, 30000);
+};
+window.cancel2FA = async function() { twoFAUser=null; twoFACode=null; $("twofa-bg").classList.remove("show"); await signOut(auth); };
+$("twofa-code").addEventListener("input", function() {
+  this.value=this.value.replace(/\D/g,"");
+  if (this.value.length===6) verify2FA();
+});
+
+// ── ENSURE USER DOC ───────────────────────────────────────────
+async function ensureUserDoc(user, extras={}) {
+  const ref=doc(db,"users",user.uid);
+  let snap; try { snap=await getDoc(ref); } catch(e){ return; }
+  if (!snap.exists()) {
+    try {
+      await setDoc(ref,{
+        uid:user.uid, name:extras.name||user.email.split("@")[0],
+        email:user.email, mobile:extras.mobile||"", photo:extras.photo||"",
+        role:"player", status:"pending",
+        score:0, solves:0, solvedIds:[], twoFA:false, bio:"", github:"",
+        joinedAt:serverTimestamp(), lastLogin:serverTimestamp()
+      });
+    } catch(e){ console.error("setDoc failed:",e); }
+  } else {
+    await updateDoc(ref,{lastLogin:serverTimestamp()}).catch(()=>{});
+  }
+}
+
+// ── TAB SWITCH ────────────────────────────────────────────────
+window.switchTab = function(tab) {
+  $("form-login").style.display    = tab==="login"    ? "block" : "none";
+  $("form-register").style.display = tab==="register" ? "block" : "none";
+  $("tab-login").classList.toggle("active",    tab==="login");
+  $("tab-register").classList.toggle("active", tab==="register");
+  $("tab-bar").style.display="flex";
+  ["screen-verify","screen-pending"].forEach(id=>$(id).classList.remove("show"));
+  clearAlert();
+};
+$("form-login").style.display="block";
+
+// ── LOGIN ─────────────────────────────────────────────────────
+window.doLogin = async function() {
+  clearAlert();
+  const email=$("l-email").value.trim(), pass=$("l-pass").value;
+  if (!email||!pass) return alert_("Please fill in all fields.");
+  const btn=$("login-btn"); btn.innerHTML='<i class="fas fa-spinner spin"></i> Signing in…'; btn.disabled=true;
+  try {
+    const cred=await signInWithEmailAndPassword(auth,email,pass);
+    await ensureUserDoc(cred.user);
+  } catch(e) {
+    btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In'; btn.disabled=false;
+    alert_(friendlyError(e.code));
+  }
+};
+
+// ── REGISTER ─────────────────────────────────────────────────
+window.doRegister = async function() {
+  clearAlert();
+  const name=$("r-name").value.trim(), email=$("r-email").value.trim();
+  const code=$("r-code").value, phone=$("r-phone").value.trim();
+  const pass=$("r-pass").value, pass2=$("r-pass2").value;
+  if (!name)            return alert_("Display name is required.");
+  if (!email)           return alert_("Email is required.");
+  if (!phone)           return alert_("Mobile number is required.");
+  if (pass.length<8)    return alert_("Password must be at least 8 characters.");
+  if (!/\d/.test(pass)) return alert_("Password must include at least one number.");
+  if (pass!==pass2)     return alert_("Passwords do not match.");
+  const btn=$("reg-btn"); btn.innerHTML='<i class="fas fa-spinner spin"></i> Creating…'; btn.disabled=true;
+  try {
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    await updateProfile(cred.user,{displayName:name});
+    await ensureUserDoc(cred.user,{name,mobile:code+phone,photo:""});
+    await sendEmailVerification(cred.user);
+    await signOut(auth);
+    showVerify(email);
+  } catch(e) {
+    btn.innerHTML='<i class="fas fa-user-plus"></i> Create Account'; btn.disabled=false;
+    alert_(friendlyError(e.code));
+  }
+};
+
+// ── GOOGLE ────────────────────────────────────────────────────
+window.doGoogle = async function() {
+  clearAlert();
+  try {
+    const provider=new GoogleAuthProvider(); provider.addScope("profile");
+    const cred=await signInWithPopup(auth,provider);
+    await ensureUserDoc(cred.user,{
+      name:cred.user.displayName||cred.user.email.split("@")[0],
+      mobile:cred.user.phoneNumber||"",
+      photo:cred.user.photoURL||""
+    });
+  } catch(e) { alert_(friendlyError(e.code)); }
+};
+
+// ── FORGOT PW ─────────────────────────────────────────────────
+window.doForgot = async function() {
+  const email=$("l-email").value.trim();
+  if (!email) return alert_("Enter your email above first.","info");
+  try { await sendPasswordResetEmail(auth,email); alert_(`Reset email sent to ${email}`,"ok"); }
+  catch(e) { alert_(friendlyError(e.code)); }
+};
+
+function friendlyError(code) {
+  return ({
+    "auth/user-not-found":"No account found with that email.",
+    "auth/wrong-password":"Incorrect password.",
+    "auth/invalid-credential":"Invalid email or password.",
+    "auth/email-already-in-use":"That email is already registered.",
+    "auth/invalid-email":"Please enter a valid email address.",
+    "auth/weak-password":"Password too weak — try something stronger.",
+    "auth/too-many-requests":"Too many attempts. Please wait and try again.",
+    "auth/popup-closed-by-user":"Google sign-in was cancelled.",
+    "auth/network-request-failed":"Network error. Check your connection.",
+    "auth/user-disabled":"This account has been disabled.",
+  })[code] || "Something went wrong. Please try again.";
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Enter") return;
+  if($("twofa-bg").classList.contains("show")) { verify2FA(); return; }
+  if($("form-login").style.display!=="none") doLogin();
+  else if($("form-register").style.display!=="none") doRegister();
+});
+</script>
+</body>
+</html>

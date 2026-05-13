@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievement — Cyber Buddy Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:linear-gradient(135deg,#000428 0%,#004e92 100%);
+  color:#d4e3ff;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;overflow:hidden;
+  position:relative;
+}
+
+/* grid */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,255,255,.045) 39px,rgba(0,255,255,.045) 40px),
+    repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,255,255,.045) 39px,rgba(0,255,255,.045) 40px);
+  animation:gPulse 15s ease-in-out infinite;
+}
+@keyframes gPulse{0%,100%{opacity:.5;}50%{opacity:.9;}}
+
+/* scanline */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(0deg,transparent 0%,rgba(0,200,255,.025) 50%,transparent 100%);
+  background-size:100% 8px;
+  animation:scan 8s linear infinite;
+}
+@keyframes scan{0%{background-position:0 -100vh;}100%{background-position:0 100vh;}}
+
+.ghost{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:0;pointer-events:none;
+  font-family:'Orbitron',monospace;font-size:12vw;font-weight:900;
+  color:rgba(0,229,255,.022);letter-spacing:4px;white-space:nowrap;
+  user-select:none;
+}
+
+/* Loading screen */
+.loading-screen{
+  position:fixed;inset:0;z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#000428 0%,#004e92 100%);
+  transition:opacity .8s ease;
+}
+.loading-screen.fade{opacity:0;pointer-events:none;}
+.loading-logo{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:#00e5ff;letter-spacing:3px;margin-bottom:20px;}
+.loading-bar{width:200px;height:2px;background:rgba(0,229,255,.15);border-radius:2px;overflow:hidden;}
+.loading-fill{height:100%;background:linear-gradient(90deg,#00e5ff,#00ff9d);border-radius:2px;animation:lFill 1.2s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes lFill{from{width:0;}to{width:100%;}}
+
+/* Card */
+.card-wrap{
+  position:relative;z-index:1;
+  width:min(500px,96vw);
+  animation:cardIn 1s cubic-bezier(.34,1.56,.64,1) .8s both;
+}
+@keyframes cardIn{from{opacity:0;transform:scale(.85) translateY(30px);}to{opacity:1;transform:none;}}
+
+.card{
+  background:linear-gradient(145deg,rgba(0,10,28,.97),rgba(0,22,50,.95));
+  border:1px solid rgba(0,229,255,.2);border-radius:20px;
+  padding:40px 32px 32px;text-align:center;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 80px rgba(0,229,255,.1),0 40px 80px rgba(0,0,0,.8);
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#00e5ff,#00ff9d,#00e5ff,transparent);
+}
+.card::after{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,229,255,.06),transparent 70%);
+  pointer-events:none;
+}
+
+/* Verified ring */
+.ring-wrap{
+  width:120px;height:120px;border-radius:50%;margin:0 auto 24px;
+  background:linear-gradient(135deg,rgba(0,229,255,.1),rgba(0,255,157,.07));
+  border:2px solid rgba(0,229,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.2rem;position:relative;
+  animation:ringPop 1s cubic-bezier(.34,1.56,.64,1) 1.2s both, ringGlow 3s ease 2.2s infinite;
+}
+@keyframes ringPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes ringGlow{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,.1);}50%{box-shadow:0 0 0 20px rgba(0,229,255,0);}}
+.ring-wrap::after{
+  content:'✓';
+  position:absolute;bottom:-2px;right:-2px;
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#00ff9d,#00cc7d);
+  color:#000;font-size:1rem;font-weight:900;font-family:'Space Grotesk',sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(0,10,28,.9);
+  animation:checkPop .5s cubic-bezier(.34,1.56,.64,1) 1.6s both;
+}
+@keyframes checkPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+/* Confetti */
+.confetti-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:20px;}
+.confetti-dot{
+  position:absolute;width:6px;height:6px;border-radius:50%;
+  animation:confettiFly var(--dur,2s) ease var(--delay,0s) both;
+}
+@keyframes confettiFly{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  100%{transform:translateY(-120px) rotate(720deg) translateX(var(--dx,20px));opacity:0;}
+}
+
+/* Text */
+.ach-name{
+  font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;
+  background:linear-gradient(135deg,#00e5ff,#00ff9d);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;letter-spacing:-.5px;
+  animation:textIn .6s ease 1.4s both;
+}
+@keyframes textIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.player-txt{
+  font-size:.9rem;color:#6e85b0;margin-bottom:20px;
+  animation:textIn .6s ease 1.5s both;
+}
+.player-txt strong{color:#d4e3ff;font-weight:600;}
+
+.desc-badge{
+  display:inline-block;padding:10px 22px;
+  background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.18);border-radius:10px;
+  font-size:.88rem;font-weight:600;color:#d4e3ff;margin-bottom:22px;
+  animation:textIn .6s ease 1.6s both;
+}
+
+.meta-chips{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:22px;animation:textIn .6s ease 1.7s both;}
+.meta-chip{font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:4px 10px;border-radius:5px;border:1px solid;}
+.chip-cat{background:rgba(0,229,255,.07);border-color:rgba(0,229,255,.2);color:#00e5ff;}
+.chip-diff.diff-Easy{background:rgba(0,255,157,.07);border-color:rgba(0,255,157,.2);color:#00ff9d;}
+.chip-diff.diff-Medium{background:rgba(255,214,10,.07);border-color:rgba(255,214,10,.2);color:#ffd60a;}
+.chip-diff.diff-Hard{background:rgba(255,0,110,.07);border-color:rgba(255,0,110,.2);color:#ff006e;}
+.chip-pts{background:rgba(157,78,221,.07);border-color:rgba(157,78,221,.2);color:#9d4edd;}
+
+/* Verified stamp */
+.stamp{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 20px;border:1px solid rgba(0,255,157,.2);border-radius:8px;
+  background:rgba(0,255,157,.04);
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;color:#00ff9d;
+  margin-bottom:20px;width:fit-content;margin-left:auto;margin-right:auto;
+  animation:stampAnim 1s ease 1.8s both;
+}
+@keyframes stampAnim{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+
+.date-txt{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:rgba(110,133,176,.6);margin-bottom:24px;animation:textIn .6s ease 1.9s both;}
+
+/* Divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,.1),transparent);margin:0 0 20px;}
+
+/* Branding */
+.brand-row{display:flex;align-items:center;justify-content:center;gap:10px;animation:textIn .6s ease 2s both;}
+.brand-logo{width:28px;height:28px;}
+.brand-logo img{width:100%;height:100%;object-fit:contain;}
+.brand-name{font-family:'Orbitron',monospace;font-size:.72rem;font-weight:900;color:#00e5ff;letter-spacing:1px;}
+
+/* CTA */
+.cta-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px;animation:textIn .6s ease 2.1s both;}
+.cta-btn{
+  display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;
+  font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:all .18s;text-decoration:none;
+  border:1px solid rgba(0,229,255,.2);background:rgba(0,229,255,.06);color:#00e5ff;
+}
+.cta-btn:hover{background:rgba(0,229,255,.12);transform:translateY(-2px);}
+.cta-btn.primary{background:linear-gradient(135deg,#00e5ff,#9d4edd);border:none;color:#000;}
+.cta-btn.primary:hover{opacity:.9;}
+
+/* error state */
+.error-state{text-align:center;padding:60px 30px;}
+.error-icon{font-size:3rem;margin-bottom:16px;color:rgba(0,229,255,.3);}
+.error-title{font-family:'Orbitron',monospace;font-size:1.1rem;color:#d4e3ff;margin-bottom:8px;}
+.error-sub{font-family:'JetBrains Mono',monospace;font-size:.74rem;color:#6e85b0;}
+</style>
+</head>
+<body>
+<div class="ghost">CYBER BUDDY</div>
+
+<!-- Loading screen -->
+<div class="loading-screen" id="loading">
+  <div class="loading-logo">CYBER BUDDY</div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<!-- Main card -->
+<div class="card-wrap" id="main-wrap" style="display:none;">
+  <div class="card" id="main-card">
+    <div class="confetti-layer" id="confetti"></div>
+    <div id="card-content"></div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+
+function spawnConfetti(){
+  const layer = document.getElementById("confetti");
+  const colors = ["#00e5ff","#00ff9d","#9d4edd","#ffd60a","#ff006e","#ff6b35"];
+  for(let i=0;i<24;i++){
+    const el=document.createElement("div");
+    el.className="confetti-dot";
+    el.style.cssText=`
+      background:${colors[i%colors.length]};
+      left:${Math.random()*100}%;
+      bottom:20%;
+      --dur:${1.4+Math.random()*1.4}s;
+      --delay:${2+Math.random()*0.8}s;
+      --dx:${(Math.random()-0.5)*80}px;
+      width:${4+Math.random()*5}px;
+      height:${4+Math.random()*5}px;
+    `;
+    layer.appendChild(el);
+  }
+}
+
+function buildCard(data){
+  let chips = "";
+  if(data.category) chips += `<span class="meta-chip chip-cat">${data.category}</span>`;
+  if(data.difficulty) chips += `<span class="meta-chip chip-diff diff-${data.difficulty}">${data.difficulty}</span>`;
+  if(data.points) chips += `<span class="meta-chip chip-pts">+${data.points} pts</span>`;
+
+  const dateStr = data.date ? new Date(data.date).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}) : new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  const typeLabel = data.type==="challenge" ? "CHALLENGE CONQUERED" : "ACHIEVEMENT UNLOCKED";
+  const displayName = data.chalTitle || data.achName || "Achievement";
+  const desc = data.desc || (data.chalTitle ? `Completed "${data.chalTitle}" challenge on Cyber Buddy Academy.` : "Earned on Cyber Buddy Academy.");
+
+  document.getElementById("card-content").innerHTML = `
+    <div class="ring-wrap">${data.icon||"🏆"}</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:2px;color:#6e85b0;margin-bottom:8px;">${typeLabel}</div>
+    <div class="ach-name">${displayName}</div>
+    <div class="player-txt">earned by <strong>${data.player||"A Hacker"}</strong></div>
+    ${chips?`<div class="meta-chips">${chips}</div>`:""}
+    <div class="desc-badge">${desc}</div>
+    <div class="stamp"><i class="fas fa-shield-check"></i> VERIFIED BY CYBER BUDDY ACADEMY</div>
+    <div class="date-txt">${dateStr}</div>
+    <div class="divider"></div>
+    <div class="brand-row">
+      <div class="brand-logo"><img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="Cyber Buddy Academy" onerror="this.style.display='none'"></div>
+      <div class="brand-name">CYBER BUDDY ACADEMY</div>
+    </div>
+    <div class="cta-row">
+      <a href="dashboard.html" class="cta-btn primary"><i class="fas fa-th-large"></i> Open Dashboard</a>
+      <button class="cta-btn" onclick="shareThis()"><i class="fas fa-share-alt"></i> Share</button>
+    </div>
+  `;
+}
+
+function buildError(){
+  document.getElementById("card-content").innerHTML = `
+    <div class="error-state">
+      <div class="error-icon"><i class="fas fa-unlink"></i></div>
+      <div class="error-title">Achievement Not Found</div>
+      <div class="error-sub">This link may be invalid or has expired.</div>
+      <br>
+      <a href="dashboard.html" class="cta-btn primary" style="display:inline-flex;margin:0 auto;"><i class="fas fa-home"></i> Go to Dashboard</a>
+    </div>
+  `;
+}
+
+window.shareThis = function(){
+  const url = window.location.href;
+  if(navigator.share){ navigator.share({title:"Cyber Buddy Academy Achievement",url}); }
+  else { navigator.clipboard.writeText(url).then(()=>alert("Link copied!")).catch(()=>prompt("Copy this link:",url)); }
+};
+
+// Boot
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    const loading = document.getElementById("loading");
+    const wrap = document.getElementById("main-wrap");
+    loading.classList.add("fade");
+    setTimeout(()=>{ loading.style.display="none"; wrap.style.display="block"; }, 800);
+
+    let data = null;
+    try{
+      const raw = params.get("viewach");
+      if(raw) data = JSON.parse(atob(raw));
+    }catch(e){}
+
+    if(data){ buildCard(data); spawnConfetti(); }
+    else { buildError(); }
+  }, 1400);
+});
+</script>
+</body>
+</html>
