@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Buddy Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+<style>
+:root {
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Outfit', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --a1: #6c63ff;
+  --a2: #00d4aa;
+  --a3: #ff4d6d;
+  --a4: #f5a623;
+  --a5: #3b82f6;
+  --r: 10px;
+  --rl: 16px;
+  --sidebar: 250px;
+  --topbar: 62px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-theme="dark"] {
+  --bg:          #0a0a0f;
+  --bg2:         #0d0d14;
+  --surface:     #13131d;
+  --surface2:    #1a1a28;
+  --surface3:    #22223a;
+  --border:      rgba(255,255,255,.07);
+  --border-hi:   rgba(108,99,255,.4);
+  --text:        #e8e8f0;
+  --text-muted:  #7070a0;
+  --text-dim:    #3a3a5a;
+  --glow-a1:     0 0 32px rgba(108,99,255,.25);
+  --glow-a2:     0 0 32px rgba(0,212,170,.2);
+  --shadow:      0 8px 40px rgba(0,0,0,.6);
+  --shadow-card: 0 4px 24px rgba(0,0,0,.4);
+  --topbar-bg:   rgba(10,10,15,.82);
+  --sidebar-bg:  #080810;
+  --input-bg:    rgba(255,255,255,.04);
+  --hover-bg:    rgba(255,255,255,.04);
+  --scroll-color: rgba(108,99,255,.3);
+}
+[data-theme="light"] {
+  --bg:          #f0f0f8;
+  --bg2:         #e8e8f4;
+  --surface:     #ffffff;
+  --surface2:    #f5f5fb;
+  --surface3:    #eaeaf4;
+  --border:      rgba(0,0,0,.08);
+  --border-hi:   rgba(108,99,255,.5);
+  --text:        #1a1a2e;
+  --text-muted:  #5a5a8a;
+  --text-dim:    #aaaacc;
+  --glow-a1:     0 0 24px rgba(108,99,255,.15);
+  --glow-a2:     0 0 24px rgba(0,212,170,.1);
+  --shadow:      0 4px 24px rgba(0,0,0,.08);
+  --shadow-card: 0 2px 16px rgba(0,0,0,.06);
+  --topbar-bg:   rgba(240,240,248,.9);
+  --sidebar-bg:  #ffffff;
+  --input-bg:    rgba(0,0,0,.03);
+  --hover-bg:    rgba(108,99,255,.05);
+  --scroll-color: rgba(108,99,255,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--scroll-color);border-radius:4px}
+.bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35;animation:orbDrift 20s ease-in-out infinite}
+[data-theme="light"] .bg-orb{opacity:.12}
+.bg-orb:nth-child(1){width:600px;height:600px;background:radial-gradient(circle,#6c63ff,transparent);top:-200px;left:-100px;animation-delay:0s}
+.bg-orb:nth-child(2){width:500px;height:500px;background:radial-gradient(circle,#00d4aa,transparent);bottom:-150px;right:-100px;animation-delay:-7s}
+.bg-orb:nth-child(3){width:400px;height:400px;background:radial-gradient(circle,#ff4d6d,transparent);top:50%;left:50%;animation-delay:-14s}
+@keyframes orbDrift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.1)}66%{transform:translate(-40px,30px) scale(.95)}}
+.grid-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,var(--border) 0px,var(--border) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(90deg,var(--border) 0px,var(--border) 1px,transparent 1px,transparent 60px);animation:gridPulse 8s ease-in-out infinite}
+@keyframes gridPulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:none;z-index:50;transition:transform .3s var(--ease-out),background .3s,border-color .3s}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-brand{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:border-color .3s}
+.sb-logo-ring{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(108,99,255,.4);flex-shrink:0}
+.sb-logo-ring img{width:26px;height:26px;object-fit:contain;filter:brightness(10)}
+.sb-brand-text .brand-name{font-family:var(--font-display);font-size:.85rem;font-weight:800;letter-spacing:.5px;color:var(--text)}
+.sb-brand-text .brand-sub{font-family:var(--font-mono);font-size:.5rem;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase}
+.sb-user{padding:12px;border-bottom:1px solid var(--border);transition:border-color .3s}
+.sb-user-inner{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);transition:all .3s}
+.sb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.9rem;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;border:2px solid rgba(108,99,255,.4);transition:border-color .3s}
+.sb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.sb-uname{font-size:.85rem;font-weight:600}
+.sb-badge{font-family:var(--font-mono);font-size:.5rem;padding:2px 7px;border-radius:100px;background:rgba(108,99,255,.12);color:var(--a1);border:1px solid rgba(108,99,255,.25);display:inline-block;margin-top:2px;letter-spacing:.5px}
+.sb-nav{flex:1;padding:10px}
+.nav-section-label{font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);padding:12px 8px 5px;font-weight:500}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);font-size:.85rem;color:var(--text-muted);cursor:pointer;transition:all .18s;margin-bottom:2px;font-weight:500;position:relative;border:1px solid transparent;text-decoration:none}
+.nav-link:hover{background:var(--hover-bg);color:var(--text)}
+.nav-link.active{background:rgba(108,99,255,.1);color:var(--a1);border-color:rgba(108,99,255,.2)}
+.nav-link i{width:16px;text-align:center;font-size:.78rem}
+.nav-badge{margin-left:auto;min-width:20px;height:18px;padding:0 6px;background:var(--a1);color:#fff;border-radius:100px;font-family:var(--font-mono);font-size:.56rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.nav-dot{margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--a2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,212,170,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(0,212,170,0)}}
+.sb-bottom{padding:12px;border-top:1px solid var(--border);transition:border-color .3s}
+.sb-score-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;transition:all .3s}
+.score-label{font-family:var(--font-mono);font-size:.56rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
+.score-val{font-family:var(--font-display);font-size:1.2rem;font-weight:800;color:var(--a1)}
+.sb-logout{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--r);cursor:pointer;font-family:var(--font-body);font-size:.84rem;font-weight:500;color:var(--a3);background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);transition:all .18s}
+.sb-logout:hover{background:rgba(255,77,109,.15);transform:translateY(-1px)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:1}
+.topbar{height:var(--topbar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;background:var(--topbar-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:40;transition:border-color .3s,background .3s}
+.topbar-title{font-family:var(--font-display);font-size:.82rem;font-weight:700;letter-spacing:1px;color:var(--text);display:flex;align-items:center;gap:8px}
+.topbar-title::before{content:'';width:4px;height:16px;background:linear-gradient(to bottom,var(--a1),var(--a2));border-radius:4px;display:inline-block}
+.search-wrap{flex:1;max-width:300px;position:relative;margin-left:auto}
+.search-wrap input{width:100%;padding:8px 12px 8px 34px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-mono);font-size:.76rem;outline:none;transition:all .2s}
+.search-wrap input:focus{border-color:var(--border-hi);background:var(--surface2)}
+.search-wrap input::placeholder{color:var(--text-dim)}
+.search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:.7rem}
+.topbar-actions{display:flex;align-items:center;gap:6px}
+.tb-btn{width:36px;height:36px;border-radius:var(--r);border:1px solid var(--border);background:var(--input-bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:.78rem;transition:all .2s;position:relative}
+.tb-btn:hover{color:var(--a1);border-color:var(--border-hi);background:rgba(108,99,255,.08)}
+.theme-toggle-btn{position:relative;overflow:hidden}
+.theme-toggle-btn .icon-sun,.theme-toggle-btn .icon-moon{position:absolute;transition:all .35s var(--ease-spring)}
+[data-theme="dark"] .theme-toggle-btn .icon-sun{opacity:0;transform:translateY(-20px) rotate(90deg)}
+[data-theme="dark"] .theme-toggle-btn .icon-moon{opacity:1;transform:translateY(0) rotate(0deg)}
+[data-theme="light"] .theme-toggle-btn .icon-sun{opacity:1;transform:translateY(0) rotate(0deg)}
+[data-theme="light"] .theme-toggle-btn .icon-moon{opacity:0;transform:translateY(20px) rotate(-90deg)}
+.tb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.8rem;font-weight:800;color:#fff;cursor:pointer;overflow:hidden;border:2px solid rgba(108,99,255,.4);transition:box-shadow .2s}
+.tb-av:hover{box-shadow:0 0 0 3px rgba(108,99,255,.3)}
+.tb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.ham-btn{display:none;background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;margin-right:4px}
+
+/* Notification bell */
+.notif-btn{position:relative}
+.notif-pill{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;background:var(--a3);border-radius:100px;font-family:var(--font-mono);font-size:.52rem;font-weight:700;color:#fff;display:none;align-items:center;justify-content:center;border:2px solid var(--bg);animation:popIn .3s var(--ease-spring)}
+.notif-pill.show{display:flex}
+
+
+
+/* CONTENT */
+.content{flex:1;padding:24px;overflow-y:auto}
+.view{display:none}
+.view.active{display:block;animation:fadeIn .3s var(--ease-out)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-title{font-family:var(--font-display);font-size:.88rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+.sec-title .accent-bar{width:3px;height:16px;background:linear-gradient(to bottom,var(--a1),var(--a2));border-radius:4px;flex-shrink:0}
+.sec-link{font-family:var(--font-mono);font-size:.7rem;color:var(--a1);cursor:pointer;transition:opacity .14s;opacity:.7}
+.sec-link:hover{opacity:1;text-decoration:underline}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;transition:all .25s var(--ease-out);position:relative;overflow:hidden;cursor:default}
+.stat-card:hover{transform:translateY(-3px);border-color:var(--border-hi);box-shadow:var(--shadow-card)}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--card-color,var(--a1)),transparent);opacity:0;transition:opacity .25s}
+.stat-card:hover::after{opacity:1}
+.stat-glow{position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;opacity:.08;filter:blur(30px)}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.85rem;margin-bottom:12px}
+.stat-label{font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px}
+.stat-value{font-family:var(--font-display);font-size:1.65rem;font-weight:800;line-height:1}
+.stat-sub{font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);margin-top:5px}
+
+/* GRID LAYOUT */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.col-2{grid-column:span 2}
+.col-3{grid-column:span 3}
+.widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;transition:border-color .3s,background .3s}
+.widget-header{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;transition:border-color .3s}
+.widget-title{font-family:var(--font-mono);font-size:.66rem;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);display:flex;align-items:center;gap:7px}
+.widget-title i{font-size:.7rem}
+
+/* SKILL MAP */
+.skill-list{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.skill-row{display:flex;align-items:center;gap:10px}
+.skill-name{font-family:var(--font-mono);font-size:.65rem;color:var(--text-muted);width:70px;text-transform:uppercase;letter-spacing:.5px}
+.skill-track{flex:1;height:6px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.skill-fill{height:100%;border-radius:4px;transition:width 1.5s var(--ease-out)}
+.skill-pct{font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);width:32px;text-align:right}
+
+/* ACTIVITY HEATMAP */
+.heatmap-wrap{padding:14px 16px;display:flex;gap:3px;flex-wrap:wrap}
+.hm-cell{width:12px;height:12px;border-radius:3px;background:var(--surface3);transition:transform .1s;cursor:default}
+.hm-cell:hover{transform:scale(1.4)}
+.hm-0{background:var(--surface3)}
+.hm-1{background:rgba(108,99,255,.25)}
+.hm-2{background:rgba(108,99,255,.5)}
+.hm-3{background:rgba(108,99,255,.75)}
+.hm-4{background:var(--a1);box-shadow:0 0 6px rgba(108,99,255,.6)}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+.qa-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .2s var(--ease-out)}
+.qa-item:hover{border-color:var(--border-hi);background:rgba(108,99,255,.06);transform:translateY(-1px)}
+.qa-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0}
+.qa-label{font-size:.82rem;font-weight:600}
+.qa-sub{font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted)}
+
+/* RECENT SOLVES */
+.solve-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);transition:background .15s;cursor:default}
+.solve-row:hover{background:var(--hover-bg)}
+.solve-row:last-child{border-bottom:none}
+.solve-emoji{font-size:1.2rem}
+.solve-name{font-size:.86rem;font-weight:600}
+.solve-meta{display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap}
+.solve-pts{font-family:var(--font-display);font-size:.88rem;font-weight:700;color:var(--a2);margin-left:auto}
+
+/* CAT TAGS */
+.cat-tag{font-family:var(--font-mono);font-size:.56rem;font-weight:500;padding:2px 7px;border-radius:100px;letter-spacing:.3px}
+.cat-Web{background:rgba(59,130,246,.1);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
+.cat-Crypto{background:rgba(108,99,255,.1);color:var(--a1);border:1px solid rgba(108,99,255,.2)}
+.cat-Pwn{background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.2)}
+.cat-Forensics{background:rgba(245,166,35,.1);color:var(--a4);border:1px solid rgba(245,166,35,.2)}
+.cat-Rev{background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2)}
+.cat-Misc{background:rgba(139,92,246,.1);color:#8b5cf6;border:1px solid rgba(139,92,246,.2)}
+.diff-tag{font-family:var(--font-mono);font-size:.56rem;font-weight:600;padding:2px 8px;border-radius:100px}
+.diff-Easy{background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2)}
+.diff-Medium,.diff-Intermediate{background:rgba(245,166,35,.1);color:var(--a4);border:1px solid rgba(245,166,35,.2)}
+.diff-Hard{background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.2)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.filter-dropdown{position:relative}
+.filter-toggle{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.filter-toggle:hover,.filter-toggle.on{border-color:var(--border-hi);color:var(--a1);background:rgba(108,99,255,.07)}
+.filter-toggle i.caret{font-size:.55rem;transition:transform .2s}
+.filter-dropdown.open .caret{transform:rotate(180deg)}
+.filter-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:160px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);z-index:100;display:none;overflow:hidden;backdrop-filter:blur(20px);animation:dropIn .18s var(--ease-out)}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.filter-dropdown.open .filter-menu{display:block}
+.filter-opt{padding:9px 14px;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:8px}
+.filter-opt:hover{background:var(--hover-bg);color:var(--text)}
+.filter-opt.sel{color:var(--a1);background:rgba(108,99,255,.06)}
+.filter-opt .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.filter-clear{font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim);cursor:pointer;padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:none;transition:all .14s}
+.filter-clear:hover{color:var(--text);border-color:var(--border-hi)}
+.chal-count{font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim);margin-left:auto}
+
+/* CHALLENGE GRID */
+.chal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
+@keyframes cardUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;animation:cardUp .3s var(--ease-out) forwards;transition:all .25s var(--ease-out)}
+.chal-card:hover{border-color:var(--border-hi);transform:translateY(-4px);box-shadow:var(--shadow-card),var(--glow-a1)}
+.chal-card.solved{border-left:3px solid var(--a2)}
+.chal-thumb{width:100%;height:128px;position:relative;overflow:hidden;background:var(--surface2);flex-shrink:0}
+.chal-thumb img{width:100%;height:100%;object-fit:cover;opacity:.75;transition:transform .4s}
+.chal-card:hover .chal-thumb img{transform:scale(1.05)}
+.chal-thumb-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+.chal-thumb-overlay{position:absolute;inset:0;background:linear-gradient(0deg,var(--surface) 0%,transparent 60%)}
+.chal-solved-badge{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:var(--a2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#000;animation:popIn .4s var(--ease-spring)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.chal-cat-tag{position:absolute;top:8px;left:8px}
+.chal-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:6px}
+.chal-title{font-weight:700;font-size:.94rem}
+.chal-desc{font-size:.78rem;color:var(--text-muted);line-height:1.6;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.chal-foot{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.chal-pts{font-family:var(--font-display);font-size:1rem;font-weight:800}
+.chal-meta{font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);display:flex;align-items:center;gap:4px;margin-top:2px}
+
+/* CHALLENGE MODAL */
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(14px)}
+.modal-wrap.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);width:min(660px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(20px) scale(.96);transition:transform .28s var(--ease-spring);box-shadow:0 30px 80px rgba(0,0,0,.8),0 0 0 1px rgba(108,99,255,.08)}
+.modal-wrap.open .modal{transform:none}
+.modal-hero{width:100%;height:180px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--surface2)}
+.modal-hero img{width:100%;height:100%;object-fit:cover;opacity:.6;transition:transform .4s}
+.modal-hero-icon{position:absolute;font-size:3.8rem;filter:drop-shadow(0 4px 16px rgba(0,0,0,.6));z-index:1}
+.modal-hero-overlay{position:absolute;inset:0;background:linear-gradient(0deg,var(--surface) 0%,rgba(0,0,0,.15) 60%,transparent 100%);z-index:2}
+.modal-hero-bar{position:absolute;bottom:0;left:0;right:0;padding:12px 16px;display:flex;align-items:center;gap:7px;z-index:3}
+.modal-close{margin-left:auto;width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.74rem;transition:all .14s}
+.modal-close:hover{color:#fff;background:rgba(0,0,0,.75);transform:scale(1.05)}
+.modal-body{padding:22px;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--scroll-color) transparent}
+.modal-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.modal-title{font-family:var(--font-display);font-size:1.15rem;font-weight:800;line-height:1.2}
+.modal-pts-pill{display:flex;align-items:center;gap:5px;font-family:var(--font-display);font-size:.88rem;font-weight:800;color:var(--a1);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);padding:4px 12px;border-radius:100px;white-space:nowrap;flex-shrink:0}
+.modal-solves{font-family:var(--font-mono);font-size:.63rem;color:var(--text-dim);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.modal-solves i{font-size:.6rem}
+.modal-desc-block{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--a1);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;position:relative;overflow:hidden}
+.modal-desc-block::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle at top right,rgba(108,99,255,.08),transparent)}
+.modal-desc-label{font-family:var(--font-mono);font-size:.58rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--a1);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.modal-desc{font-size:.86rem;color:var(--text-muted);line-height:1.8}
+.info-block{border-radius:var(--r);padding:14px 16px;margin-bottom:14px;border:1px solid;position:relative;overflow:hidden}
+.info-block.violet{background:rgba(108,99,255,.05);border-color:rgba(108,99,255,.18);border-left:3px solid var(--a1)}
+.info-block.teal{background:rgba(0,212,170,.04);border-color:rgba(0,212,170,.18);border-left:3px solid var(--a2)}
+.info-block.amber{background:rgba(245,166,35,.04);border-color:rgba(245,166,35,.18);border-left:3px solid var(--a4)}
+.block-label{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.block-label.violet{color:var(--a1)}
+.block-label.teal{color:var(--a2)}
+.block-label.amber{color:var(--a4)}
+.block-text{font-size:.83rem;color:var(--text-muted);line-height:1.75}
+
+/* HINTS */
+.hints-section{margin-bottom:16px}
+.hints-section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.hints-section-label{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;color:var(--a4);display:flex;align-items:center;gap:6px}
+.hints-section-count{font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);background:var(--surface3);border-radius:100px;padding:2px 8px}
+.hint-item{position:relative;border-radius:var(--r);border:1px solid rgba(245,166,35,.18);background:linear-gradient(135deg,rgba(245,166,35,.04),rgba(245,166,35,.02));padding:16px;cursor:pointer;margin-bottom:8px;overflow:hidden;transition:border-color .3s,box-shadow .3s;min-height:62px}
+.hint-item:hover{border-color:rgba(245,166,35,.4);box-shadow:0 0 20px rgba(245,166,35,.08)}
+.hint-item.revealed{border-color:rgba(245,166,35,.3);cursor:default}
+.hint-num{font-family:var(--font-mono);font-size:.6rem;color:var(--a4);margin-bottom:7px;letter-spacing:1px;font-weight:600;display:flex;align-items:center;gap:6px}
+.hint-num::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--a4);flex-shrink:0;box-shadow:0 0 6px rgba(245,166,35,.6)}
+.hint-text{font-size:.84rem;color:var(--text);line-height:1.65}
+.hint-mist{position:absolute;inset:0;z-index:3;backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);background:linear-gradient(135deg,rgba(245,166,35,.14),rgba(245,166,35,.07),rgba(245,107,35,.08));border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;transition:opacity .6s ease,backdrop-filter .6s ease;cursor:pointer;user-select:none}
+.hint-mist-inner{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.7rem;color:var(--a4);letter-spacing:1.5px}
+.hint-mist-icon{font-size:1.4rem;animation:floatIcon 3s ease-in-out infinite}
+@keyframes floatIcon{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.06)}}
+.hint-mist-hint{font-family:var(--font-mono);font-size:.58rem;color:rgba(245,166,35,.55);letter-spacing:.5px}
+.hint-item:hover .hint-mist{backdrop-filter:blur(5px) saturate(1.1);-webkit-backdrop-filter:blur(5px);background:linear-gradient(135deg,rgba(245,166,35,.22),rgba(245,166,35,.12))}
+.hint-item.revealed .hint-mist{opacity:0;pointer-events:none;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)}
+.hint-particle-area{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:var(--r);z-index:4}
+.hint-particle{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--a4);opacity:0}
+.hint-item.revealed .hint-particle{animation:particleBurst .9s ease-out forwards}
+@keyframes particleBurst{0%{opacity:.9;transform:translate(0,0) scale(1)}100%{opacity:0;transform:var(--dir,translate(20px,-30px)) scale(0)}}
+
+/* STEPS + FLAG */
+.steps-block{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.steps-block-label{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:7px;font-weight:600}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step:last-child{margin-bottom:0}
+.step-n{width:22px;height:22px;border-radius:50%;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.6rem;font-weight:700;color:var(--a1);flex-shrink:0;margin-top:1px}
+.step-t{font-size:.83rem;color:var(--text-muted);line-height:1.65}
+.step-t code{font-family:var(--font-mono);background:var(--surface3);padding:1px 6px;border-radius:4px;color:var(--a2);font-size:.75rem;border:1px solid rgba(0,212,170,.15)}
+.flag-block{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:border-color .3s}
+.flag-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a2),transparent);opacity:.5}
+.flag-block.is-solved{border-color:rgba(0,212,170,.35);background:rgba(0,212,170,.03)}
+.flag-block.is-solved::before{opacity:1}
+.flag-label{font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px;font-weight:600}
+.flag-label.solved-label{color:var(--a2)}
+.flag-row{display:flex;gap:7px}
+.flag-input{flex:1;padding:11px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-mono);font-size:.85rem;color:var(--a2);outline:none;transition:all .18s}
+.flag-input:focus{border-color:rgba(0,212,170,.45);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
+.flag-input:disabled{opacity:.5;cursor:not-allowed;background:var(--surface3)}
+.flag-input::placeholder{color:var(--text-dim)}
+.solved-banner{display:flex;align-items:center;gap:10px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;animation:popIn .4s var(--ease-spring)}
+.solved-banner-icon{font-size:1.4rem;flex-shrink:0}
+.solved-banner-text{font-family:var(--font-mono);font-size:.76rem;font-weight:600;color:var(--a2)}
+.solved-banner-sub{font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);margin-top:2px}
+.flag-result{margin-top:10px;padding:10px 14px;border-radius:var(--r);font-family:var(--font-mono);font-size:.77rem;font-weight:600;display:none;animation:popIn .25s var(--ease-spring)}
+.flag-result.ok{background:rgba(0,212,170,.08);color:var(--a2);border:1px solid rgba(0,212,170,.25)}
+.flag-result.err{background:rgba(255,77,109,.08);color:var(--a3);border:1px solid rgba(255,77,109,.25)}
+.flag-result.info{background:rgba(108,99,255,.08);color:var(--a1);border:1px solid rgba(108,99,255,.25)}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:var(--r);border:none;font-family:var(--font-body);font-weight:600;font-size:.84rem;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--a1),#8b5cf6);color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 18px rgba(108,99,255,.3)}
+.btn-ghost{background:var(--input-bg);border:1px solid var(--border);color:var(--text-muted)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border-hi)}
+.btn-danger{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--a3)}
+.btn-danger:hover{background:rgba(255,77,109,.15)}
+.btn-sm{padding:6px 12px;font-size:.78rem;border-radius:8px}
+.btn-access{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;margin-bottom:14px;border:1px solid var(--border-hi);border-radius:var(--r);background:rgba(108,99,255,.06);color:var(--a1);font-family:var(--font-mono);font-size:.74rem;font-weight:500;cursor:pointer;transition:all .18s;text-decoration:none}
+.btn-access:hover{background:rgba(108,99,255,.12);box-shadow:var(--glow-a1)}
+
+/* LEADERBOARD */
+.lb-container{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.lb-head{display:grid;grid-template-columns:60px 1fr 80px 100px 90px 90px;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-dim)}
+.lb-row{display:grid;grid-template-columns:60px 1fr 80px 100px 90px 90px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .14s}
+.lb-row:last-child{border-bottom:none}
+.lb-row:not(.lb-head):hover{background:var(--hover-bg)}
+.lb-row.is-me{background:rgba(108,99,255,.04);border-left:3px solid var(--a1)}
+.lb-rank{font-family:var(--font-display);font-size:.9rem;font-weight:800;color:var(--text-dim)}
+.rank-1{color:#ffd700;text-shadow:0 0 12px rgba(255,215,0,.6)}
+.rank-2{color:#c0c0c0}
+.rank-3{color:#cd7f32}
+.lb-user{display:flex;align-items:center;gap:10px;min-width:0}
+.lb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.7rem;font-weight:800;flex-shrink:0;overflow:hidden}
+.lb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.lb-name{font-size:.86rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-email{font-family:var(--font-mono);font-size:.6rem;color:var(--text-muted)}
+.me-tag{font-family:var(--font-mono);font-size:.52rem;font-weight:700;background:rgba(108,99,255,.12);color:var(--a1);border:1px solid rgba(108,99,255,.2);padding:1px 5px;border-radius:4px;margin-left:5px}
+.lb-score{font-family:var(--font-display);font-size:.88rem;font-weight:700;color:var(--a1)}
+.lb-solves{font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted)}
+.designation-tag{font-family:var(--font-mono);font-size:.56rem;font-weight:600;padding:3px 9px;border-radius:100px;display:inline-flex;align-items:center;gap:4px}
+.desig-admin{background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.25)}
+.desig-player{background:rgba(108,99,255,.1);color:var(--a1);border:1px solid rgba(108,99,255,.2)}
+.desig-elite{background:rgba(245,166,35,.1);color:var(--a4);border:1px solid rgba(245,166,35,.2)}
+.desig-advanced{background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2)}
+
+/* PROGRESS */
+.prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.prog-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:16px;transition:all .3s}
+.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prog-name{font-size:.88rem;font-weight:600}
+.prog-count{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted)}
+.prog-bar{height:6px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width 1.4s var(--ease-out)}
+.prog-pct{font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);margin-top:5px}
+
+/* PROFILE */
+.profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:24px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden;transition:border-color .3s,background .3s}
+.profile-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a1),var(--a2),transparent)}
+.prof-photo-wrap{position:relative;flex-shrink:0}
+.prof-photo{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:#fff;overflow:hidden;border:3px solid rgba(108,99,255,.35)}
+.prof-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.prof-cam{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--a1);border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.58rem;color:#fff;transition:transform .2s}
+.prof-cam:hover{transform:scale(1.1)}
+.prof-name{font-family:var(--font-display);font-size:1.15rem;font-weight:800}
+.prof-email{font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);margin:3px 0 6px}
+.prof-stats{margin-left:auto;display:flex;gap:24px;flex-wrap:wrap}
+.pstat{text-align:center}
+.pstat-val{font-family:var(--font-display);font-size:1.35rem;font-weight:800}
+.pstat-lbl{font-family:var(--font-mono);font-size:.56rem;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase}
+.prof-grid{display:grid;grid-template-columns:1fr 290px;gap:14px}
+.prof-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;transition:border-color .3s,background .3s}
+.card-title{font-family:var(--font-mono);font-size:.66rem;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title .dot-bar{width:3px;height:14px;background:linear-gradient(to bottom,var(--a1),var(--a2));border-radius:4px}
+.field{margin-bottom:12px}
+.field label{font-family:var(--font-mono);display:block;font-size:.62rem;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:9px 12px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-body);font-size:.86rem;outline:none;transition:all .18s}
+.inp:focus{border-color:var(--border-hi);box-shadow:0 0 0 3px rgba(108,99,255,.07)}
+.inp::placeholder{color:var(--text-dim)}
+textarea.inp{resize:vertical;min-height:72px}
+
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ach-card{display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);text-align:center;position:relative;overflow:hidden;transition:all .22s var(--ease-out);cursor:default}
+.ach-card.earned{border-color:rgba(108,99,255,.25)}
+.ach-card.earned:hover{transform:translateY(-2px);box-shadow:var(--shadow-card);border-color:var(--border-hi)}
+.ach-card.locked{opacity:.35;filter:grayscale(.6)}
+.ach-icon{font-size:1.6rem}
+.ach-name{font-size:.78rem;font-weight:700}
+.ach-desc{font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted);line-height:1.5}
+.ach-share{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);color:var(--a1);cursor:pointer;font-size:.64rem;padding:4px 8px;border-radius:6px;font-family:var(--font-mono);display:flex;align-items:center;gap:4px;transition:all .14s;margin-top:4px}
+.ach-share:hover{background:rgba(108,99,255,.2)}
+
+/* SECURITY */
+.security-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;max-width:560px;margin-bottom:14px;transition:border-color .3s,background .3s}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px}
+.toggle-label{font-size:.86rem;font-weight:600}
+.toggle-sub{font-family:var(--font-mono);font-size:.64rem;color:var(--text-muted)}
+.sw{position:relative;width:42px;height:23px;cursor:pointer;flex-shrink:0}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw-track{position:absolute;inset:0;border-radius:23px;background:var(--surface3);transition:background .25s}
+.sw input:checked+.sw-track{background:var(--a1)}
+.sw-thumb{position:absolute;width:17px;height:17px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .25s var(--ease-spring);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.sw input:checked~.sw-thumb{transform:translateX(19px)}
+
+/* CTF NOTES */
+.notes-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.nstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;transition:border-color .3s}
+.nstat-val{font-family:var(--font-display);font-size:1.25rem;font-weight:800;color:var(--a1)}
+.nstat-lbl{font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.notes-grid{display:grid;grid-template-columns:1fr 300px;gap:16px}
+.note-editor{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;transition:border-color .3s}
+.note-title-inp{width:100%;padding:8px 0;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-display);font-size:1rem;font-weight:700;outline:none;margin-bottom:12px;transition:border-color .2s}
+.note-title-inp:focus{border-color:var(--border-hi)}
+.note-body-inp{width:100%;min-height:220px;padding:8px 0;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:.78rem;line-height:1.8;outline:none;resize:none}
+.note-meta-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.note-cat-sel{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-family:var(--font-mono);font-size:.68rem;padding:5px 9px;outline:none;cursor:pointer;transition:all .2s}
+.note-list-wrap{display:flex;flex-direction:column;gap:7px}
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 12px 12px 16px;cursor:pointer;transition:all .18s;position:relative}
+.note-card::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 4px 4px 0;background:var(--border-hi);transition:background .2s}
+.note-card:hover{background:var(--surface2);border-color:var(--border-hi)}
+.note-card.active-note{background:rgba(108,99,255,.04);border-color:rgba(108,99,255,.3)}
+.note-card.active-note::before{background:var(--a1)}
+.note-card-title{font-size:.84rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-card-preview{font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:3px 0 6px}
+.note-card-meta{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim)}
+.note-search-inp{width:100%;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;outline:none;padding:4px 8px}
+.note-add-btn{width:100%;padding:10px;border:1px dashed rgba(108,99,255,.25);background:rgba(108,99,255,.02);border-radius:var(--r);color:var(--text-dim);font-family:var(--font-mono);font-size:.7rem;cursor:pointer;transition:all .16s;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:7px}
+.note-add-btn:hover{border-color:rgba(108,99,255,.5);color:var(--a1)}
+
+/* ═══════════════════════════════
+   COMMUNITY CHAT — FULLY REBUILT
+═══════════════════════════════ */
+.community-tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--surface2);border-radius:var(--r);padding:4px;border:1px solid var(--border);width:fit-content}
+.comm-tab{font-family:var(--font-mono);font-size:.7rem;padding:6px 14px;border-radius:7px;cursor:pointer;transition:all .18s;color:var(--text-muted);border:1px solid transparent;position:relative}
+.comm-tab.active{background:var(--surface);color:var(--a1);border-color:rgba(108,99,255,.25);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.comm-tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03)}
+.comm-tab-badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;padding:0 4px;background:var(--a3);border-radius:100px;font-size:.52rem;font-weight:700;color:#fff;display:none;align-items:center;justify-content:center;border:2px solid var(--bg)}
+.comm-tab-badge.show{display:flex}
+
+.chat-layout{display:grid;grid-template-columns:270px 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;height:calc(100vh - 220px);min-height:500px;max-height:780px}
+.chat-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface2);overflow:hidden;transition:border-color .3s}
+.chat-sidebar-header{padding:14px 14px 12px;border-bottom:1px solid var(--border)}
+.chat-sidebar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.chat-sidebar-title{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);font-weight:600}
+.chat-group-search{width:100%;padding:7px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-family:var(--font-mono);font-size:.68rem;outline:none;transition:all .18s}
+.chat-group-search:focus{border-color:var(--border-hi)}
+.group-list{flex:1;overflow-y:auto;padding:6px}
+.group-list-label{font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);padding:8px 8px 4px}
+.group-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r);cursor:pointer;transition:all .15s;margin-bottom:2px;border:1px solid transparent;position:relative}
+.group-item:hover{background:var(--hover-bg)}
+.group-item.active-group{background:rgba(108,99,255,.08);border-color:rgba(108,99,255,.2)}
+.group-av{width:38px;height:38px;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1rem;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.group-av img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+.group-name{font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-meta-row{display:flex;align-items:center;gap:4px;margin-top:2px;flex-wrap:wrap}
+.group-member-count{font-family:var(--font-mono);font-size:.56rem;color:var(--text-dim);display:flex;align-items:center;gap:3px}
+.group-public-badge{font-family:var(--font-mono);font-size:.52rem;background:rgba(0,212,170,.08);color:var(--a2);border:1px solid rgba(0,212,170,.15);border-radius:4px;padding:1px 5px}
+.group-private-badge{font-family:var(--font-mono);font-size:.52rem;background:rgba(108,99,255,.08);color:var(--a1);border:1px solid rgba(108,99,255,.15);border-radius:4px;padding:1px 5px}
+
+.chat-main{display:flex;flex-direction:column;overflow:hidden}
+.chat-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;transition:border-color .3s}
+.chat-group-av-lg{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1rem;overflow:hidden;flex-shrink:0}
+.chat-group-av-lg img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+.chat-group-name{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:7px}
+.chat-group-meta{font-family:var(--font-mono);font-size:.6rem;color:var(--text-muted);margin-top:1px;display:flex;align-items:center;gap:6px}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--a2);flex-shrink:0;animation:pulse 2s infinite}
+.chat-actions{margin-left:auto;display:flex;gap:6px}
+.chat-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.msg-date-sep{text-align:center;margin:8px 0}
+.msg-date-sep span{font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);padding:3px 10px;border-radius:100px}
+.msg-bubble-wrap{display:flex;gap:8px;align-items:flex-end;animation:msgIn .22s var(--ease-out)}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg-bubble-wrap.is-me{flex-direction:row-reverse}
+.msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.65rem;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden}
+.msg-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.msg-content{max-width:66%}
+.msg-sender{font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);margin-bottom:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.msg-sender .leader-tag{background:rgba(245,166,35,.12);color:var(--a4);border:1px solid rgba(245,166,35,.2);padding:1px 5px;border-radius:4px;font-size:.52rem;font-weight:600}
+.msg-sender .admin-tag{background:rgba(255,77,109,.12);color:var(--a3);border:1px solid rgba(255,77,109,.2);padding:1px 5px;border-radius:4px;font-size:.52rem;font-weight:600}
+.msg-bubble{padding:9px 14px;border-radius:14px;font-size:.85rem;line-height:1.6;word-break:break-word;position:relative;transition:all .15s}
+.msg-bubble-wrap:not(.is-me) .msg-bubble{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:3px}
+.msg-bubble-wrap.is-me .msg-bubble{background:rgba(108,99,255,.18);border:1px solid rgba(108,99,255,.3);border-bottom-right-radius:3px}
+.msg-time{font-family:var(--font-mono);font-size:.57rem;color:var(--text-dim);margin-top:3px;display:flex;align-items:center;gap:4px}
+.msg-bubble-wrap.is-me .msg-time{justify-content:flex-end}
+.msg-system{text-align:center}
+.msg-system-text{font-family:var(--font-mono);font-size:.64rem;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:100px;display:inline-flex;align-items:center;gap:5px}
+.chat-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--text-dim)}
+.chat-empty i{font-size:2.2rem}
+.chat-empty p{font-family:var(--font-mono);font-size:.76rem;text-align:center;line-height:1.6}
+.chat-input-row{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;transition:border-color .3s;flex-shrink:0}
+.chat-inp{flex:1;padding:10px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--rl);color:var(--text);font-family:var(--font-body);font-size:.86rem;outline:none;resize:none;line-height:1.5;max-height:120px;transition:all .18s}
+.chat-inp:focus{border-color:var(--border-hi);box-shadow:0 0 0 3px rgba(108,99,255,.06)}
+.chat-inp::placeholder{color:var(--text-dim)}
+
+/* Join request cards */
+.req-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;transition:all .18s}
+.req-card:hover{border-color:var(--border-hi)}
+.req-card-info{flex:1;min-width:0}
+.req-card-title{font-size:.86rem;font-weight:600}
+.req-card-sub{font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);margin-top:2px}
+.req-actions{display:flex;gap:6px;flex-shrink:0}
+.req-join-btn{padding:5px 12px;border-radius:8px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:var(--a2);font-family:var(--font-mono);font-size:.68rem;font-weight:600;cursor:pointer;transition:all .18s}
+.req-join-btn:hover{background:rgba(0,212,170,.2)}
+.req-del-btn{padding:5px 12px;border-radius:8px;background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:var(--a3);font-family:var(--font-mono);font-size:.68rem;cursor:pointer;transition:all .18s}
+.req-del-btn:hover{background:rgba(255,77,109,.14)}
+
+/* Discover */
+.discover-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:10px;transition:all .2s var(--ease-out)}
+.discover-card:hover{border-color:var(--border-hi);transform:translateX(2px)}
+.discover-av{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;flex-shrink:0}
+.discover-av img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+.discover-name{font-size:.9rem;font-weight:700}
+.discover-meta{font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);margin-top:2px}
+.request-join-btn{margin-left:auto;padding:6px 14px;border-radius:100px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);color:var(--a1);font-family:var(--font-mono);font-size:.68rem;font-weight:600;cursor:pointer;transition:all .18s;flex-shrink:0;white-space:nowrap}
+.request-join-btn:hover{background:rgba(108,99,255,.2);box-shadow:var(--glow-a1)}
+.request-join-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* CREATE GROUP MODAL */
+.cg-modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(10px)}
+.cg-modal-wrap.open{opacity:1;pointer-events:all}
+.cg-modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);width:min(480px,96vw);padding:28px 24px;transform:scale(.94) translateY(16px);transition:transform .28s var(--ease-spring);box-shadow:0 30px 70px rgba(0,0,0,.7);max-height:90vh;overflow-y:auto}
+.cg-modal-wrap.open .cg-modal{transform:none}
+.cg-title{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.cg-photo-row{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.cg-photo-preview{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden;flex-shrink:0;border:2px solid var(--border);cursor:pointer;transition:all .2s}
+.cg-photo-preview:hover{border-color:var(--border-hi)}
+.cg-photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.cg-members-list{max-height:200px;overflow-y:auto}
+.cg-member-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r);cursor:pointer;transition:all .14s}
+.cg-member-row:hover{background:var(--hover-bg)}
+.cg-member-row.sel{background:rgba(108,99,255,.07)}
+.cg-member-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.7rem;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0}
+.cg-member-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.cg-check{margin-left:auto;width:18px;height:18px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.6rem;transition:all .14s}
+.cg-member-row.sel .cg-check{background:var(--a1);border-color:var(--a1);color:#fff}
+
+/* SOLVE ANIMATION */
+.solve-blast{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;background:rgba(0,0,0,.5)}
+.solve-blast.show{opacity:1}
+@keyframes blastIn{0%{opacity:0;transform:scale(.4) rotate(-8deg)}40%{opacity:1;transform:scale(1.06) rotate(2deg)}60%{transform:scale(.97)}80%{opacity:1;transform:scale(1)}95%{opacity:1}100%{opacity:0;transform:scale(1.04)}}
+.solve-blast-box{animation:blastIn 3.8s var(--ease-out) forwards;background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--rl);padding:36px 44px;text-align:center;box-shadow:0 0 80px rgba(108,99,255,.35),0 0 200px rgba(108,99,255,.1);min-width:300px;position:relative;overflow:hidden}
+.solve-blast-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--a1),var(--a2),var(--a1))}
+.solve-icon{font-size:3rem;margin-bottom:8px;animation:bounceIcon 3.8s ease}
+@keyframes bounceIcon{0%{transform:scale(0)}20%{transform:scale(1.2)}30%{transform:scale(1)}40%{transform:scale(1.1)}50%,100%{transform:scale(1)}}
+.solve-title{font-family:var(--font-display);font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;margin-bottom:4px}
+.solve-sub{font-family:var(--font-mono);font-size:.82rem;color:var(--text-muted);margin-bottom:8px}
+.solve-pts{font-family:var(--font-display);font-size:2.4rem;font-weight:900;color:var(--a2)}
+
+/* SHARE MODAL */
+.share-wrap{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .26s;backdrop-filter:blur(14px)}
+.share-wrap.open{opacity:1;pointer-events:all}
+.share-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);width:min(500px,96vw);padding:28px 24px;text-align:center;transform:scale(.94) translateY(20px);transition:transform .3s var(--ease-spring);position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.share-wrap.open .share-card{transform:none}
+.share-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a1),var(--a2),transparent)}
+.share-heading{font-family:var(--font-display);font-size:1.25rem;font-weight:900;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.share-sub{font-size:.84rem;color:var(--text-muted);margin-bottom:18px}
+.share-badge-row{display:inline-flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:18px;text-align:left}
+.share-badge-icon{font-size:1.5rem}
+.share-badge-name{font-size:.9rem;font-weight:700}
+.share-badge-meta{font-family:var(--font-mono);font-size:.63rem;color:var(--text-muted)}
+.share-link-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px;text-align:left}
+.share-link-url{font-family:var(--font-mono);font-size:.63rem;color:var(--a1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.share-link-copy{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.75rem;transition:color .12s;padding:2px 5px}
+.share-link-copy:hover{color:var(--a1)}
+.share-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.share-btn{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface2);cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text);transition:all .18s}
+.share-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-card)}
+.share-btn.full{grid-column:1/-1;justify-content:center}
+.share-later{background:none;border:none;font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);cursor:pointer;transition:color .14s}
+.share-later:hover{color:var(--text-muted)}
+
+/* TOAST */
+#toast-area{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+@keyframes toastIn{from{transform:translateX(52px);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast{padding:10px 15px;border-radius:var(--r);font-family:var(--font-mono);font-size:.74rem;font-weight:600;animation:toastIn .22s ease;pointer-events:all;display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:300px;letter-spacing:.2px;border:1px solid}
+.toast.ok{background:rgba(0,212,170,.95);color:#000;border-color:rgba(0,212,170,.5)}
+.toast.err{background:rgba(255,77,109,.95);color:#fff;border-color:rgba(255,77,109,.5)}
+.toast.info{background:rgba(108,99,255,.95);color:#fff;border-color:rgba(108,99,255,.5)}
+
+/* MISC */
+.empty{text-align:center;padding:44px 20px;color:var(--text-muted)}
+.empty i{font-size:1.8rem;margin-bottom:10px;display:block;color:var(--text-dim)}
+.empty p{font-family:var(--font-mono);font-size:.76rem;letter-spacing:.3px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .7s linear infinite;display:inline-block}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:45}
+.mob-overlay.show{display:block}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .lb-head,.lb-row{grid-template-columns:52px 1fr 80px 100px}
+  .lb-head>:nth-child(5),.lb-row>:nth-child(5),.lb-head>:nth-child(6),.lb-row>:nth-child(6){display:none}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .col-2{grid-column:span 2}
+  .col-3{grid-column:span 2}
+}
+@media(max-width:900px){
+  .prog-grid{grid-template-columns:1fr}
+  .prof-grid{grid-template-columns:1fr}
+  .notes-grid{grid-template-columns:1fr}
+  .chat-layout{grid-template-columns:1fr}
+  .chat-sidebar{display:none}
+}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-100%;height:100vh}
+  .sidebar.open{left:0}
+  .ham-btn{display:flex}
+  .content{padding:14px}
+  .topbar{padding:0 12px}
+  .chal-grid{grid-template-columns:1fr}
+  .dash-grid{grid-template-columns:1fr}
+  .col-2,.col-3{grid-column:span 1}
+  .search-wrap{max-width:180px}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .profile-hero{flex-direction:column;text-align:center}
+  .prof-stats{margin-left:0;justify-content:center}
+  .share-btns{grid-template-columns:1fr}
+  .ach-grid{grid-template-columns:1fr}
+  .lb-head,.lb-row{grid-template-columns:46px 1fr 90px}
+}
+</style>
+</head>
+<body>
+<div class="bg-canvas">
+  <div class="grid-lines"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+</div>
+<div id="mob-overlay" class="mob-overlay" onclick="closeSb()"></div>
+<div id="toast-area"></div>
+
+<!-- SOLVE BLAST -->
+<div class="solve-blast" id="solve-blast">
+  <div class="solve-blast-box">
+    <div class="solve-icon" id="sb-icon">🚩</div>
+    <div class="solve-title">ACCESS GRANTED</div>
+    <div class="solve-sub" id="sb-sub">Challenge Completed</div>
+    <div class="solve-pts" id="sb-pts">+100 PTS</div>
+  </div>
+</div>
+
+<!-- CREATE GROUP MODAL -->
+<div class="cg-modal-wrap" id="cg-modal-wrap" onclick="if(event.target===this)closeCGModal()">
+  <div class="cg-modal">
+    <div class="cg-title"><i class="fas fa-users" style="color:var(--a1);font-size:.9rem;"></i> Create Group</div>
+    <div class="cg-photo-row">
+      <div class="cg-photo-preview" id="cg-photo-preview" onclick="document.getElementById('cg-photo-inp').click()">
+        <span id="cg-photo-emoji">💬</span>
+        <img id="cg-photo-img" style="display:none;" alt="group">
+      </div>
+      <input type="file" id="cg-photo-inp" accept="image/*" style="display:none" onchange="handleGroupPhoto(event)">
+      <div style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);line-height:1.6;">Click to add group image.<br>You will be the group <strong style="color:var(--a4);">leader</strong>.</div>
+    </div>
+    <div class="field"><label>Group Name *</label><input class="inp" id="cg-name" placeholder="e.g. Web Warriors, Team Zero…"></div>
+    <div class="field"><label>Description (optional)</label><input class="inp" id="cg-desc" placeholder="What's this group about?"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;">
+      <div>
+        <div style="font-size:.84rem;font-weight:600;" id="cg-privacy-label">Private Group</div>
+        <div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);" id="cg-privacy-sub">Members join via invite only</div>
+      </div>
+      <label class="sw"><input type="checkbox" id="cg-private-toggle" checked onchange="updatePrivacyLabel()"><div class="sw-track"></div><div class="sw-thumb"></div></label>
+    </div>
+    <div class="field">
+      <label>Invite Members</label>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:6px;">
+        <input style="width:100%;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;outline:none;padding:2px 6px;" id="cg-member-search" placeholder="Search players…" oninput="filterCGMembers()">
+      </div>
+      <div class="cg-members-list" id="cg-members-list"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;justify-content:flex-end;">
+      <button class="btn btn-ghost btn-sm" onclick="closeCGModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="cg-create-btn" onclick="createGroup()"><i class="fas fa-plus"></i> Create Group</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGE MODAL -->
+<div class="modal-wrap" id="chal-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hero" id="m-hero">
+      <div class="modal-hero-icon" id="m-hero-icon">🔍</div>
+      <div class="modal-hero-overlay"></div>
+      <div class="modal-hero-bar">
+        <span id="m-cat-badge" class="cat-tag cat-Web">Web</span>
+        <span id="m-diff-badge" class="diff-tag diff-Easy">Easy</span>
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-title-row">
+        <div class="modal-title" id="m-title">Challenge</div>
+        <div class="modal-pts-pill"><i class="fas fa-star" style="font-size:.7rem;"></i><span id="m-pts">100 pts</span></div>
+      </div>
+      <div class="modal-solves" id="m-solves"><i class="fas fa-users"></i>0 solves</div>
+      <div class="modal-desc-block">
+        <div class="modal-desc-label"><i class="fas fa-align-left"></i> Challenge Description</div>
+        <div class="modal-desc" id="m-desc"></div>
+      </div>
+      <div class="info-block violet">
+        <div class="block-label violet"><i class="fas fa-book-open"></i> Vulnerability Knowledge</div>
+        <div class="block-text" id="m-vuln">—</div>
+      </div>
+      <div class="hints-section" id="m-hints-area">
+        <div class="hints-section-header">
+          <div class="hints-section-label"><i class="fas fa-cloud"></i> Hints</div>
+          <span class="hints-section-count" id="m-hints-count">0 hints</span>
+        </div>
+        <div id="m-hints"></div>
+      </div>
+      <a id="m-access-btn" href="#" target="_blank" class="btn-access" onclick="trackAccess()">
+        <i class="fas fa-external-link-alt"></i> Access Challenge Environment
+      </a>
+      <div class="steps-block">
+        <div class="steps-block-label"><i class="fas fa-list-ol"></i> How to solve</div>
+        <div class="step"><div class="step-n">1</div><div class="step-t">Click <strong>Access Challenge</strong> to open the challenge environment.</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t">Explore and identify the vulnerability. Use hints if needed.</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t">Exploit it to retrieve the flag. Format: <code>CTF{xxxx_xxxx}</code></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-t">Paste your flag below and click <strong>Submit</strong> to claim your points.</div></div>
+      </div>
+      <div class="flag-block" id="m-flag-block">
+        <div class="flag-label" id="m-flag-label">Submit Your Flag</div>
+        <div id="m-solved-banner" style="display:none;"></div>
+        <div class="flag-row" id="m-flag-row">
+          <input class="flag-input" id="m-flag" placeholder="CTF{your_flag_here}">
+          <button class="btn btn-primary btn-sm" id="m-submit-btn" onclick="submitFlag()"><i class="fas fa-paper-plane"></i> Submit</button>
+        </div>
+        <div class="flag-result" id="m-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE POPUP -->
+<div class="share-wrap" id="share-modal">
+  <div class="share-card">
+    <div class="share-heading" id="share-heading">CHALLENGE CONQUERED!</div>
+    <div class="share-sub" id="share-sub">You crushed it!</div>
+    <div class="share-badge-row">
+      <div class="share-badge-icon" id="share-badge-icon">🚩</div>
+      <div>
+        <div class="share-badge-name" id="share-badge-name">—</div>
+        <div class="share-badge-meta" id="share-badge-meta">—</div>
+      </div>
+    </div>
+    <div class="share-link-box">
+      <i class="fas fa-link" style="color:var(--a1);font-size:.7rem;"></i>
+      <span class="share-link-url" id="share-link-url"></span>
+      <button class="share-link-copy" onclick="copyShareLink()"><i class="fas fa-copy"></i></button>
+    </div>
+    <div class="share-btns">
+      <button class="share-btn" onclick="shareOn('linkedin')"><i class="fab fa-linkedin" style="color:#0a66c2;"></i> LinkedIn</button>
+      <button class="share-btn" onclick="shareOn('twitter')"><i class="fab fa-x-twitter"></i> X / Twitter</button>
+      <button class="share-btn" onclick="shareOn('whatsapp')"><i class="fab fa-whatsapp" style="color:#25d366;"></i> WhatsApp</button>
+      <button class="share-btn" onclick="shareOn('telegram')"><i class="fab fa-telegram" style="color:#229ed9;"></i> Telegram</button>
+      <button class="share-btn full" onclick="shareOn('copy')"><i class="fas fa-copy"></i> Copy Achievement Text</button>
+    </div>
+    <button class="share-later" onclick="closeShare()"><i class="fas fa-clock" style="font-size:.62rem;margin-right:3px;"></i> Share later</button>
+  </div>
+</div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo-ring">
+      <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="CB" onerror="this.parentElement.innerHTML='<i class=\'fas fa-shield-alt\' style=\'color:#fff;font-size:1rem;\'></i>'">
+    </div>
+    <div class="sb-brand-text">
+      <div class="brand-name">CYBER BUDDY</div>
+      <div class="brand-sub">ACADEMY</div>
+    </div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-user-inner">
+      <div class="sb-av" id="sb-av">?</div>
+      <div style="min-width:0;">
+        <div class="sb-uname" id="sb-uname">Loading…</div>
+        <span class="sb-badge" id="sb-badge">player</span>
+      </div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <p class="nav-section-label">Main</p>
+    <a class="nav-link active" id="nav-dashboard" onclick="go('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
+    <a class="nav-link" id="nav-challenges" onclick="go('challenges')"><i class="fas fa-layer-group"></i> Challenges <span class="nav-badge" id="sb-open">—</span></a>
+    <a class="nav-link" id="nav-progress" onclick="go('progress')"><i class="fas fa-chart-line"></i> Progress</a>
+    <a class="nav-link" id="nav-notes" onclick="go('notes')"><i class="fas fa-sticky-note"></i> CTF Notes</a>
+    <a class="nav-link" id="nav-community" onclick="go('community')"><i class="fas fa-comments"></i> Community <span class="nav-dot" id="chat-dot" style="display:none;"></span></a>
+    <a class="nav-link" id="nav-leaderboard" onclick="go('leaderboard')"><i class="fas fa-trophy"></i> Leaderboard</a>
+    <p class="nav-section-label">Account</p>
+    <a class="nav-link" id="nav-profile" onclick="go('profile')"><i class="fas fa-user-circle"></i> Profile</a>
+    <a class="nav-link" id="nav-security" onclick="go('security')"><i class="fas fa-shield-alt"></i> Security</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-score-pill">
+      <div class="score-label">Total Score</div>
+      <div class="score-val" id="sb-score">0 pts</div>
+    </div>
+    <button class="sb-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <button class="ham-btn" onclick="openSb()"><i class="fas fa-bars"></i></button>
+    <div class="topbar-title" id="page-title">DASHBOARD</div>
+    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search-inp" placeholder="Search… (⌘K)" oninput="onSearch()"></div>
+    <div class="topbar-actions">
+      <button class="tb-btn notif-btn" id="notif-btn" onclick="go('community')" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notif-pill" id="notif-pill">0</span>
+      </button>
+      <button class="tb-btn theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+        <i class="fas fa-sun icon-sun"></i>
+        <i class="fas fa-moon icon-moon"></i>
+      </button>
+      <div class="tb-av" id="top-av" onclick="go('profile')">?</div>
+
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ▸ DASHBOARD -->
+    <div id="view-dashboard" class="view active">
+      <div class="stats-row">
+        <div class="stat-card" style="--card-color:var(--a1)">
+          <div class="stat-glow" style="background:var(--a1);"></div>
+          <div class="stat-icon" style="background:rgba(108,99,255,.12);color:var(--a1);"><i class="fas fa-hashtag"></i></div>
+          <div class="stat-label">Global Rank</div>
+          <div class="stat-value" id="d-rank" style="color:var(--a1);">#—</div>
+          <div class="stat-sub">All players</div>
+        </div>
+        <div class="stat-card" style="--card-color:var(--a2)">
+          <div class="stat-glow" style="background:var(--a2);"></div>
+          <div class="stat-icon" style="background:rgba(0,212,170,.12);color:var(--a2);"><i class="fas fa-flag-checkered"></i></div>
+          <div class="stat-label">Solved</div>
+          <div class="stat-value" id="d-solved" style="color:var(--a2);">0</div>
+          <div class="stat-sub" id="d-solved-sub">of 0 total</div>
+        </div>
+        <div class="stat-card" style="--card-color:var(--a3)">
+          <div class="stat-glow" style="background:var(--a3);"></div>
+          <div class="stat-icon" style="background:rgba(255,77,109,.12);color:var(--a3);"><i class="fas fa-star"></i></div>
+          <div class="stat-label">Points</div>
+          <div class="stat-value" id="d-pts" style="color:var(--a3);">0</div>
+          <div class="stat-sub">CTF score</div>
+        </div>
+        <div class="stat-card" style="--card-color:var(--a4)">
+          <div class="stat-glow" style="background:var(--a4);"></div>
+          <div class="stat-icon" style="background:rgba(245,166,35,.12);color:var(--a4);"><i class="fas fa-users"></i></div>
+          <div class="stat-label">Players</div>
+          <div class="stat-value" id="d-players" style="color:var(--a4);">—</div>
+          <div class="stat-sub">On leaderboard</div>
+        </div>
+      </div>
+      <div class="dash-grid">
+        <div class="widget col-2">
+          <div class="widget-header">
+            <div class="widget-title"><i class="fas fa-history" style="color:var(--a1);"></i> Recent Solves</div>
+            <span class="sec-link" onclick="go('progress')">View all →</span>
+          </div>
+          <div id="recent-list"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+        </div>
+        <div class="widget">
+          <div class="widget-header">
+            <div class="widget-title"><i class="fas fa-brain" style="color:var(--a1);"></i> Skill Map</div>
+          </div>
+          <div class="skill-list" id="dash-skill-map"></div>
+        </div>
+        <div class="widget">
+          <div class="widget-header">
+            <div class="widget-title"><i class="fas fa-bolt" style="color:var(--a4);"></i> Quick Actions</div>
+          </div>
+          <div class="qa-grid">
+            <div class="qa-item" onclick="go('challenges')">
+              <div class="qa-icon" style="background:rgba(108,99,255,.1);color:var(--a1);"><i class="fas fa-layer-group"></i></div>
+              <div><div class="qa-label">Challenges</div><div class="qa-sub">Browse all</div></div>
+            </div>
+            <div class="qa-item" onclick="go('leaderboard')">
+              <div class="qa-icon" style="background:rgba(245,166,35,.1);color:var(--a4);"><i class="fas fa-trophy"></i></div>
+              <div><div class="qa-label">Leaderboard</div><div class="qa-sub">Top players</div></div>
+            </div>
+            <div class="qa-item" onclick="go('community')">
+              <div class="qa-icon" style="background:rgba(0,212,170,.1);color:var(--a2);"><i class="fas fa-comments"></i></div>
+              <div><div class="qa-label">Community</div><div class="qa-sub">Chat groups</div></div>
+            </div>
+            <div class="qa-item" onclick="go('notes')">
+              <div class="qa-icon" style="background:rgba(255,77,109,.1);color:var(--a3);"><i class="fas fa-sticky-note"></i></div>
+              <div><div class="qa-label">CTF Notes</div><div class="qa-sub">Your writeups</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="widget col-3">
+          <div class="widget-header">
+            <div class="widget-title"><i class="fas fa-fire" style="color:var(--a3);"></i> Solve Activity</div>
+            <span style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);">Last 12 weeks</span>
+          </div>
+          <div class="heatmap-wrap" id="dash-heatmap"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ▸ CHALLENGES -->
+    <div id="view-challenges" class="view">
+      <div class="filter-bar">
+        <div class="filter-dropdown" id="dd-cat">
+          <div class="filter-toggle" onclick="toggleDD('dd-cat')"><i class="fas fa-tag" style="font-size:.68rem;"></i><span id="dd-cat-lbl">Category: All</span><i class="fas fa-chevron-down caret"></i></div>
+          <div class="filter-menu">
+            <div class="filter-opt sel" data-cat="All" onclick="setCat(this,'All')"><span class="dot" style="background:var(--a1);"></span>All Categories</div>
+            <div class="filter-opt" data-cat="Web" onclick="setCat(this,'Web')"><span class="dot" style="background:#3b82f6;"></span>Web</div>
+            <div class="filter-opt" data-cat="Crypto" onclick="setCat(this,'Crypto')"><span class="dot" style="background:var(--a1);"></span>Crypto</div>
+            <div class="filter-opt" data-cat="Pwn" onclick="setCat(this,'Pwn')"><span class="dot" style="background:var(--a3);"></span>Pwn</div>
+            <div class="filter-opt" data-cat="Forensics" onclick="setCat(this,'Forensics')"><span class="dot" style="background:var(--a4);"></span>Forensics</div>
+            <div class="filter-opt" data-cat="Rev" onclick="setCat(this,'Rev')"><span class="dot" style="background:var(--a2);"></span>Rev</div>
+            <div class="filter-opt" data-cat="Misc" onclick="setCat(this,'Misc')"><span class="dot" style="background:#8b5cf6;"></span>Misc</div>
+          </div>
+        </div>
+        <div class="filter-dropdown" id="dd-diff">
+          <div class="filter-toggle" onclick="toggleDD('dd-diff')"><i class="fas fa-signal" style="font-size:.68rem;"></i><span id="dd-diff-lbl">Difficulty: All</span><i class="fas fa-chevron-down caret"></i></div>
+          <div class="filter-menu">
+            <div class="filter-opt sel" data-diff="All" onclick="setDiff(this,'All')"><span class="dot" style="background:var(--text-muted);"></span>All Levels</div>
+            <div class="filter-opt" data-diff="Easy" onclick="setDiff(this,'Easy')"><span class="dot" style="background:var(--a2);"></span>Easy</div>
+            <div class="filter-opt" data-diff="Medium" onclick="setDiff(this,'Medium')"><span class="dot" style="background:var(--a4);"></span>Medium</div>
+            <div class="filter-opt" data-diff="Hard" onclick="setDiff(this,'Hard')"><span class="dot" style="background:var(--a3);"></span>Hard</div>
+          </div>
+        </div>
+        <div class="filter-dropdown" id="dd-status">
+          <div class="filter-toggle" onclick="toggleDD('dd-status')"><i class="fas fa-filter" style="font-size:.68rem;"></i><span id="dd-status-lbl">Status: All</span><i class="fas fa-chevron-down caret"></i></div>
+          <div class="filter-menu">
+            <div class="filter-opt sel" data-st="All" onclick="setStatus(this,'All')"><span class="dot" style="background:var(--text-muted);"></span>All</div>
+            <div class="filter-opt" data-st="Solved" onclick="setStatus(this,'Solved')"><span class="dot" style="background:var(--a2);"></span>Solved</div>
+            <div class="filter-opt" data-st="Unsolved" onclick="setStatus(this,'Unsolved')"><span class="dot" style="background:var(--border-hi);"></span>Unsolved</div>
+          </div>
+        </div>
+        <button class="filter-clear" onclick="clearFilters()"><i class="fas fa-times" style="font-size:.6rem;"></i> Clear</button>
+        <span class="chal-count" id="chal-count">0 challenges</span>
+      </div>
+      <div class="chal-grid" id="chal-grid"><div class="empty" style="grid-column:1/-1"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+    <!-- ▸ PROGRESS -->
+    <div id="view-progress" class="view">
+      <div class="sec-hd"><div class="sec-title"><span class="accent-bar"></span>Category Progress</div></div>
+      <div class="prog-grid" id="prog-grid" style="margin-bottom:22px;"></div>
+      <div class="sec-hd"><div class="sec-title"><span class="accent-bar"></span>Score Timeline</div></div>
+      <div class="widget" style="margin-bottom:22px;padding:18px;">
+        <div style="height:180px;"><canvas id="timeline-canvas"></canvas></div>
+      </div>
+      <div class="sec-hd"><div class="sec-title"><span class="accent-bar"></span>Completed Challenges</div></div>
+      <div class="widget" id="solved-history" style="overflow:hidden;"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+    <!-- ▸ CTF NOTES -->
+    <div id="view-notes" class="view">
+      <div class="notes-stats">
+        <div class="nstat"><div class="nstat-val" id="ns-total">0</div><div class="nstat-lbl">Notes</div></div>
+        <div class="nstat"><div class="nstat-val" id="ns-cats">0</div><div class="nstat-lbl">Categories</div></div>
+        <div class="nstat"><div class="nstat-val" id="ns-words">0</div><div class="nstat-lbl">Words</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <div id="notes-toolbar" style="display:flex;gap:6px;flex-wrap:wrap;flex:1;"></div>
+        <button class="btn btn-primary btn-sm" onclick="newNote()"><i class="fas fa-plus"></i> New</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportNotes()"><i class="fas fa-download"></i> Export</button>
+      </div>
+      <div class="notes-grid">
+        <div class="note-editor">
+          <input class="note-title-inp" id="note-title" placeholder="Note title…">
+          <textarea class="note-body-inp" id="note-body" placeholder="Write your CTF notes, writeups, techniques…"></textarea>
+          <div class="note-meta-row">
+            <select class="note-cat-sel" id="note-cat-sel">
+              <option value="">No category</option>
+              <option value="Web">Web</option>
+              <option value="Crypto">Crypto</option>
+              <option value="Pwn">Pwn</option>
+              <option value="Forensics">Forensics</option>
+              <option value="Rev">Rev</option>
+              <option value="Misc">Misc</option>
+              <option value="Tools">Tools</option>
+              <option value="Reference">Reference</option>
+            </select>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" onclick="deleteNote()"><i class="fas fa-trash"></i></button>
+              <button class="btn btn-primary btn-sm" onclick="saveNote()"><i class="fas fa-save"></i> Save</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:8px;">
+            <input class="note-search-inp" id="note-search" placeholder="🔍 Search notes…" oninput="renderNotesList()">
+          </div>
+          <div class="note-list-wrap" id="note-list">
+            <div class="empty" style="padding:24px;"><i class="fas fa-sticky-note"></i><p>No notes yet.</p></div>
+          </div>
+          <button class="note-add-btn" onclick="newNote()"><i class="fas fa-plus"></i> New Note</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ▸ COMMUNITY CHAT -->
+    <div id="view-community" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div class="community-tabs" id="comm-tabs">
+          <div class="comm-tab active" data-tab="groups" onclick="switchCommTab('groups')">My Groups</div>
+          <div class="comm-tab" data-tab="discover" onclick="switchCommTab('discover')">Discover</div>
+          <div class="comm-tab" data-tab="requests" onclick="switchCommTab('requests')" id="comm-req-tab" style="position:relative;">
+            Requests
+            <span class="comm-tab-badge" id="req-notif-count">0</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openCGModal()"><i class="fas fa-plus"></i> New Group</button>
+      </div>
+
+      <!-- Tab: My Groups -->
+      <div id="comm-tab-groups">
+        <div class="chat-layout">
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+              <div class="chat-sidebar-top">
+                <div class="chat-sidebar-title"><i class="fas fa-layer-group" style="margin-right:5px;color:var(--a1);"></i>My Groups</div>
+              </div>
+              <input class="chat-group-search" id="group-search-inp" placeholder="Search groups…" oninput="filterGroupList()">
+            </div>
+            <div class="group-list" id="group-list">
+              <div class="empty" style="padding:28px;"><i class="fas fa-spinner spin"></i></div>
+            </div>
+          </div>
+          <div class="chat-main" id="chat-main-area">
+            <div class="chat-empty">
+              <i class="fas fa-comments"></i>
+              <p>Select a group to start chatting<br><span style="font-size:.7rem;opacity:.6;">or create a new group above</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Discover -->
+      <div id="comm-tab-discover" style="display:none;">
+        <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input class="inp" id="discover-search" placeholder="Search public groups…" oninput="renderDiscoverGroups()" style="max-width:400px;flex:1;">
+          <button class="btn btn-ghost btn-sm" onclick="loadAllPublicGroupsAndRender()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div id="discover-list"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading groups…</p></div></div>
+      </div>
+
+      <!-- Tab: Join Requests -->
+      <div id="comm-tab-requests" style="display:none;">
+        <div style="margin-bottom:12px;font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);">Pending invites and join requests for your groups</div>
+        <div id="join-requests-list"><div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div></div>
+      </div>
+    </div>
+
+    <!-- ▸ LEADERBOARD -->
+    <div id="view-leaderboard" class="view">
+      <div class="lb-container">
+        <div class="lb-head">
+          <span>Rank</span><span>Player</span><span>Solves</span><span>Score</span><span>Level</span><span>Designation</span>
+        </div>
+        <div id="lb-body"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+      </div>
+    </div>
+
+    <!-- ▸ PROFILE -->
+    <div id="view-profile" class="view">
+      <div class="profile-hero">
+        <div class="prof-photo-wrap">
+          <div class="prof-photo" id="prof-av">?</div>
+          <div class="prof-cam" onclick="document.getElementById('photo-file-input').click()"><i class="fas fa-camera"></i></div>
+          <input type="file" id="photo-file-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+        </div>
+        <div>
+          <div class="prof-name" id="prof-name">—</div>
+          <div class="prof-email" id="prof-email">—</div>
+          <span class="sb-badge" id="prof-role">player</span>
+        </div>
+        <div class="prof-stats">
+          <div class="pstat"><div class="pstat-val" id="ps-pts" style="color:var(--a1);">0</div><div class="pstat-lbl">Points</div></div>
+          <div class="pstat"><div class="pstat-val" id="ps-solves" style="color:var(--a2);">0</div><div class="pstat-lbl">Solves</div></div>
+          <div class="pstat"><div class="pstat-val" id="ps-rank" style="color:var(--a4);">#—</div><div class="pstat-lbl">Rank</div></div>
+        </div>
+      </div>
+      <div class="prof-grid">
+        <div>
+          <div class="prof-card" style="margin-bottom:12px;">
+            <div class="card-title"><span class="dot-bar"></span>Edit Profile</div>
+            <div class="field"><label>Display Name</label><input class="inp" id="pf-name" placeholder="h4cker_pro"></div>
+            <div class="field"><label>Bio</label><textarea class="inp" id="pf-bio" placeholder="Tell the community about yourself…"></textarea></div>
+            <div class="field"><label>GitHub</label><input class="inp" id="pf-github" placeholder="github_username"></div>
+            <div class="field"><label>Mobile</label><input class="inp" id="pf-mobile" placeholder="+91 9876543210"></div>
+            <button class="btn btn-primary btn-sm" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+          </div>
+        </div>
+        <div>
+          <div class="prof-card">
+            <div class="card-title"><span class="dot-bar"></span>Achievements</div>
+            <div class="ach-grid" id="ach-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ▸ SECURITY -->
+    <div id="view-security" class="view">
+      <div class="security-card">
+        <div class="card-title"><span class="dot-bar"></span>Session Info</div>
+        <p style="font-family:var(--font-mono);font-size:.74rem;color:var(--text-muted);margin-bottom:14px;line-height:1.7;" id="sec-info">—</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAcc()"><i class="fas fa-trash"></i> Delete Account</button>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="card-title"><span class="dot-bar"></span>Two-Factor Authentication</div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Email 2FA</div><div class="toggle-sub">Send a code to your email on each login</div></div>
+          <label class="sw"><input type="checkbox" id="twofa-toggle" onchange="toggle2FA(this)"><div class="sw-track"></div><div class="sw-thumb"></div></label>
+        </div>
+        <p style="font-family:var(--font-mono);font-size:.7rem;margin-top:4px;" id="twofa-status">2FA is currently disabled.</p>
+      </div>
+      <div class="security-card">
+        <div class="card-title"><span class="dot-bar"></span>Change Password</div>
+        <div class="field"><label>New Password</label><input class="inp" type="password" id="new-pass" placeholder="Min 8 characters"></div>
+        <div class="field"><label>Confirm Password</label><input class="inp" type="password" id="new-pass2" placeholder="Repeat password"></div>
+        <button class="btn btn-primary btn-sm" onclick="doChangePass()"><i class="fas fa-lock"></i> Update Password</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth,
+  onAuthStateChanged, signOut, deleteUser, updatePassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore,
+  doc, collection, getDoc, getDocs, onSnapshot, setDoc,
+  updateDoc, addDoc, deleteDoc, query, orderBy, where, limit,
+  serverTimestamp, increment, writeBatch, arrayUnion, arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCIY6AiBsGrq7wM0BBYGW2lM_0FLWjnH0k",
+  authDomain: "cybermonitor-1ab3c.firebaseapp.com",
+  projectId: "cybermonitor-1ab3c",
+  storageBucket: "cybermonitor-1ab3c.firebasestorage.app",
+  messagingSenderId: "569408987884",
+  appId: "1:569408987884:web:0839eb7932c206fc157bc9"
+};
+const _app = initializeApp(firebaseConfig);
+const auth = getAuth(_app);
+const db   = getFirestore(_app);
+
+/* ─── HELPERS ─── */
+const $ = id => document.getElementById(id);
+const av = s => (s||"?")[0].toUpperCase();
+const SITE_URL = window.location.origin + window.location.pathname.replace(/[^/]*$/,"");
+const AV_COLORS = ["#6c63ff","#00d4aa","#ff4d6d","#f5a623","#3b82f6","#8b5cf6","#06b6d4","#ec4899"];
+const CAT_ICONS = {Web:"🌐",Crypto:"🔐",Pwn:"💣",Forensics:"🔬",Rev:"⚙️",Misc:"🎭"};
+const CATS = ["Web","Crypto","Pwn","Forensics","Rev","Misc"];
+const SKILL_COLORS = {Web:"#3b82f6",Crypto:"#6c63ff",Pwn:"#ff4d6d",Forensics:"#f5a623",Rev:"#00d4aa",Misc:"#8b5cf6"};
+
+/* ─── TOAST ─── */
+function toast(msg, type="info") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  const icons = {ok:"fa-check-circle",err:"fa-times-circle",info:"fa-info-circle"};
+  el.innerHTML = `<i class="fas ${icons[type]||'fa-info-circle'}"></i>${msg}`;
+  $("toast-area").appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transform="translateX(30px)"; el.style.transition="all .3s"; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+/* ─── STATE ─── */
+let me = null, myData = null;
+let allChals = [], solveHistory = [], notes = [], allLbUsers = [];
+let catFilter="All", diffFilter="All", statusFilter="All";
+let activeModal = null, shareTarget = null;
+let activeGroupId = null;
+let chatUnsub = null, groupsUnsub = null, lbUnsub = null, reqUnsub = null;
+let timelineChart = null;
+let activeNoteId = null;
+let notesCatFilter = "";
+let groupsCache = [];
+let allGroupsCache = [];
+let pendingRequestsCache = [];
+let currentCommTab = "groups";
+let allLbPlayers = [];
+let cgSelectedMembers = new Set();
+let cgPhotoData = null;
+let groupSearchFilter = "";
+
+/* ─── THEME ─── */
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  try { localStorage.setItem("ctf-theme", theme); } catch(e) {}
+}
+window.toggleTheme = () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  applyTheme(current==="dark" ? "light" : "dark");
+};
+try { const t = localStorage.getItem("ctf-theme"); if(t) applyTheme(t); } catch(e) {}
+
+/* ─── AUTH ─── */
+onAuthStateChanged(auth, async user => {
+  if(!user) { window.location.href = "login.html"; return; }
+  me = user;
+  onSnapshot(doc(db,"users",user.uid), snap => {
+    myData = snap.data() || {};
+    if(myData.status==="pending"||myData.status==="rejected") { signOut(auth).then(()=>location.href="login.html"); return; }
+    refreshSidebar();
+    refreshDashStats();
+    if($("view-profile").classList.contains("active")) renderProfile();
+    if($("view-security").classList.contains("active")) renderSecurity();
+  });
+  loadChallenges();
+  startLeaderboard();
+  loadSolveHistory();
+  loadNotes();
+  startGroupsListener();
+  startRequestsListener(); // NEW: always listen for requests
+});
+
+/* ─── PHOTO UPLOAD ─── */
+window.handlePhotoUpload = async function(e) {
+  const file = e.target.files[0]; if(!file||!me) return;
+  if(file.size > 2*1024*1024) { toast("Image must be under 2MB","err"); return; }
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const dataUrl = ev.target.result;
+    try {
+      await updateDoc(doc(db,"users",me.uid), {photo:dataUrl});
+      await updateDoc(doc(db,"leaderboard",me.uid), {photo:dataUrl}).catch(()=>{});
+      setAvatarEl("sb-av", dataUrl, myData?.name||"?");
+      setAvatarEl("top-av", dataUrl, myData?.name||"?");
+      setAvatarEl("prof-av", dataUrl, myData?.name||"?");
+      toast("Photo updated!","ok");
+    } catch(err) { toast("Failed: "+err.message,"err"); }
+  };
+  reader.readAsDataURL(file);
+};
+
+function setAvatarEl(id, photoUrl, name) {
+  const el = $(id); if(!el) return;
+  if(photoUrl) { el.innerHTML = `<img src="${photoUrl}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`; }
+  else { el.textContent = av(name); }
+}
+
+/* ─── SIDEBAR ─── */
+function refreshSidebar() {
+  const name = myData.name||me.displayName||"Hacker";
+  const photo = myData.photo||me.photoURL||"";
+  setAvatarEl("sb-av", photo, name);
+  setAvatarEl("top-av", photo, name);
+  $("sb-uname").textContent = name;
+  $("sb-badge").textContent = myData.role||"player";
+  $("sb-score").textContent = (myData.score||0).toLocaleString()+" pts";
+}
+
+/* ─── NAVIGATION ─── */
+const VIEWS = ["dashboard","challenges","progress","notes","community","leaderboard","profile","security"];
+const TITLES = {dashboard:"DASHBOARD",challenges:"CHALLENGES",progress:"PROGRESS",notes:"CTF NOTES",community:"COMMUNITY",leaderboard:"LEADERBOARD",profile:"PROFILE",security:"SECURITY"};
+window.go = function(v) {
+  VIEWS.forEach(x => {
+    $("view-"+x)?.classList.toggle("active", x===v);
+    $("nav-"+x)?.classList.toggle("active", x===v);
+  });
+  $("page-title").textContent = TITLES[v]||v.toUpperCase();
+  closeSb();
+  if(v==="challenges") renderChals();
+  if(v==="leaderboard") startLeaderboard();
+  if(v==="progress") renderProgressView();
+  if(v==="profile") renderProfile();
+  if(v==="security") renderSecurity();
+  if(v==="notes") renderNotesList();
+  if(v==="community") { refreshGroupListUI(); switchCommTab(currentCommTab); }
+};
+window.openSb  = () => { $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
+window.closeSb = () => { $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
+
+/* ─── FILTER DROPDOWNS ─── */
+window.toggleDD = function(id) {
+  const el = document.getElementById(id);
+  const was = el.classList.contains("open");
+  document.querySelectorAll(".filter-dropdown.open").forEach(d=>d.classList.remove("open"));
+  if(!was) el.classList.add("open");
+};
+document.addEventListener("click", e => {
+  if(!e.target.closest(".filter-dropdown")) document.querySelectorAll(".filter-dropdown.open").forEach(d=>d.classList.remove("open"));
+});
+window.setCat    = function(el,v) { catFilter=v; document.querySelectorAll("#dd-cat .filter-opt").forEach(o=>o.classList.remove("sel")); el.classList.add("sel"); $("dd-cat-lbl").textContent="Category: "+v; document.getElementById("dd-cat").classList.remove("open"); renderChals(); };
+window.setDiff   = function(el,v) { diffFilter=v; document.querySelectorAll("#dd-diff .filter-opt").forEach(o=>o.classList.remove("sel")); el.classList.add("sel"); $("dd-diff-lbl").textContent="Difficulty: "+v; document.getElementById("dd-diff").classList.remove("open"); renderChals(); };
+window.setStatus = function(el,v) { statusFilter=v; document.querySelectorAll("#dd-status .filter-opt").forEach(o=>o.classList.remove("sel")); el.classList.add("sel"); $("dd-status-lbl").textContent="Status: "+v; document.getElementById("dd-status").classList.remove("open"); renderChals(); };
+window.clearFilters = function() { catFilter="All"; diffFilter="All"; statusFilter="All"; $("dd-cat-lbl").textContent="Category: All"; $("dd-diff-lbl").textContent="Difficulty: All"; $("dd-status-lbl").textContent="Status: All"; document.querySelectorAll(".filter-opt[data-cat='All'],.filter-opt[data-diff='All'],.filter-opt[data-st='All']").forEach(el=>el.classList.add("sel")); renderChals(); };
+
+/* ─── CHALLENGES ─── */
+async function loadChallenges() {
+  try {
+    const snap = await getDocs(collection(db,"challenges"));
+    allChals = [];
+    snap.forEach(d => allChals.push({id:d.id,...d.data()}));
+    allChals = allChals.filter(c=>c.visible!==false).map(({flag:_f,...rest})=>rest);
+    const total = allChals.length;
+    const solved = (myData?.solvedIds||[]).length;
+    $("sb-open").textContent = total - solved;
+    $("d-solved-sub").textContent = "of "+total+" total";
+    renderChals();
+    renderRecentSolves();
+    renderDashSkillMap();
+    renderActivityHeatmap();
+  } catch(e) { console.error("loadChallenges:",e); toast("Failed to load challenges","err"); }
+}
+
+function renderChals() {
+  const q = ($("search-inp").value||"").toLowerCase();
+  const solvedIds = myData?.solvedIds||[];
+  const filtered = allChals.filter(c => {
+    if(catFilter!=="All" && c.category!==catFilter) return false;
+    if(diffFilter!=="All" && c.difficulty!==diffFilter) return false;
+    if(statusFilter==="Solved" && !solvedIds.includes(c.id)) return false;
+    if(statusFilter==="Unsolved" && solvedIds.includes(c.id)) return false;
+    if(q && !c.title?.toLowerCase().includes(q) && !c.category?.toLowerCase().includes(q) && !c.description?.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const grid = $("chal-grid"), badge = $("chal-count");
+  if(badge) badge.textContent = filtered.length+" challenge"+(filtered.length!==1?"s":"");
+  if(!filtered.length) { grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><i class="fas fa-search"></i><p>No challenges match your filters.</p></div>`; return; }
+  grid.innerHTML = filtered.map((c,i) => {
+    const solved = solvedIds.includes(c.id);
+    const icon = CAT_ICONS[c.category]||"🚩";
+    return `
+    <div class="chal-card ${solved?"solved":""}" onclick="openChal('${c.id}')" style="animation-delay:${i*20}ms">
+      <div class="chal-thumb">
+        ${c.imageUrl?`<img src="${c.imageUrl}" alt="${c.title}" onerror="this.style.display='none'">`:""}
+        <div class="chal-thumb-icon">${icon}</div>
+        <div class="chal-thumb-overlay"></div>
+        <span class="cat-tag cat-${c.category} chal-cat-tag">${c.category}</span>
+        ${solved?`<div class="chal-solved-badge"><i class="fas fa-check"></i></div>`:""}
+      </div>
+      <div class="chal-body">
+        <div class="chal-title">${c.title}</div>
+        <div class="chal-desc">${c.description||""}</div>
+        <div class="chal-foot">
+          <div>
+            <div class="chal-pts" style="color:${solved?"var(--a2)":"var(--a1)"}">${c.points} pts</div>
+            <div class="chal-meta"><i class="fas fa-users" style="font-size:.58rem;"></i>${c.solves||0} solves</div>
+          </div>
+          <span class="diff-tag diff-${c.difficulty}">${c.difficulty}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+window.onSearch = () => { if($("view-challenges").classList.contains("active")) renderChals(); };
+
+/* ─── MODAL ─── */
+window.openChal = function(id) {
+  activeModal = allChals.find(c=>c.id===id); if(!activeModal) return;
+  const heroEl = $("m-hero");
+  heroEl.querySelectorAll("img.hero-img").forEach(i=>i.remove());
+  if(activeModal.imageUrl) {
+    const img = document.createElement("img");
+    img.className = "hero-img";
+    img.src = activeModal.imageUrl;
+    img.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;z-index:0;";
+    img.onerror = () => img.remove();
+    heroEl.insertBefore(img, heroEl.firstChild);
+  }
+  $("m-hero-icon").textContent = CAT_ICONS[activeModal.category]||"🚩";
+  $("m-title").textContent = activeModal.title;
+  $("m-pts").textContent = activeModal.points+" pts";
+  $("m-solves").innerHTML = `<i class="fas fa-users"></i>${activeModal.solves||0} solves`;
+  $("m-cat-badge").className = `cat-tag cat-${activeModal.category}`;
+  $("m-cat-badge").textContent = activeModal.category;
+  $("m-diff-badge").className = `diff-tag diff-${activeModal.difficulty}`;
+  $("m-diff-badge").textContent = activeModal.difficulty;
+  $("m-desc").textContent = activeModal.description||"";
+  $("m-vuln").textContent = activeModal.vulnerability||"Study the category to understand common attack vectors.";
+  const ab = $("m-access-btn");
+  ab.href = activeModal.challengeUrl||"#";
+  ab.style.display = activeModal.challengeUrl?"inline-flex":"none";
+  const hints = [activeModal.hint1||activeModal.hint, activeModal.hint2, activeModal.hint3].filter(Boolean);
+  if($("m-hints-count")) $("m-hints-count").textContent = hints.length+(hints.length===1?" hint":" hints");
+  $("m-hints").innerHTML = hints.length ? hints.map((h,i) => `
+    <div class="hint-item" id="hint-${i}">
+      <div class="hint-num">HINT ${i+1}</div>
+      <div class="hint-text">${h}</div>
+      <div class="hint-particle-area" id="hint-particles-${i}"></div>
+      <div class="hint-mist" id="hint-mist-${i}" onclick="revealHint(${i})">
+        <div class="hint-mist-inner"><span class="hint-mist-icon">🌫️</span><span>Touch to reveal hint ${i+1}</span></div>
+        <div class="hint-mist-hint">Hover to preview · Click to reveal</div>
+      </div>
+    </div>`).join("") : `<p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);padding:10px 0;">No hints available.</p>`;
+  const alreadySolved = (myData?.solvedIds||[]).includes(activeModal.id);
+  const flagBlock = $("m-flag-block"), flagRow = $("m-flag-row"), flagLabel = $("m-flag-label");
+  const solvedBanner = $("m-solved-banner"), flagInp = $("m-flag"), submitBtn = $("m-submit-btn");
+  const fr = $("m-result"); fr.style.display="none"; fr.className="flag-result";
+  if(alreadySolved) {
+    flagBlock.classList.add("is-solved");
+    flagLabel.className = "flag-label solved-label";
+    flagLabel.innerHTML = `<i class="fas fa-check-circle"></i> Challenge Solved!`;
+    solvedBanner.style.display = "flex";
+    solvedBanner.innerHTML = `<div class="solved-banner"><div class="solved-banner-icon">✅</div><div><div class="solved-banner-text">Already solved!</div><div class="solved-banner-sub">Points were awarded. Share your achievement!</div></div><button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="shareFromProgress('${activeModal.id}');closeModal();"><i class="fas fa-share-alt"></i> Share</button></div>`;
+    flagRow.style.display = "none";
+  } else {
+    flagBlock.classList.remove("is-solved");
+    flagLabel.className = "flag-label";
+    flagLabel.innerHTML = `<i class="fas fa-flag"></i> Submit Your Flag`;
+    solvedBanner.style.display = "none"; solvedBanner.innerHTML = "";
+    flagRow.style.display = "flex"; flagInp.value = ""; flagInp.disabled = false;
+    if(submitBtn) { submitBtn.disabled=false; submitBtn.innerHTML=`<i class="fas fa-paper-plane"></i> Submit`; }
+  }
+  $("chal-modal").classList.add("open");
+};
+window.closeModal  = () => $("chal-modal").classList.remove("open");
+window.trackAccess = () => toast("Challenge environment opening…","info");
+window.revealHint  = function(i) {
+  const item = document.getElementById("hint-"+i);
+  if(!item||item.classList.contains("revealed")) return;
+  item.classList.add("revealed");
+  const pa = document.getElementById("hint-particles-"+i);
+  if(pa) { for(let p=0;p<8;p++){const part=document.createElement("div");part.className="hint-particle";const x=(Math.random()-.5)*60,y=(Math.random()-.5)*40-20;part.style.cssText=`left:${20+Math.random()*60}%;top:${20+Math.random()*60}%;--dir:translate(${x}px,${y}px);animation-delay:${p*50}ms;`;pa.appendChild(part);setTimeout(()=>part.remove(),900+p*50);}}
+};
+
+/* ─── FLAG SUBMIT ─── */
+window.submitFlag = async function() {
+  if(!activeModal||!me) return;
+  const input = $("m-flag").value.trim();
+  const fr = $("m-result"); if(!input) { toast("Enter your flag first","err"); return; }
+  if((myData?.solvedIds||[]).includes(activeModal.id)) { fr.textContent="✓ Already solved!"; fr.className="flag-result ok"; fr.style.display="block"; return; }
+  const submitBtn = $("m-submit-btn");
+  if(submitBtn) { submitBtn.disabled=true; submitBtn.innerHTML=`<i class="fas fa-spinner spin"></i>`; }
+  fr.textContent="Verifying…"; fr.className="flag-result info"; fr.style.display="block";
+  let correctFlag;
+  try { const s = await getDoc(doc(db,"challenges",activeModal.id)); correctFlag = s.data()?.flag; }
+  catch(e) { fr.textContent="Error verifying. Try again."; fr.className="flag-result err"; if(submitBtn){submitBtn.disabled=false;submitBtn.innerHTML=`<i class="fas fa-paper-plane"></i> Submit`;} return; }
+  if(input===correctFlag) {
+    fr.textContent = `✓ Correct! +${activeModal.points} pts earned!`; fr.className = "flag-result ok";
+    const flagInp = $("m-flag"); if(flagInp){flagInp.disabled=true;flagInp.style.opacity=".55";}
+    if(submitBtn){submitBtn.disabled=true;submitBtn.innerHTML=`<i class="fas fa-check"></i> Solved`;submitBtn.style.background="rgba(0,212,170,.15)";submitBtn.style.color="var(--a2)";submitBtn.style.borderColor="rgba(0,212,170,.3)";}
+    const solvedBanner = $("m-solved-banner");
+    if(solvedBanner){solvedBanner.style.display="flex";solvedBanner.innerHTML=`<div class="solved-banner"><div class="solved-banner-icon">🎉</div><div><div class="solved-banner-text">Solved! +${activeModal.points} pts</div><div class="solved-banner-sub">Awesome work!</div></div><button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="shareFromProgress('${activeModal.id}')"><i class="fas fa-share-alt"></i> Share</button></div>`;}
+    const newIds = [...(myData?.solvedIds||[]), activeModal.id];
+    const newScore = (myData?.score||0)+activeModal.points;
+    const newSolves = (myData?.solves||0)+1;
+    const photo = myData?.photo||me.photoURL||"";
+    try {
+      await updateDoc(doc(db,"users",me.uid), {solvedIds:newIds,score:newScore,solves:newSolves});
+      await setDoc(doc(db,"leaderboard",me.uid), {name:myData.name||"Hacker",email:myData.email||me.email||"",photo,score:newScore,solves:newSolves,uid:me.uid,role:myData.role||"player"},{merge:true});
+      await addDoc(collection(db,"solves"), {uid:me.uid,name:myData.name||"Hacker",challengeId:activeModal.id,title:activeModal.title,pts:activeModal.points,category:activeModal.category,ts:serverTimestamp()});
+      await updateDoc(doc(db,"challenges",activeModal.id), {solves:increment(1)});
+    } catch(e) { console.error("solve write:",e); }
+    showSolveBlast(activeModal);
+  } else {
+    fr.textContent="✗ Wrong flag. Keep hacking!"; fr.className="flag-result err"; toast("Wrong flag — keep trying!","err");
+    if(submitBtn){submitBtn.disabled=false;submitBtn.innerHTML=`<i class="fas fa-paper-plane"></i> Submit`;}
+  }
+};
+
+function showSolveBlast(chal) {
+  const overlay = $("solve-blast");
+  $("sb-icon").textContent = CAT_ICONS[chal.category]||"🚩";
+  $("sb-sub").textContent = chal.title+" — Completed";
+  $("sb-pts").textContent = "+"+chal.points+" PTS";
+  overlay.classList.add("show");
+  toast(`🚩 +${chal.points} pts earned!`,"ok");
+  setTimeout(()=>{ overlay.classList.remove("show"); closeModal(); openSharePopup(chal); }, 3900);
+}
+
+/* ─── SHARE ─── */
+function buildAchLink(type,data) {
+  const payload = {type,...data,player:myData?.name||me?.displayName||"A Hacker",date:new Date().toISOString().split("T")[0]};
+  return `${SITE_URL}achievement.html?viewach=${btoa(JSON.stringify(payload))}`;
+}
+function openSharePopup(chal) {
+  shareTarget = chal;
+  const user = myData?.name||me?.displayName||"A hacker";
+  const achLink = buildAchLink("challenge",{chalId:chal.id,chalTitle:chal.title,category:chal.category,difficulty:chal.difficulty,points:chal.points});
+  $("share-heading").textContent = "CHALLENGE CONQUERED!";
+  $("share-sub").textContent = `${user} completed "${chal.title}" and earned ${chal.points} points!`;
+  $("share-badge-icon").textContent = CAT_ICONS[chal.category]||"🏆";
+  $("share-badge-name").textContent = chal.title;
+  $("share-badge-meta").textContent = `${chal.category} · ${chal.difficulty} · ${chal.points} pts`;
+  $("share-link-url").textContent = achLink;
+  $("share-modal").classList.add("open");
+}
+window.closeShare = () => $("share-modal").classList.remove("open");
+window.shareFromProgress = function(chalId) { const c = allChals.find(x=>x.id===chalId); if(c) openSharePopup(c); else toast("Challenge not found","err"); };
+window.copyShareLink = function() { navigator.clipboard.writeText($("share-link-url").textContent).then(()=>toast("Link copied!","ok")).catch(()=>toast("Copy failed","err")); };
+window.shareOn = function(platform) {
+  if(!shareTarget) return;
+  const user = myData?.name||me?.displayName||"A hacker";
+  const achLink = $("share-link-url").textContent;
+  const text = `🏴 ${user} just conquered "${shareTarget.title}" on Cyber Buddy Academy!\n\n📂 ${shareTarget.category} · ⚡ ${shareTarget.difficulty} · 🏆 +${shareTarget.points} pts\n\nView achievement: ${achLink}\n#CTF #CyberSecurity #CyberBuddyAcademy`;
+  const encText = encodeURIComponent(text), encUrl = encodeURIComponent(achLink);
+  const links = {linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${encUrl}`,twitter:`https://twitter.com/intent/tweet?text=${encText}`,whatsapp:`https://wa.me/?text=${encodeURIComponent(text)}`,telegram:`https://t.me/share/url?url=${encUrl}&text=${encText}`};
+  if(platform==="copy"){navigator.clipboard.writeText(text).then(()=>toast("Copied!","ok")).catch(()=>toast("Failed","err"));return;}
+  if(links[platform]) window.open(links[platform],"_blank","width=620,height=480,noopener");
+};
+window.shareAchievement = function(name,desc,icon) {
+  const achLink = buildAchLink("achievement",{achName:name,desc,icon});
+  shareTarget = {title:name,description:desc,category:"Achievement",difficulty:"",points:0,id:"ach"};
+  $("share-heading").textContent="ACHIEVEMENT UNLOCKED!";
+  $("share-sub").textContent=`${myData?.name||"A hacker"} earned "${name}"!`;
+  $("share-badge-icon").textContent=icon;
+  $("share-badge-name").textContent=name;
+  $("share-badge-meta").textContent=desc;
+  $("share-link-url").textContent=achLink;
+  $("share-modal").classList.add("open");
+};
+
+/* ─── LEADERBOARD ─── */
+function startLeaderboard() {
+  if(lbUnsub) lbUnsub();
+  lbUnsub = onSnapshot(query(collection(db,"leaderboard"),orderBy("score","desc"),limit(50)), snap => {
+    allLbUsers = []; snap.forEach(d=>allLbUsers.push({id:d.id,...d.data()}));
+    renderLb(allLbUsers);
+    $("d-players").textContent = allLbUsers.length;
+    const myIdx = allLbUsers.findIndex(r=>r.id===me?.uid);
+    if(myIdx>=0) { $("d-rank").textContent="#"+(myIdx+1); $("ps-rank").textContent="#"+(myIdx+1); }
+  });
+}
+function getDesignation(row,rank) {
+  if(row.role==="admin") return {label:"Admin",cls:"desig-admin"};
+  if(rank===1) return {label:"Champion",cls:"desig-elite"};
+  if(rank<=3) return {label:"Elite",cls:"desig-elite"};
+  if(rank<=10) return {label:"Advanced",cls:"desig-advanced"};
+  return {label:"Player",cls:"desig-player"};
+}
+function getLevelBadge(score) {
+  if(score>=10000) return {l:"Legend 🏅",cls:"diff-Hard"};
+  if(score>=5000)  return {l:"Master",cls:"diff-Hard"};
+  if(score>=2500)  return {l:"Expert",cls:"diff-Medium"};
+  if(score>=1000)  return {l:"Pro",cls:"diff-Easy"};
+  if(score>=500)   return {l:"Skilled",cls:"diff-Easy"};
+  return {l:"Rookie",cls:"diff-Easy"};
+}
+function renderLb(rows) {
+  const body = $("lb-body");
+  if(!rows.length) { body.innerHTML=`<div class="empty"><i class="fas fa-trophy"></i><p>No players yet.</p></div>`; return; }
+  body.innerHTML = rows.map((r,i) => {
+    const rank = i+1, isMe = r.id===me?.uid;
+    const rankCls = rank===1?"rank-1":rank===2?"rank-2":rank===3?"rank-3":"";
+    const medal = rank===1?"🥇":rank===2?"🥈":rank===3?"🥉":"";
+    const color = AV_COLORS[i%AV_COLORS.length];
+    const desig = getDesignation(r, rank);
+    const level = getLevelBadge(r.score||0);
+    const photoHtml = r.photo ? `<img src="${r.photo}" alt="${r.name||"?"}" onerror="this.parentElement.style.background='${color}';this.remove()">` : av(r.name);
+    const isAdmin = r.role==="admin";
+    return `
+    <div class="lb-row ${isMe?"is-me":""}">
+      <span class="lb-rank ${rankCls}">${medal||"#"+rank}</span>
+      <div class="lb-user">
+        <div class="lb-av" style="${r.photo?"":"background:"+color+";color:#000;"}">${photoHtml}</div>
+        <div>
+          <div class="lb-name">${r.name||"Hacker"}${isMe?`<span class="me-tag">YOU</span>`:""}${isAdmin?`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(255,77,109,.12);color:var(--a3);border:1px solid rgba(255,77,109,.2);border-radius:4px;margin-left:4px;">ADMIN</span>`:""}</div>
+          <div class="lb-email">${r.email||""}</div>
+        </div>
+      </div>
+      <span class="lb-solves">${r.solves||0}</span>
+      <span class="lb-score">${(r.score||0).toLocaleString()}</span>
+      <span class="diff-tag ${level.cls}" style="font-size:.56rem;">${level.l}</span>
+      <span class="designation-tag ${desig.cls}">${desig.label}</span>
+    </div>`;
+  }).join("");
+}
+
+/* ─── DASHBOARD ─── */
+function refreshDashStats() {
+  $("d-pts").textContent = (myData?.score||0).toLocaleString();
+  $("d-solved").textContent = myData?.solves||0;
+  $("ps-pts").textContent = (myData?.score||0).toLocaleString();
+  $("ps-solves").textContent = myData?.solves||0;
+}
+function renderDashSkillMap() {
+  const solvedIds = myData?.solvedIds||[];
+  const el = $("dash-skill-map"); if(!el) return;
+  el.innerHTML = CATS.map(cat => {
+    const total = allChals.filter(c=>c.category===cat).length;
+    const solved = allChals.filter(c=>c.category===cat&&solvedIds.includes(c.id)).length;
+    const pct = total ? Math.round(solved/total*100) : 0;
+    const col = SKILL_COLORS[cat]||"var(--a1)";
+    return `<div class="skill-row"><div class="skill-name">${cat}</div><div class="skill-track"><div class="skill-fill" style="width:${pct}%;background:${col};box-shadow:0 0 6px ${col}66;"></div></div><div class="skill-pct">${pct}%</div></div>`;
+  }).join("");
+}
+function renderActivityHeatmap() {
+  const el = $("dash-heatmap"); if(!el) return;
+  const counts = {};
+  solveHistory.forEach(s=>{ if(s.ts?.toDate){ const d=s.ts.toDate().toDateString(); counts[d]=(counts[d]||0)+1; }});
+  const cells = [];
+  const today = new Date();
+  for(let i=83;i>=0;i--) {
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    const c = counts[d.toDateString()]||0;
+    const lvl = c===0?0:c===1?1:c===2?2:c<=4?3:4;
+    cells.push(`<div class="hm-cell hm-${lvl}" title="${d.toLocaleDateString()}: ${c} solve${c!==1?"s":""}"></div>`);
+  }
+  el.innerHTML = cells.join("");
+}
+function renderRecentSolves() {
+  if(!me) return;
+  const list = $("recent-list");
+  onSnapshot(query(collection(db,"solves"),where("uid","==",me.uid),limit(20)), snap => {
+    const items = []; snap.forEach(d=>items.push(d.data()));
+    items.sort((a,b)=>(b.ts?.toMillis?b.ts.toMillis():0)-(a.ts?.toMillis?a.ts.toMillis():0));
+    const recent = items.slice(0,6);
+    if(!recent.length) { list.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Start hacking!</p></div>`; return; }
+    list.innerHTML = recent.map(s=>`
+      <div class="solve-row">
+        <div class="solve-emoji">${CAT_ICONS[s.category]||"🚩"}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="solve-name">${s.title||"?"}</div>
+          <div class="solve-meta"><span class="cat-tag cat-${s.category||""}">${s.category||""}</span><span style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);">${s.ts?.toDate?s.ts.toDate().toLocaleDateString():""}</span></div>
+        </div>
+        <div class="solve-pts">+${s.pts}</div>
+      </div>`).join("");
+    renderActivityHeatmap();
+  },()=>{ list.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet.</p></div>`; });
+}
+
+/* ─── SOLVE HISTORY ─── */
+function loadSolveHistory() {
+  if(!me) return;
+  onSnapshot(query(collection(db,"solves"),where("uid","==",me.uid),limit(100)), snap=>{
+    solveHistory = []; snap.forEach(d=>solveHistory.push(d.data()));
+    solveHistory.sort((a,b)=>(a.ts?.toMillis?a.ts.toMillis():0)-(b.ts?.toMillis?b.ts.toMillis():0));
+    if($("view-progress").classList.contains("active")) renderTimeline();
+  },err=>console.error("solveHistory:",err));
+}
+
+/* ─── PROGRESS ─── */
+function renderProgressView() { renderCatProgress(); renderTimeline(); renderSolvedHistory(); }
+function renderCatProgress() {
+  const solvedIds = myData?.solvedIds||[];
+  const grid = $("prog-grid"); if(!grid) return;
+  grid.innerHTML = CATS.map(cat=>{
+    const total = allChals.filter(c=>c.category===cat).length;
+    const solved = allChals.filter(c=>c.category===cat&&solvedIds.includes(c.id)).length;
+    const pct = total ? Math.round(solved/total*100) : 0;
+    const col = SKILL_COLORS[cat]||"var(--a1)";
+    return `<div class="prog-card"><div class="prog-hd"><div class="prog-name">${CAT_ICONS[cat]} ${cat}</div><div class="prog-count">${solved}/${total}</div></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${col};box-shadow:0 0 8px ${col}55;"></div></div><div class="prog-pct">${pct}% complete</div></div>`;
+  }).join("");
+}
+function renderSolvedHistory() {
+  const container = $("solved-history"); if(!me) return;
+  onSnapshot(query(collection(db,"solves"),where("uid","==",me.uid),limit(100)), snap=>{
+    const items = []; snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(b.ts?.toMillis?b.ts.toMillis():0)-(a.ts?.toMillis?a.ts.toMillis():0));
+    if(!items.length) { container.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet.</p></div>`; return; }
+    const chalById = id => allChals.find(c=>c.id===id)||{};
+    container.innerHTML = items.map(s=>{
+      const chal = chalById(s.challengeId);
+      return `<div class="solve-row"><div class="solve-emoji">${CAT_ICONS[s.category]||"🚩"}</div><div style="flex:1;min-width:0;"><div class="solve-name">${s.title||"?"}</div><div class="solve-meta"><span class="cat-tag cat-${s.category||""}">${s.category||""}</span>${chal.difficulty?`<span class="diff-tag diff-${chal.difficulty}" style="font-size:.56rem;padding:2px 7px;">${chal.difficulty}</span>`:""}<span style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);">${s.ts?.toDate?s.ts.toDate().toLocaleDateString():""}</span></div></div><div class="solve-pts">+${s.pts}</div><button onclick="shareFromProgress('${s.challengeId}')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.76rem;padding:5px 8px;border-radius:7px;transition:all .14s;" title="Share" onmouseover="this.style.color='var(--a1)'" onmouseout="this.style.color='var(--text-dim)'"><i class="fas fa-share-alt"></i></button></div>`;
+    }).join("");
+  },()=>{ container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading.</p></div>`; });
+}
+function renderTimeline() {
+  const canvas = $("timeline-canvas"); if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if(timelineChart) timelineChart.destroy();
+  let labels = [], data = [];
+  if(solveHistory.length>0) {
+    let cum=0; const pts=[];
+    solveHistory.forEach(s=>{ if(s.ts?.toDate){cum+=s.pts||0;pts.push({label:s.ts.toDate().toLocaleDateString("en-IN",{month:"short",day:"numeric"}),score:cum});}});
+    if(pts.length>8){const step=Math.floor(pts.length/7);for(let i=0;i<pts.length;i+=step){if(pts[i]){labels.push(pts[i].label);data.push(pts[i].score);}}}
+    else{pts.forEach(p=>{labels.push(p.label);data.push(p.score);});}
+    labels.unshift("Start"); data.unshift(0);
+  } else { labels=["Start","Now"]; data=[0,0]; }
+  const isDark = document.documentElement.getAttribute("data-theme")==="dark";
+  timelineChart = new Chart(ctx,{type:"line",data:{labels,datasets:[{label:"Score",data,borderColor:"#6c63ff",backgroundColor:"rgba(108,99,255,.08)",tension:.4,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#6c63ff",borderWidth:2,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:isDark?"rgba(13,13,20,.97)":"rgba(255,255,255,.97)",borderColor:"rgba(108,99,255,.3)",borderWidth:1,titleColor:"#6c63ff",bodyColor:isDark?"#d4e3ff":"#1a1a2e",callbacks:{label:c=>` ${c.parsed.y.toLocaleString()} pts`}}},scales:{y:{grid:{color:isDark?"rgba(255,255,255,.05)":"rgba(0,0,0,.05)"},ticks:{color:isDark?"#3a3a5a":"#aaaacc",font:{size:11,family:"'DM Mono'"}}},x:{grid:{display:false},ticks:{color:isDark?"#3a3a5a":"#aaaacc",font:{size:11,family:"'DM Mono'"}}}}}});
+}
+
+/* ─── CTF NOTES ─── */
+const NOTES_KEY = () => me ? `ctf-notes-${me.uid}` : "ctf-notes";
+function loadNotes() {
+  try { const raw = localStorage.getItem(NOTES_KEY()); notes = raw ? JSON.parse(raw) : []; } catch(e) { notes = []; }
+  renderNotesList(); updateNotesStats();
+}
+function saveNoteStorage() { try { localStorage.setItem(NOTES_KEY(), JSON.stringify(notes)); } catch(e) { toast("Storage full!","err"); } }
+function updateNotesStats() {
+  if($("ns-total")) $("ns-total").textContent = notes.length;
+  const cats = [...new Set(notes.filter(n=>n.cat).map(n=>n.cat))].length;
+  if($("ns-cats")) $("ns-cats").textContent = cats;
+  const words = notes.reduce((a,n)=>a+(n.body||"").split(/\s+/).filter(Boolean).length, 0);
+  if($("ns-words")) $("ns-words").textContent = words>1000?(words/1000).toFixed(1)+"k":words;
+  const tb = $("notes-toolbar"); if(!tb) return;
+  const allCats = [...new Set(notes.filter(n=>n.cat).map(n=>n.cat))];
+  tb.innerHTML = `<button style="font-family:var(--font-mono);font-size:.66rem;padding:4px 12px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;" onclick="filterNotesCat(this,'')" class="${notesCatFilter===""?"active-ntag":""}">All</button>`+allCats.map(c=>`<button style="font-family:var(--font-mono);font-size:.66rem;padding:4px 12px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;" onclick="filterNotesCat(this,'${c}')" class="${notesCatFilter===c?"active-ntag":""}">${c}</button>`).join("");
+}
+window.filterNotesCat = function(el,cat) { notesCatFilter=cat; document.querySelectorAll(".active-ntag").forEach(b=>{b.classList.remove("active-ntag");b.style.color="var(--text-muted)";b.style.borderColor="var(--border)";b.style.background="var(--surface)";}); el.style.color="var(--a1)"; el.style.borderColor="rgba(108,99,255,.4)"; el.style.background="rgba(108,99,255,.08)"; renderNotesList(); };
+function renderNotesList() {
+  const list = $("note-list"); if(!list) return;
+  const search = ($("note-search")?.value||"").toLowerCase();
+  let filtered = notes.filter(n=>{ if(notesCatFilter && n.cat!==notesCatFilter) return false; if(search && !n.title?.toLowerCase().includes(search) && !n.body?.toLowerCase().includes(search)) return false; return true; }).sort((a,b)=>b.updated-a.updated);
+  if(!filtered.length) { list.innerHTML=`<div class="empty" style="padding:24px;"><i class="fas fa-sticky-note"></i><p>${notes.length?"No matches":"No notes yet."}</p></div>`; return; }
+  list.innerHTML = filtered.map(n=>{ const col=SKILL_COLORS[n.cat]||"var(--border-hi)"; return `<div class="note-card ${n.id===activeNoteId?"active-note":""}" onclick="openNote('${n.id}')"><div style="position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 4px 4px 0;background:${col};"></div><div class="note-card-title">${n.title||"Untitled"}</div><div class="note-card-preview">${(n.body||"No content").substring(0,80)}</div><div class="note-card-meta">${n.cat?`<span class="cat-tag cat-${n.cat}" style="font-size:.54rem;padding:1px 6px;">${n.cat}</span>`:""}<span>${new Date(n.updated).toLocaleDateString()}</span></div></div>`; }).join("");
+}
+window.openNote = function(id) { const note=notes.find(n=>n.id===id); if(!note) return; activeNoteId=id; $("note-title").value=note.title||""; $("note-body").value=note.body||""; $("note-cat-sel").value=note.cat||""; renderNotesList(); };
+window.newNote = function() { const id="note_"+Date.now(); notes.unshift({id,title:"",body:"",cat:"",created:Date.now(),updated:Date.now()}); saveNoteStorage(); activeNoteId=id; $("note-title").value=""; $("note-body").value=""; $("note-cat-sel").value=""; $("note-title").focus(); renderNotesList(); updateNotesStats(); };
+window.saveNote = function() { if(!activeNoteId){window.newNote();return;} const note=notes.find(n=>n.id===activeNoteId); if(!note){window.newNote();return;} note.title=$("note-title").value||"Untitled"; note.body=$("note-body").value||""; note.cat=$("note-cat-sel").value||""; note.updated=Date.now(); saveNoteStorage(); renderNotesList(); updateNotesStats(); toast("Note saved","ok"); };
+window.deleteNote = function() { if(!activeNoteId) return; if(!confirm("Delete this note?")) return; notes=notes.filter(n=>n.id!==activeNoteId); activeNoteId=notes[0]?.id||null; if(activeNoteId){const n=notes[0];$("note-title").value=n.title||"";$("note-body").value=n.body||"";$("note-cat-sel").value=n.cat||"";}else{$("note-title").value="";$("note-body").value="";$("note-cat-sel").value="";} saveNoteStorage(); renderNotesList(); updateNotesStats(); toast("Deleted","info"); };
+window.exportNotes = function() { const txt=notes.map(n=>`# ${n.title||"Untitled"}\nCategory: ${n.cat||"—"}\nDate: ${new Date(n.updated).toLocaleString()}\n\n${n.body||""}\n\n---\n`).join("\n"); const blob=new Blob([txt],{type:"text/markdown"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="ctf-notes.md"; a.click(); URL.revokeObjectURL(url); toast("Exported as .md","ok"); };
+
+/* ═══════════════════════════════════════════════════════════════
+   COMMUNITY — PRODUCTION-READY: Groups, Requests, Notifications
+   Requirements: invite-only join, role-based access, real-time,
+   notifications bell, duplicate prevention, admin approve/reject
+═══════════════════════════════════════════════════════════════ */
+
+function escapeHtml(t) { return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ── Privacy label ── */
+window.updatePrivacyLabel = function() {
+  const isPrivate = $("cg-private-toggle")?.checked;
+  if($("cg-privacy-label")) $("cg-privacy-label").textContent = isPrivate ? "Private Group" : "Public Group";
+  if($("cg-privacy-sub")) $("cg-privacy-sub").textContent = isPrivate ? "Members join via invite only" : "Anyone can discover & join instantly";
+};
+
+/* ── Tab switching ── */
+window.switchCommTab = function(tab) {
+  currentCommTab = tab;
+  ["groups","discover","requests"].forEach(t => {
+    const el = $("comm-tab-"+t); if(el) el.style.display = t===tab?"block":"none";
+    document.querySelectorAll(".comm-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.tab===tab));
+  });
+  if(tab==="discover") loadAllPublicGroupsAndRender();
+  if(tab==="requests") loadJoinRequests();
+};
+
+/* ── Groups listener (real-time, client-side sort) ── */
+function startGroupsListener() {
+  if(!me) return;
+  if(groupsUnsub) groupsUnsub();
+  groupsUnsub = onSnapshot(
+    query(collection(db,"chatGroups"), where("members","array-contains",me.uid)),
+    snap => {
+      groupsCache = [];
+      snap.forEach(d => groupsCache.push({id:d.id,...d.data()}));
+      groupsCache.sort((a,b) => {
+        const ta = a.lastMessageAt?.toMillis?.() ?? a.createdAt?.toMillis?.() ?? 0;
+        const tb = b.lastMessageAt?.toMillis?.() ?? b.createdAt?.toMillis?.() ?? 0;
+        return tb - ta;
+      });
+      refreshGroupListUI();
+      if($("chat-dot")) $("chat-dot").style.display = groupsCache.length?"flex":"none";
+    },
+    err => console.error("groups listener:", err)
+  );
+}
+
+/* ── Requests + Notification bell listener (always active) ── */
+function startRequestsListener() {
+  if(!me) return;
+  if(reqUnsub) reqUnsub();
+  reqUnsub = onSnapshot(
+    query(collection(db,"joinRequests"), where("toUid","==",me.uid), where("status","==","pending")),
+    snap => {
+      pendingRequestsCache = [];
+      snap.forEach(d => pendingRequestsCache.push({id:d.id,...d.data()}));
+      const count = pendingRequestsCache.length;
+      const pill = $("notif-pill");
+      if(pill) { pill.textContent = count; pill.classList.toggle("show", count>0); }
+      const badge = $("req-notif-count");
+      if(badge) { badge.textContent = count; badge.classList.toggle("show", count>0); }
+      if(currentCommTab==="requests" && $("view-community")?.classList.contains("active")) loadJoinRequests();
+    },
+    err => console.error("req listener:", err)
+  );
+}
+
+/* ── Notification helper: write to users/{uid}/notifications ── */
+async function pushNotification(toUid, type, text, groupId) {
+  try {
+    await addDoc(collection(db,"users",toUid,"notifications"), {
+      type, text, groupId, read:false, ts:serverTimestamp()
+    });
+  } catch(e) { console.warn("notify err:", e); }
+}
+
+/* ── Group list UI ── */
+window.filterGroupList = function() {
+  groupSearchFilter = ($("group-search-inp")?.value||"").toLowerCase();
+  refreshGroupListUI();
+};
+function refreshGroupListUI() {
+  if(!$("view-community")?.classList.contains("active")) return;
+  const list = $("group-list"); if(!list) return;
+  const filtered = groupsCache.filter(g => !groupSearchFilter || g.name?.toLowerCase().includes(groupSearchFilter));
+  if(!filtered.length) {
+    list.innerHTML = `<div class="empty" style="padding:28px;"><i class="fas fa-users"></i><p>No groups yet.<br>Create one or discover public groups!</p></div>`;
+    return;
+  }
+  list.innerHTML = `<div class="group-list-label">Your Groups (${filtered.length})</div>` + filtered.map(g => {
+    const isActive = g.id === activeGroupId;
+    const memberCount = g.members?.length||0;
+    const isLeader = g.leaderId===me?.uid;
+    return `
+    <div class="group-item ${isActive?"active-group":""}" onclick="openGroup('${g.id}')">
+      <div class="group-av">${g.photo?`<img src="${g.photo}" alt="${escapeHtml(g.name)}" onerror="this.style.display='none'">`:"💬"}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="group-name">${escapeHtml(g.name)} ${isLeader?`<i class="fas fa-crown" style="color:var(--a4);font-size:.6rem;" title="You are the leader"></i>`:""}</div>
+        <div class="group-meta-row">
+          <span class="group-member-count"><i class="fas fa-user" style="font-size:.5rem;"></i>${memberCount}</span>
+          <span class="${g.isPrivate!==false?"group-private-badge":"group-public-badge"}">${g.isPrivate!==false?"🔒":"🌐"}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ── Open group & chat ── */
+window.openGroup = function(groupId) {
+  activeGroupId = groupId;
+  refreshGroupListUI();
+  const group = groupsCache.find(g=>g.id===groupId);
+  if(!group) { toast("Group not found","err"); return; }
+  // Role-based: only members can enter chat
+  if(!(group.members||[]).includes(me.uid) && myData?.role!=="admin") {
+    toast("You are not a member of this group","err"); return;
+  }
+  buildChatUI(groupId, group);
+};
+
+function buildChatUI(groupId, group) {
+  const isLeader = group.leaderId===me?.uid;
+  const isAdmin  = myData?.role==="admin" || (group.admins||[]).includes(me?.uid);
+  const memberCount = group.members?.length||0;
+  const chatArea = $("chat-main-area");
+  chatArea.innerHTML = `
+    <div class="chat-header">
+      <div class="chat-group-av-lg">${group.photo?`<img src="${group.photo}" alt="${escapeHtml(group.name)}" onerror="this.style.display='none'">`:"💬"}</div>
+      <div>
+        <div class="chat-group-name">
+          ${escapeHtml(group.name)}
+          ${isLeader?`<i class="fas fa-crown" style="color:var(--a4);font-size:.75rem;" title="You are the leader"></i>`:""}
+        </div>
+        <div class="chat-group-meta">
+          <span class="online-dot"></span>${memberCount} member${memberCount!==1?"s":""}
+          · ${group.isPrivate!==false?"🔒 Private":"🌐 Public"}
+          ${group.desc?` · <em style="color:var(--text-dim);">${escapeHtml(group.desc)}</em>`:""}
+        </div>
+      </div>
+      <div class="chat-actions">
+        <button class="tb-btn" onclick="showGroupMembers('${groupId}')" title="Members"><i class="fas fa-users"></i></button>
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="showInviteByEmail('${groupId}')" title="Invite by Email" style="color:var(--a2);"><i class="fas fa-user-plus"></i></button>`:""}
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="postAnnouncement('${groupId}')" title="Announcement" style="color:var(--a4);"><i class="fas fa-bullhorn"></i></button>`:""}
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="showGroupSettings('${groupId}')" title="Settings"><i class="fas fa-cog"></i></button>`:""}
+        <button class="tb-btn" onclick="leaveGroup('${groupId}')" title="Leave Group" style="color:var(--a3);"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-msgs-${groupId}"><div class="empty" style="padding:30px;"><i class="fas fa-spinner spin"></i></div></div>
+    <div class="chat-input-row">
+      <textarea class="chat-inp" id="chat-inp-${groupId}" placeholder="Message ${escapeHtml(group.name)}… (Enter to send)" rows="1" onkeydown="handleChatKey(event,'${groupId}')"></textarea>
+      <button class="btn btn-primary btn-sm" onclick="sendMsg('${groupId}')"><i class="fas fa-paper-plane"></i></button>
+    </div>`;
+
+  if(chatUnsub) chatUnsub();
+  chatUnsub = onSnapshot(
+    query(collection(db,"chatGroups",groupId,"messages"), orderBy("ts","asc"), limit(100)),
+    snap => {
+      const msgs = []; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+      renderChatMessages(groupId, msgs, group);
+    },
+    err => console.error("chat msgs:",err)
+  );
+}
+
+function renderChatMessages(groupId, msgs, group) {
+  const container = document.getElementById("chat-msgs-"+groupId); if(!container) return;
+  if(!msgs.length) { container.innerHTML=`<div class="chat-empty"><i class="fas fa-comment-dots"></i><p>No messages yet.<br>Say hello! 👋</p></div>`; return; }
+  let lastDate = "";
+  container.innerHTML = msgs.map(msg=>{
+    // Announcement style
+    if(msg.isAnnouncement) {
+      const t = msg.ts?.toDate ? msg.ts.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}) : "";
+      return `<div style="margin:10px 0;padding:12px 16px;background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(245,166,35,.04));border:1px solid rgba(245,166,35,.25);border-radius:12px;border-left:3px solid var(--a4);">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><i class="fas fa-bullhorn" style="color:var(--a4);font-size:.75rem;"></i><span style="font-family:var(--font-mono);font-size:.6rem;color:var(--a4);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Announcement</span><span style="font-family:var(--font-mono);font-size:.56rem;color:var(--text-dim);margin-left:auto;">${t}</span></div>
+        <div style="font-size:.84rem;line-height:1.6;">${escapeHtml(msg.text||"")}</div>
+        <div style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);margin-top:4px;">— ${escapeHtml(msg.senderName||"Admin")}</div>
+      </div>`;
+    }
+    if(msg.isSystem) { return `<div class="msg-system"><div class="msg-system-text"><i class="fas fa-info-circle" style="font-size:.6rem;"></i>${escapeHtml(msg.text||"")}</div></div>`; }
+    const isMe = msg.uid===me?.uid;
+    const color = AV_COLORS[Math.abs((msg.uid||"a").charCodeAt(0))%AV_COLORS.length];
+    const isLeader = msg.uid===group.leaderId;
+    const isAdminMsg = msg.senderRole==="admin" || (group.admins||[]).includes(msg.uid);
+    const tagHtml = isAdminMsg?`<span class="admin-tag">ADMIN</span>`:isLeader?`<span class="leader-tag">LEADER</span>`:"";
+    const timeStr = msg.ts?.toDate ? msg.ts.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}) : "";
+    const dateStr = msg.ts?.toDate ? msg.ts.toDate().toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"}) : "";
+    let dateSep = "";
+    if(dateStr && dateStr!==lastDate) { lastDate=dateStr; dateSep=`<div class="msg-date-sep"><span>${dateStr}</span></div>`; }
+    const photoHtml = msg.photo ? `<img src="${msg.photo}" alt="${escapeHtml(msg.senderName||"?")}" onerror="this.parentElement.style.background='${color}';this.remove()">` : av(msg.senderName);
+    return `${dateSep}
+    <div class="msg-bubble-wrap ${isMe?"is-me":""}">
+      <div class="msg-av" style="${msg.photo?"":"background:"+color+";color:#000;"}">${photoHtml}</div>
+      <div class="msg-content">
+        ${!isMe?`<div class="msg-sender">${escapeHtml(msg.senderName||"Hacker")} ${tagHtml}</div>`:""}
+        <div class="msg-bubble">${escapeHtml(msg.text||"")}</div>
+        <div class="msg-time"><i class="fas fa-clock" style="font-size:.5rem;"></i>${timeStr}</div>
+      </div>
+    </div>`;
+  }).join("");
+  container.scrollTop = container.scrollHeight;
+}
+
+window.handleChatKey = function(e, groupId) { if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg(groupId);} };
+window.sendMsg = async function(groupId) {
+  if(!me) return;
+  const inp = document.getElementById("chat-inp-"+groupId); if(!inp) return;
+  const text = inp.value.trim(); if(!text) return;
+  inp.value = "";
+  try {
+    await addDoc(collection(db,"chatGroups",groupId,"messages"), {
+      uid:me.uid, senderName:myData?.name||me.displayName||"Hacker",
+      senderRole:myData?.role||"player",
+      photo:myData?.photo||me.photoURL||"",
+      text, ts:serverTimestamp(),
+    });
+    await updateDoc(doc(db,"chatGroups",groupId), {
+      lastMessage:text.length>60?text.substring(0,60)+"…":text,
+      lastMessageAt:serverTimestamp(),
+      messageCount:increment(1),
+    });
+  } catch(e) { toast("Failed to send: "+e.message,"err"); }
+};
+
+/* ── Post Announcement (admin/leader only) ── */
+window.postAnnouncement = async function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
+  const isLeader = group.leaderId===me?.uid;
+  const isAdmin  = myData?.role==="admin"||(group.admins||[]).includes(me?.uid);
+  if(!isLeader&&!isAdmin) { toast("Only leader/admin can post announcements","err"); return; }
+  const text = prompt("📢 Announcement text:");
+  if(!text?.trim()) return;
+  try {
+    await addDoc(collection(db,"chatGroups",groupId,"messages"), {
+      uid:me.uid, senderName:myData?.name||"Admin",
+      senderRole:myData?.role||"player",
+      photo:myData?.photo||"",
+      text:text.trim(), ts:serverTimestamp(), isAnnouncement:true,
+    });
+    await updateDoc(doc(db,"chatGroups",groupId), {
+      lastMessage:"📢 "+text.trim().substring(0,50),
+      lastMessageAt:serverTimestamp(),
+    });
+    // Notify all members
+    const grpSnap = await getDoc(doc(db,"chatGroups",groupId)).catch(()=>null);
+    const members = grpSnap?.data()?.members||[];
+    await Promise.all(members.filter(u=>u!==me.uid).map(uid=>
+      pushNotification(uid,"message",`📢 Announcement in ${group.name}: ${text.trim().substring(0,60)}`,groupId)
+    ));
+    toast("Announcement posted!","ok");
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
+
+/* ── Leave group ── */
+window.leaveGroup = async function(groupId) {
+  if(!me||!confirm("Leave this group?")) return;
+  const group = groupsCache.find(g=>g.id===groupId);
+  if(group?.leaderId===me.uid) {
+    toast("You are the leader. Transfer leadership or delete the group first.","err"); return;
+  }
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId), {members:arrayRemove(me.uid)});
+    if(activeGroupId===groupId) {
+      activeGroupId=null;
+      $("chat-main-area").innerHTML=`<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group to start chatting</p></div>`;
+    }
+    toast("Left group","info");
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
+
+/* ── Group Settings ── */
+window.showGroupSettings = async function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
+  const isLeader=group.leaderId===me?.uid, isAdmin=myData?.role==="admin";
+  if(!isLeader&&!isAdmin) { toast("Only leader/admin can edit settings","err"); return; }
+  const msgs = document.getElementById("chat-msgs-"+groupId); if(!msgs) return;
+  msgs.querySelectorAll(".settings-panel").forEach(p=>p.remove());
+  const overlay = document.createElement("div");
+  overlay.className = "settings-panel";
+  overlay.style.cssText="position:absolute;inset:0;background:var(--surface);z-index:20;padding:18px;overflow-y:auto;border-radius:0;";
+  overlay.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:var(--font-display);font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:8px;"><i class="fas fa-cog" style="color:var(--a1);"></i> Group Settings</div>
+      <button onclick="this.closest('.settings-panel').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="field"><label>Group Name</label><input class="inp" id="gs-name" value="${escapeHtml(group.name)}"></div>
+    <div class="field"><label>Description</label><input class="inp" id="gs-desc" value="${escapeHtml(group.desc||"")}"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;">
+      <div><div style="font-size:.84rem;font-weight:600;">Privacy: ${group.isPrivate!==false?"Private":"Public"}</div><div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);">Toggle to change</div></div>
+      <label class="sw"><input type="checkbox" id="gs-private" ${group.isPrivate!==false?"checked":""}><div class="sw-track"></div><div class="sw-thumb"></div></label>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+      <button class="btn btn-primary btn-sm" onclick="saveGroupSettings('${groupId}')"><i class="fas fa-save"></i> Save</button>
+      <button class="btn btn-ghost btn-sm" onclick="showTransferLeadership('${groupId}')"><i class="fas fa-exchange-alt"></i> Transfer Leadership</button>
+      ${isLeader||isAdmin?`<button class="btn btn-danger btn-sm" onclick="deleteGroup('${groupId}')"><i class="fas fa-trash"></i> Delete Group</button>`:""}
+    </div>`;
+  msgs.style.position="relative";
+  msgs.appendChild(overlay);
+};
+window.saveGroupSettings = async function(groupId) {
+  const name=$("gs-name")?.value.trim(), desc=$("gs-desc")?.value.trim();
+  const isPrivate=$("gs-private")?.checked!==false;
+  if(!name){toast("Group name required","err");return;}
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId), {name,desc:desc||"",isPrivate});
+    toast("Settings saved","ok");
+    document.querySelector(".settings-panel")?.remove();
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+window.deleteGroup = async function(groupId) {
+  if(!confirm("Delete this group permanently? All messages will be lost.")) return;
+  try {
+    const msgsSnap = await getDocs(collection(db,"chatGroups",groupId,"messages")).catch(()=>null);
+    if(msgsSnap){const b=writeBatch(db);msgsSnap.forEach(d=>b.delete(d.ref));await b.commit();}
+    await deleteDoc(doc(db,"chatGroups",groupId));
+    if(activeGroupId===groupId){activeGroupId=null;$("chat-main-area").innerHTML=`<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group</p></div>`;}
+    toast("Group deleted","info");
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+
+/* ── Transfer Leadership ── */
+window.showTransferLeadership = async function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
+  if(group.leaderId!==me?.uid && myData?.role!=="admin") { toast("Only leader can transfer","err"); return; }
+  const others = (group.members||[]).filter(u=>u!==me.uid);
+  if(!others.length) { toast("No other members to transfer to","err"); return; }
+  try {
+    const mds = await Promise.all(others.map(uid=>
+      getDoc(doc(db,"users",uid)).then(s=>s.exists()?{uid,...s.data()}:{uid,name:"Unknown"}).catch(()=>({uid,name:"Unknown"}))
+    ));
+    const choices = mds.map((m,i)=>`${i+1}. ${m.name||"Unknown"}`).join("\n");
+    const idx = parseInt(prompt(`Transfer leadership to:\n${choices}\n\nEnter number:`));
+    if(isNaN(idx)||idx<1||idx>mds.length) { toast("Invalid choice","err"); return; }
+    const nl = mds[idx-1];
+    if(!confirm(`Transfer leadership to "${nl.name||"Unknown"}"?`)) return;
+    await updateDoc(doc(db,"chatGroups",groupId),{leaderId:nl.uid, admins:arrayUnion(nl.uid)});
+    await addDoc(collection(db,"chatGroups",groupId,"messages"),{
+      uid:"system",senderName:"System",
+      text:`Leadership transferred to ${nl.name||"Unknown"}`,
+      ts:serverTimestamp(),isSystem:true,
+    }).catch(()=>{});
+    toast("Leadership transferred","ok");
+    document.querySelector(".settings-panel")?.remove();
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+
+/* ── Members Panel ── */
+window.showGroupMembers = async function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId)||allGroupsCache.find(g=>g.id===groupId);
+  if(!group) return;
+  const msgs = document.getElementById("chat-msgs-"+groupId); if(!msgs) return;
+  msgs.querySelectorAll(".members-panel").forEach(p=>p.remove());
+  msgs.style.position="relative";
+  const overlay = document.createElement("div");
+  overlay.className = "members-panel";
+  overlay.style.cssText="position:absolute;inset:0;background:var(--surface);z-index:20;padding:18px;overflow-y:auto;";
+  overlay.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-family:var(--font-display);font-size:.95rem;font-weight:800;"><i class="fas fa-users" style="color:var(--a1);margin-right:6px;"></i>Members (${group.members?.length||0})</div><button onclick="this.closest('.members-panel').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button></div><div id="members-list-inner"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>`;
+  msgs.appendChild(overlay);
+  const memberData = await Promise.all((group.members||[]).map(async uid=>{ try{const s=await getDoc(doc(db,"users",uid));return s.exists()?{uid,...s.data()}:{uid,name:"Unknown"};}catch(e){return{uid,name:"Unknown"};}}));
+  const canManage = myData?.role==="admin"||(group.admins||[]).includes(me?.uid)||group.leaderId===me?.uid;
+  const inner = overlay.querySelector("#members-list-inner");
+  if(inner) {
+    inner.innerHTML = memberData.map(u=>{
+      const isLeader2=u.uid===group.leaderId, isAdminM=(group.admins||[]).includes(u.uid)||u.role==="admin", isMe2=u.uid===me?.uid;
+      const col=AV_COLORS[Math.abs((u.uid||"a").charCodeAt(0))%AV_COLORS.length];
+      const photoHtml=u.photo?`<img src="${u.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:`<span>${av(u.name)}</span>`;
+      const tagHtml=isLeader2?`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(245,166,35,.12);color:var(--a4);border:1px solid rgba(245,166,35,.2);border-radius:4px;margin-left:5px;">LEADER</span>`:isAdminM?`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.2);border-radius:4px;margin-left:5px;">ADMIN</span>`:`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(108,99,255,.08);color:var(--a1);border:1px solid rgba(108,99,255,.15);border-radius:4px;margin-left:5px;">PLAYER</span>`;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px;border-radius:var(--r);background:var(--surface2);margin-bottom:6px;border:1px solid var(--border);">
+        <div style="width:34px;height:34px;border-radius:50%;background:${u.photo?"transparent":col};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.82rem;font-weight:800;color:#000;overflow:hidden;flex-shrink:0;">${photoHtml}</div>
+        <div style="flex:1;min-width:0;"><div style="font-size:.86rem;font-weight:600;display:flex;align-items:center;flex-wrap:wrap;">${escapeHtml(u.name||"Hacker")}${isMe2?`<span class="me-tag">YOU</span>`:""}${tagHtml}</div><div style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);">${u.email||""}</div></div>
+        ${canManage&&!isMe2&&!isLeader2?`<button onclick="removeMember('${groupId}','${u.uid}')" style="background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:var(--a3);padding:4px 9px;border-radius:7px;cursor:pointer;font-size:.68rem;font-family:var(--font-mono);" title="Remove"><i class="fas fa-times"></i></button>`:""}
+      </div>`;
+    }).join("");
+  }
+};
+window.removeMember = async function(groupId, targetUid) {
+  if(!me||!confirm("Remove this member from the group?")) return;
+  try { await updateDoc(doc(db,"chatGroups",groupId),{members:arrayRemove(targetUid)}); toast("Member removed","info"); showGroupMembers(groupId); }
+  catch(e){toast("Error: "+e.message,"err");}
+};
+
+/* ── Invite by email (admin/leader) ── */
+window.showInviteByEmail = function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
+  const msgs = document.getElementById("chat-msgs-"+groupId); if(!msgs) return;
+  msgs.querySelectorAll(".invite-panel").forEach(p=>p.remove());
+  msgs.style.position="relative";
+  const ov = document.createElement("div");
+  ov.className = "invite-panel";
+  ov.style.cssText="position:absolute;inset:0;background:var(--surface);z-index:20;padding:20px;overflow-y:auto;";
+  ov.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-family:var(--font-display);font-size:.92rem;font-weight:800;display:flex;align-items:center;gap:8px;"><i class="fas fa-user-plus" style="color:var(--a2);"></i>Invite Member</div>
+      <button onclick="this.closest('.invite-panel').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);margin-bottom:14px;line-height:1.7;">Search by email. An invite request will be sent — the person must <strong style="color:var(--text);">accept</strong> to join <strong style="color:var(--a1);">${escapeHtml(group.name)}</strong>.</p>
+    <div class="field"><label>Email Address</label>
+      <div style="display:flex;gap:8px;">
+        <input class="inp" id="inv-email" placeholder="user@example.com" type="email" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="searchAndInvite('${groupId}')"><i class="fas fa-search"></i> Find</button>
+      </div>
+    </div>
+    <div id="inv-result" style="margin-top:12px;"></div>`;
+  msgs.appendChild(ov);
+};
+window.searchAndInvite = async function(groupId) {
+  const email=($("inv-email")?.value||"").trim().toLowerCase();
+  if(!email){toast("Enter an email","err");return;}
+  const res=$("inv-result"); if(!res) return;
+  res.innerHTML=`<div class="empty" style="padding:16px;"><i class="fas fa-spinner spin"></i></div>`;
+  try {
+    const snap=await getDocs(query(collection(db,"users"),where("email","==",email),limit(1)));
+    if(snap.empty){res.innerHTML=`<div class="empty" style="padding:16px;"><i class="fas fa-user-slash"></i><p>No user found with that email.</p></div>`;return;}
+    const ud={id:snap.docs[0].id,...snap.docs[0].data()};
+    const grp=groupsCache.find(g=>g.id===groupId);
+    const alreadyIn=(grp?.members||[]).includes(ud.id);
+    const col=AV_COLORS[Math.abs((ud.id||"a").charCodeAt(0))%AV_COLORS.length];
+    res.innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rl);">
+      <div style="width:40px;height:40px;border-radius:50%;background:${ud.photo?"transparent":col};display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">${ud.photo?`<img src="${ud.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:`<span style="font-family:var(--font-display);font-size:.9rem;font-weight:800;color:#fff;">${av(ud.name)}</span>`}</div>
+      <div style="flex:1;min-width:0;"><div style="font-size:.88rem;font-weight:700;">${escapeHtml(ud.name||"User")}</div><div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);">${escapeHtml(ud.email||email)}</div></div>
+      ${alreadyIn?`<span style="font-family:var(--font-mono);font-size:.65rem;color:var(--a2);"><i class="fas fa-check-circle"></i> Already a member</span>`:`<button class="btn btn-primary btn-sm" onclick="sendGroupInvite('${groupId}','${ud.id}','${escapeHtml(ud.name||"")}')"><i class="fas fa-paper-plane"></i> Invite</button>`}
+    </div>`;
+  } catch(e){res.innerHTML=`<div class="empty" style="padding:16px;"><i class="fas fa-exclamation-circle"></i><p>${e.message}</p></div>`;}
+};
+window.sendGroupInvite = async function(groupId, targetUid, targetName) {
+  if(!me) return;
+  const reqId=`${groupId}_inv_${targetUid}`;
+  try {
+    // Prevent duplicate invite
+    const ex=await getDoc(doc(db,"joinRequests",reqId)).catch(()=>null);
+    if(ex?.exists()&&ex.data().status==="pending"){toast("Invite already sent!","info");return;}
+    const grp=groupsCache.find(g=>g.id===groupId);
+    await setDoc(doc(db,"joinRequests",reqId),{
+      groupId, groupName:grp?.name||"", groupPhoto:grp?.photo||"",
+      fromUid:me.uid, fromName:myData?.name||"Admin",
+      toUid:targetUid, status:"pending", ts:serverTimestamp(), type:"group_invite",
+    });
+    // Push notification to the invited user
+    await pushNotification(targetUid, "invite",
+      `${myData?.name||"Someone"} invited you to join ${grp?.name||"a group"}`, groupId);
+    toast(`Invite sent to ${targetName||"user"}! They must accept to join.`,"ok");
+    document.querySelector(".invite-panel")?.remove();
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+
+/* ── Create Group Modal ── */
+window.openCGModal = async function() {
+  cgSelectedMembers = new Set();
+  cgPhotoData = null;
+  if($("cg-name")) $("cg-name").value="";
+  if($("cg-desc")) $("cg-desc").value="";
+  if($("cg-photo-emoji")){$("cg-photo-emoji").textContent="💬";$("cg-photo-emoji").style.display="block";}
+  if($("cg-photo-img")){$("cg-photo-img").src="";$("cg-photo-img").style.display="none";}
+  if($("cg-private-toggle")) $("cg-private-toggle").checked=true;
+  updatePrivacyLabel();
+  allLbPlayers = allLbUsers.filter(u=>u.id!==me?.uid);
+  if(!allLbPlayers.length) {
+    try {
+      const snap = await getDocs(query(collection(db,"leaderboard"),limit(50)));
+      allLbPlayers = [];
+      snap.forEach(d=>{ if(d.id!==me?.uid) allLbPlayers.push({id:d.id,...d.data()}); });
+    } catch(e) { console.error("fetch players:",e); }
+  }
+  renderCGMembersList();
+  $("cg-modal-wrap").classList.add("open");
+};
+window.closeCGModal = () => $("cg-modal-wrap").classList.remove("open");
+window.handleGroupPhoto = function(e) {
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size>2*1024*1024){toast("Image under 2MB please","err");return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{cgPhotoData=ev.target.result;const img=$("cg-photo-img"),emoji=$("cg-photo-emoji");if(img){img.src=cgPhotoData;img.style.display="block";}if(emoji)emoji.style.display="none";};
+  reader.readAsDataURL(file);
+};
+window.filterCGMembers = function() { renderCGMembersList(); };
+function renderCGMembersList() {
+  const container=$("cg-members-list"); if(!container) return;
+  const search=($("cg-member-search")?.value||"").toLowerCase();
+  const filtered=allLbPlayers.filter(u=>!search||(u.name||"").toLowerCase().includes(search)||(u.email||"").toLowerCase().includes(search));
+  container.innerHTML=filtered.map(u=>{
+    const sel=cgSelectedMembers.has(u.id);
+    const col=AV_COLORS[Math.abs(u.id?.charCodeAt(0)||0)%AV_COLORS.length];
+    const photoHtml=u.photo?`<img src="${u.photo}" alt="${escapeHtml(u.name||"?")}" onerror="this.parentElement.style.background='${col}';this.innerHTML='${av(u.name)}'">`:`${av(u.name)}`;
+    return `<div class="cg-member-row ${sel?"sel":""}" onclick="toggleCGMember('${u.id}')"><div class="cg-member-av" style="${u.photo?"":"background:"+col+";color:#000;"}">${photoHtml}</div><div><div style="font-size:.84rem;font-weight:600;">${escapeHtml(u.name||"Hacker")}</div><div style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);">${u.email||""}</div></div><div class="cg-check">${sel?`<i class="fas fa-check"></i>`:""}</div></div>`;
+  }).join("")||`<div class="empty" style="padding:20px;"><p>No players found.</p></div>`;
+}
+window.toggleCGMember = function(uid) { if(cgSelectedMembers.has(uid)) cgSelectedMembers.delete(uid); else cgSelectedMembers.add(uid); renderCGMembersList(); };
+
+/* ── Create Group ── */
+// RULE: Creator is added immediately. Selected members get invite requests.
+// They must accept before joining. No one is added without consent.
+window.createGroup = async function() {
+  if(!me) return;
+  const name=$("cg-name").value.trim();
+  if(!name){toast("Enter a group name","err");return;}
+  const isPrivate=$("cg-private-toggle")?.checked!==false;
+  const desc=$("cg-desc")?.value.trim()||"";
+  const invitedUids=Array.from(cgSelectedMembers);
+  const btn=$("cg-create-btn");
+  if(btn){btn.disabled=true;btn.innerHTML=`<i class="fas fa-spinner spin"></i> Creating…`;}
+  try {
+    // Only creator is a member initially
+    const groupRef=await addDoc(collection(db,"chatGroups"),{
+      name, desc, photo:cgPhotoData||"",
+      leaderId:me.uid,
+      members:[me.uid],
+      admins:[me.uid],
+      isPrivate,
+      createdAt:serverTimestamp(),
+      lastMessage:`${myData?.name||"Someone"} created this group`,
+      lastMessageAt:serverTimestamp(),
+      messageCount:0,
+    });
+    // Welcome message
+    await addDoc(collection(db,"chatGroups",groupRef.id,"messages"),{
+      uid:"system",senderName:"System",
+      text:`${myData?.name||"Someone"} created the group "${name}"`,
+      ts:serverTimestamp(),isSystem:true,
+    });
+    // Send invite requests to selected members (they must accept)
+    if(invitedUids.length) {
+      await Promise.all(invitedUids.map(uid=>
+        setDoc(doc(db,"joinRequests",`${groupRef.id}_inv_${uid}`),{
+          groupId:groupRef.id, groupName:name, groupPhoto:cgPhotoData||"",
+          fromUid:me.uid, fromName:myData?.name||"Someone",
+          toUid:uid, status:"pending", ts:serverTimestamp(), type:"group_invite",
+        }).then(()=>pushNotification(uid,"invite",`${myData?.name||"Someone"} invited you to join ${name}`,groupRef.id))
+          .catch(()=>{})
+      ));
+      toast(`Group "${name}" created! Invites sent to ${invitedUids.length} member(s).`,"ok");
+    } else {
+      toast(`Group "${name}" created!`,"ok");
+    }
+    closeCGModal();
+    activeGroupId=groupRef.id;
+    setTimeout(()=>{ const g=groupsCache.find(g=>g.id===groupRef.id); if(g) openGroup(groupRef.id); }, 1200);
+    if(btn){btn.disabled=false;btn.innerHTML=`<i class="fas fa-plus"></i> Create Group`;}
+  } catch(e){
+    toast("Failed: "+e.message,"err");
+    if(btn){btn.disabled=false;btn.innerHTML=`<i class="fas fa-plus"></i> Create Group`;}
+  }
+};
+
+/* ── Discover Tab ── */
+window.loadAllPublicGroupsAndRender = async function() {
+  const container=$("discover-list"); if(!container) return;
+  container.innerHTML=`<div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div>`;
+  try {
+    let snap;
+    if(myData?.role==="admin") {
+      snap = await getDocs(collection(db,"chatGroups"));
+    } else {
+      snap = await getDocs(query(collection(db,"chatGroups"), where("isPrivate","==",false)));
+    }
+    allGroupsCache = [];
+    snap.forEach(d=>allGroupsCache.push({id:d.id,...d.data()}));
+    allGroupsCache.sort((a,b)=>{
+      const ta=a.lastMessageAt?.toMillis?.()??a.createdAt?.toMillis?.()??0;
+      const tb=b.lastMessageAt?.toMillis?.()??b.createdAt?.toMillis?.()??0;
+      return tb-ta;
+    });
+    renderDiscoverGroups();
+  } catch(e) { container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error: ${e.message}</p></div>`; }
+};
+
+window.renderDiscoverGroups = function() {
+  const container=$("discover-list");
+  if(!container) return;
+  if(!allGroupsCache.length) { loadAllPublicGroupsAndRender(); return; }
+  const search=($("discover-search")?.value||"").toLowerCase();
+  const myGroupIds=new Set(groupsCache.map(g=>g.id));
+  const filtered=allGroupsCache.filter(g=>{
+    if(search && !g.name?.toLowerCase().includes(search) && !g.desc?.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  if(!filtered.length){container.innerHTML=`<div class="empty"><i class="fas fa-search"></i><p>No groups found.</p></div>`;return;}
+  container.innerHTML=filtered.map(g=>{
+    const memberCount=g.members?.length||0;
+    const inGroup=myGroupIds.has(g.id);
+    const isAdmin=myData?.role==="admin";
+    return `
+    <div class="discover-card">
+      <div class="discover-av">${g.photo?`<img src="${g.photo}" alt="${escapeHtml(g.name)}" onerror="this.style.display='none'">`:"💬"}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="discover-name">${escapeHtml(g.name)} ${g.isPrivate!==false?`<span class="group-private-badge">🔒 Private</span>`:`<span class="group-public-badge">🌐 Public</span>`}</div>
+        <div class="discover-meta">${memberCount} member${memberCount!==1?"s":""}${g.desc?` · ${escapeHtml(g.desc)}`:""}</div>
+      </div>
+      ${inGroup
+        ? `<button class="request-join-btn" onclick="go('community');switchCommTab('groups');setTimeout(()=>openGroup('${g.id}'),400);" style="background:rgba(0,212,170,.1);border-color:rgba(0,212,170,.3);color:var(--a2);"><i class="fas fa-comments"></i> Open Chat</button>`
+        : g.isPrivate!==false
+          ? (isAdmin
+              ? `<button class="request-join-btn" id="rjb-${g.id}" onclick="adminJoinGroup('${g.id}')"><i class="fas fa-eye"></i> Monitor</button>`
+              : `<button class="request-join-btn" id="rjb-${g.id}" onclick="requestToJoin('${g.id}','${escapeHtml(g.name)}')"><i class="fas fa-paper-plane"></i> Request to Join</button>`
+            )
+          : `<button class="request-join-btn" id="rjb-${g.id}" onclick="joinPublicGroup('${g.id}','${escapeHtml(g.name)}')"><i class="fas fa-plus"></i> Join Now</button>`
+      }
+    </div>`;
+  }).join("");
+};
+
+/* ── Join Public Group ── */
+window.joinPublicGroup = async function(groupId, groupName) {
+  if(!me) return;
+  const btn=document.getElementById("rjb-"+groupId);
+  if(btn){btn.disabled=true;btn.innerHTML=`<i class="fas fa-spinner spin"></i> Joining…`;}
+  try {
+    // Duplicate check
+    const grpSnap=await getDoc(doc(db,"chatGroups",groupId));
+    if((grpSnap.data()?.members||[]).includes(me.uid)){toast("You are already a member!","info");renderDiscoverGroups();return;}
+    await updateDoc(doc(db,"chatGroups",groupId),{members:arrayUnion(me.uid)});
+    await addDoc(collection(db,"chatGroups",groupId,"messages"),{
+      uid:"system",senderName:"System",
+      text:`${myData?.name||"Someone"} joined the group`,
+      ts:serverTimestamp(),isSystem:true,
+    });
+    toast(`Joined "${groupName}"!`,"ok");
+    renderDiscoverGroups();
+    setTimeout(()=>{ switchCommTab("groups"); setTimeout(()=>openGroup(groupId), 300); }, 500);
+  } catch(e){toast("Error: "+e.message,"err");if(btn){btn.disabled=false;btn.innerHTML=`<i class="fas fa-plus"></i> Join Now`;}}
+};
+
+/* ── Request to Join Private Group ── */
+window.requestToJoin = async function(groupId, groupName) {
+  if(!me) return;
+  const btn=document.getElementById("rjb-"+groupId);
+  if(btn){btn.disabled=true;btn.innerHTML=`<i class="fas fa-spinner spin"></i> Sending…`;}
+  try {
+    const reqId=`${groupId}_req_${me.uid}`;
+    // Duplicate prevention
+    const existing=await getDoc(doc(db,"joinRequests",reqId)).catch(()=>null);
+    if(existing?.exists()&&existing.data().status==="pending"){
+      toast("Request already sent!","info");
+      if(btn){btn.disabled=true;btn.innerHTML=`<i class="fas fa-clock"></i> Pending`;}
+      return;
+    }
+    // Check if already a member
+    const grpSnap=await getDoc(doc(db,"chatGroups",groupId)).catch(()=>null);
+    if((grpSnap?.data()?.members||[]).includes(me.uid)){toast("Already a member!","info");renderDiscoverGroups();return;}
+    const group=allGroupsCache.find(g=>g.id===groupId);
+    await setDoc(doc(db,"joinRequests",reqId),{
+      groupId, groupName, groupPhoto:group?.photo||"",
+      fromUid:me.uid, fromName:myData?.name||"Someone", fromPhoto:myData?.photo||"",
+      toUid:group?.leaderId||"",
+      status:"pending", ts:serverTimestamp(), type:"join_request",
+    });
+    // Notify group leader
+    if(group?.leaderId) {
+      await pushNotification(group.leaderId,"request",
+        `${myData?.name||"Someone"} wants to join ${groupName}`,groupId);
+    }
+    toast(`Request sent to join "${groupName}"!`,"ok");
+    if(btn){btn.disabled=true;btn.innerHTML=`<i class="fas fa-clock"></i> Pending`;}
+  } catch(e){toast("Error: "+e.message,"err");if(btn){btn.disabled=false;btn.innerHTML=`<i class="fas fa-paper-plane"></i> Request to Join`;}}
+};
+
+/* ── Admin Monitor Group ── */
+window.adminJoinGroup = async function(groupId) {
+  if(!me||myData?.role!=="admin") return;
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId),{members:arrayUnion(me.uid),admins:arrayUnion(me.uid)});
+    toast("Joined group as admin","ok");
+    setTimeout(()=>{ switchCommTab("groups"); setTimeout(()=>openGroup(groupId),300); }, 500);
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+
+/* ── Join Requests Tab ── */
+async function loadJoinRequests() {
+  const container=$("join-requests-list"); if(!container) return;
+  container.innerHTML=`<div class="empty"><i class="fas fa-spinner spin"></i></div>`;
+  try {
+    const allReqs=[], seen=new Set();
+    // 1. Invites/requests sent TO me (I must accept or decline)
+    const inSnap=await getDocs(query(collection(db,"joinRequests"),where("toUid","==",me.uid),where("status","==","pending")));
+    inSnap.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);allReqs.push({id:d.id,...d.data()});}});
+    // 2. Join requests for groups where I am leader/admin (I must approve or reject)
+    const myLeadGroups=groupsCache.filter(g=>g.leaderId===me?.uid||(g.admins||[]).includes(me?.uid));
+    for(const g of myLeadGroups) {
+      const reqSnap=await getDocs(query(collection(db,"joinRequests"),where("groupId","==",g.id),where("status","==","pending"),where("type","==","join_request")));
+      reqSnap.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);allReqs.push({id:d.id,...d.data()});}});
+    }
+    if(!allReqs.length){container.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`;return;}
+    container.innerHTML=allReqs.map(req=>{
+      const isJoinReq=req.type==="join_request";
+      const isInvite=req.type==="group_invite"||req.type==="invite_info";
+      const col=AV_COLORS[Math.abs((req.fromUid||"a").charCodeAt(0))%AV_COLORS.length];
+      const photoHtml=req.fromPhoto
+        ?`<img src="${req.fromPhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+        :`<span style="font-family:var(--font-display);font-size:.9rem;font-weight:800;color:#fff;">${av(req.fromName)}</span>`;
+      const borderCol=isInvite?"rgba(108,99,255,.3)":isJoinReq?"rgba(0,212,170,.3)":"rgba(245,166,35,.3)";
+      const iconHtml=isInvite?`<i class="fas fa-envelope" style="color:var(--a1);font-size:.65rem;margin-right:4px;"></i>`
+        :isJoinReq?`<i class="fas fa-user-plus" style="color:var(--a2);font-size:.65rem;margin-right:4px;"></i>`
+        :`<i class="fas fa-bell" style="color:var(--a4);font-size:.65rem;margin-right:4px;"></i>`;
+      const titleHtml=isInvite
+        ?`${iconHtml}<strong>${escapeHtml(req.fromName)}</strong> invited you to join <strong>${escapeHtml(req.groupName)}</strong>`
+        :isJoinReq
+        ?`${iconHtml}<strong>${escapeHtml(req.fromName)}</strong> wants to join <strong>${escapeHtml(req.groupName)}</strong>`
+        :`${iconHtml}<strong>${escapeHtml(req.fromName)}</strong> — ${escapeHtml(req.groupName)}`;
+      const typeLabel=isInvite?"Group Invite":isJoinReq?"Join Request":"Notification";
+      const acceptLabel=isInvite?"Accept":isJoinReq?"Approve":"Accept";
+      const declineLabel=isInvite?"Decline":isJoinReq?"Reject":"Decline";
+      return `
+      <div class="req-card" id="req-${req.id}">
+        <div style="width:40px;height:40px;border-radius:50%;background:${req.fromPhoto?"transparent":col};display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:2px solid ${borderCol};">${photoHtml}</div>
+        <div class="req-card-info">
+          <div class="req-card-title">${titleHtml}</div>
+          <div class="req-card-sub">${req.ts?.toDate?req.ts.toDate().toLocaleDateString():""} · ${typeLabel}</div>
+        </div>
+        <div class="req-actions">
+          <button class="req-join-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','accept','${req.type}')"><i class="fas fa-check"></i> ${acceptLabel}</button>
+          <button class="req-del-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','decline','${req.type}')"><i class="fas fa-times"></i> ${declineLabel}</button>
+        </div>
+      </div>`;
+    }).join("");
+  } catch(e){container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error: ${e.message}</p></div>`;console.error(e);}
+}
+
+/* ── Respond to Request (Accept / Decline) ── */
+window.respondToRequest = async function(reqId, groupId, fromUid, action, reqType) {
+  try {
+    const reqRef=doc(db,"joinRequests",reqId);
+    const isInviteToMe=(reqType==="group_invite"||reqType==="invite_info");
+    // The user being added: if it's an invite TO me, I'm the one joining; else the requester
+    const targetUid=isInviteToMe ? me.uid : fromUid;
+    // Prevent self-approval of own requests
+    if(isInviteToMe && action==="accept" && targetUid!==me.uid) {
+      toast("You cannot approve yourself","err"); return;
+    }
+    if(action==="accept") {
+      // Add user to group members
+      await updateDoc(doc(db,"chatGroups",groupId),{members:arrayUnion(targetUid)});
+      await updateDoc(reqRef,{status:"accepted"});
+      // Post system message
+      const snap=await getDoc(doc(db,"users",targetUid)).catch(()=>null);
+      const nm=snap?.data()?.name||"Someone";
+      await addDoc(collection(db,"chatGroups",groupId,"messages"),{
+        uid:"system",senderName:"System",
+        text:`${nm} joined the group`,
+        ts:serverTimestamp(),isSystem:true,
+      }).catch(()=>{});
+      // Notify the person who was accepted
+      const grp=groupsCache.find(g=>g.id===groupId)||allGroupsCache.find(g=>g.id===groupId);
+      await pushNotification(targetUid,"approval",
+        `Your request to join ${grp?.name||"the group"} was approved!`,groupId);
+      toast(isInviteToMe?`Joined "${grp?.name||"group"}"!`:"Member added!","ok");
+    } else {
+      await updateDoc(reqRef,{status:"declined"});
+      toast("Declined","info");
+    }
+    document.getElementById("req-"+reqId)?.remove();
+    const rem=document.querySelectorAll(".req-card");
+    if(!rem.length){const ct=$("join-requests-list");if(ct)ct.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`;}
+  } catch(e){toast("Error: "+e.message,"err");console.error(e);}
+};
+
+
+/* ─── PROFILE ─── */
+window.renderProfile = function() {
+  if(!myData||!me) return;
+  const name=myData.name||me.displayName||"Hacker";
+  const photo=myData.photo||me.photoURL||"";
+  setAvatarEl("prof-av", photo, name);
+  $("prof-name").textContent=name; $("prof-email").textContent=myData.email||me.email||"—"; $("prof-role").textContent=myData.role||"player";
+  $("ps-pts").textContent=(myData.score||0).toLocaleString(); $("ps-solves").textContent=myData.solves||0;
+  $("pf-name").value=myData.name||""; $("pf-bio").value=myData.bio||""; $("pf-github").value=myData.github||""; $("pf-mobile").value=myData.mobile||"";
+  const solves=myData.solves||0, score=myData.score||0, solvedIds=myData.solvedIds||[];
+  const webChals=allChals.filter(c=>c.category==="Web");
+  const cryptoChals=allChals.filter(c=>c.category==="Crypto");
+  const achs=[
+    {icon:"🚩",name:"First Blood",   desc:"Solved your first challenge",ok:solves>=1, bg:"rgba(255,77,109,.06)"},
+    {icon:"🔓",name:"Unlocker",      desc:"Solved 5+ challenges",      ok:solves>=5, bg:"rgba(0,212,170,.06)"},
+    {icon:"💎",name:"Diamond Hacker",desc:"Scored 1,000+ points",      ok:score>=1000,bg:"rgba(108,99,255,.06)"},
+    {icon:"⚡",name:"Speed Runner",  desc:"Scored 2,500+ points",      ok:score>=2500,bg:"rgba(245,166,35,.06)"},
+    {icon:"🏆",name:"CTF Champion",  desc:"Scored 5,000+ points",      ok:score>=5000,bg:"rgba(108,99,255,.06)"},
+    {icon:"🌐",name:"Web Wizard",    desc:"Solved all Web challenges",  ok:webChals.length>0&&webChals.every(c=>solvedIds.includes(c.id)),bg:"rgba(59,130,246,.06)"},
+    {icon:"🔐",name:"Crypto King",   desc:"Solved all Crypto challenges",ok:cryptoChals.length>0&&cryptoChals.every(c=>solvedIds.includes(c.id)),bg:"rgba(108,99,255,.06)"},
+    {icon:"🎯",name:"Precision",     desc:"Solved 10+ challenges",      ok:solves>=10,bg:"rgba(245,166,35,.06)"},
+  ];
+  $("ach-list").innerHTML=achs.map(a=>`
+    <div class="ach-card ${a.ok?"earned":"locked"}" style="${a.ok?"background:"+a.bg:""}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+      ${a.ok?`<button class="ach-share" onclick="shareAchievement('${a.name.replace(/'/g,"\\'")}','${a.desc.replace(/'/g,"\\'")}','${a.icon}')"><i class="fas fa-share-alt"></i> Share</button>`:""}
+    </div>`).join("");
+};
+window.saveProfile = async function() {
+  if(!me) return;
+  const name=$("pf-name").value.trim()||myData?.name||"Hacker";
+  const bio=$("pf-bio").value.trim(), github=$("pf-github").value.trim(), mobile=$("pf-mobile").value.trim();
+  try { await updateDoc(doc(db,"users",me.uid),{name,bio,github,mobile}); await updateDoc(doc(db,"leaderboard",me.uid),{name}).catch(()=>{}); toast("Profile saved","ok"); }
+  catch(e){toast("Error: "+e.message,"err");}
+};
+
+/* ─── SECURITY ─── */
+function renderSecurity() {
+  if(!me) return;
+  $("sec-info").textContent=`Signed in as ${me.email} · UID: ${me.uid.substring(0,14)}…`;
+  const tgl=$("twofa-toggle"), status=$("twofa-status");
+  tgl.checked=myData?.twoFA||false;
+  status.textContent=tgl.checked?"2FA is enabled.":"2FA is currently disabled.";
+  status.style.color=tgl.checked?"var(--a2)":"var(--text-muted)";
+}
+window.toggle2FA = async function(el) {
+  if(!me) return; const on=el.checked;
+  try { await updateDoc(doc(db,"users",me.uid),{twoFA:on}); const s=$("twofa-status"); s.textContent=on?"2FA is enabled.":"2FA is currently disabled."; s.style.color=on?"var(--a2)":"var(--text-muted)"; toast(on?"2FA enabled":"2FA disabled",on?"ok":"info"); }
+  catch(e){toast("Error: "+e.message,"err");el.checked=!on;}
+};
+window.doChangePass = async function() {
+  const p1=$("new-pass").value, p2=$("new-pass2").value;
+  if(!p1||p1.length<8) return toast("Min 8 characters","err");
+  if(p1!==p2) return toast("Passwords don't match","err");
+  try{await updatePassword(me,p1);toast("Password updated","ok");$("new-pass").value="";$("new-pass2").value="";}
+  catch(e){if(e.code==="auth/requires-recent-login") toast("Re-login first","err"); else toast("Error: "+e.message,"err");}
+};
+window.deleteAcc = async function() {
+  if(!confirm("Permanently delete your account? Cannot be undone.")) return;
+  try {
+    const uid=me.uid; const batch=writeBatch(db); batch.delete(doc(db,"users",uid)); batch.delete(doc(db,"leaderboard",uid)); await batch.commit();
+    try{const sSnap=await getDocs(query(collection(db,"solves"),where("uid","==",uid)));const sb=writeBatch(db);sSnap.forEach(d=>sb.delete(d.ref));await sb.commit();}catch(e){console.warn(e);}
+    await deleteUser(me); window.location.href="login.html";
+  } catch(e){if(e.code==="auth/requires-recent-login") toast("Re-login first","err"); else toast("Error: "+e.message,"err");}
+};
+window.doLogout = async function() {
+  if(chatUnsub) chatUnsub(); if(groupsUnsub) groupsUnsub(); if(lbUnsub) lbUnsub(); if(reqUnsub) reqUnsub();
+  await signOut(auth); window.location.href="login.html";
+};
+
+/* ─── KEYBOARD ─── */
+document.addEventListener("keydown", e => {
+  if(e.key==="Escape"){closeModal();closeShare();closeCGModal();}
+  if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();$("search-inp").focus();}
+  if((e.ctrlKey||e.metaKey)&&e.key==="s"&&$("view-notes").classList.contains("active")){e.preventDefault();saveNote();}
+});
+$("m-flag").addEventListener("keydown", e=>{if(e.key==="Enter") submitFlag();});
+</script>
+</body>
+</html>
