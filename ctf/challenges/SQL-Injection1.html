@@ -1,0 +1,842 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+:root{
+  --bg:#f0f4f8;--card:#fff;--nav:#0f1f38;--nav2:#162a4a;
+  --blue:#2563eb;--blue2:#1d4ed8;--green:#16a34a;--red:#dc2626;
+  --amber:#d97706;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --input-bg:#fff;--surface:#f8fafc;
+}
+.page{border-radius:10px;overflow:hidden;background:var(--bg);min-height:680px;display:flex;flex-direction:column}
+.browser-bar{background:#1a1a2e;height:36px;display:flex;align-items:center;padding:0 14px;gap:8px;flex-shrink:0}
+.bdot{width:11px;height:11px;border-radius:50%}
+.burl{flex:1;margin:0 10px;background:#2a2a40;border-radius:5px;height:22px;display:flex;align-items:center;padding:0 10px;gap:6px;font-size:11px;color:#a0aec0;font-family:monospace}
+
+/* AUTH SCREENS */
+.auth-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 20px;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0f172a 100%)}
+.auth-card{background:var(--card);border-radius:14px;width:400px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden}
+.auth-head{background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:24px 28px;display:flex;align-items:center;gap:14px}
+.auth-logo{width:42px;height:42px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.auth-head h1{color:#fff;font-size:16px;font-weight:600}
+.auth-head p{color:#93c5fd;font-size:11.5px;margin-top:2px}
+.auth-tabs{display:flex;border-bottom:1.5px solid var(--border)}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .2s}
+.auth-tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.auth-body{padding:24px 28px}
+.fg{margin-bottom:15px}
+.fg label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#374151;margin-bottom:5px}
+.iw{position:relative}
+.iw span{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.iw input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:7px;font-size:13.5px;color:var(--text);background:var(--input-bg);outline:none;transition:all .2s;font-family:monospace}
+.iw input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.iw input.err{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(220,38,38,.1)!important}
+.iw input.ok{border-color:var(--green)!important}
+.pw-toggle{position:absolute;right:11px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:13px;color:var(--muted);background:none;border:none}
+.submit-btn{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.submit-btn:hover{background:var(--blue2)}
+.submit-btn:active{transform:scale(.99)}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{border-radius:7px;padding:9px 13px;font-size:12.5px;margin-bottom:14px;display:none;align-items:center;gap:8px;line-height:1.4}
+.toast-err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.toast-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.toast-warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.toast-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.query-box{background:#1e293b;border-radius:6px;padding:9px 13px;margin-bottom:13px;font-family:monospace;font-size:10.5px;color:#94a3b8;display:none;border-left:3px solid #f59e0b}
+.kw{color:#7dd3fc}.vl{color:#a3e635}.inj{color:#f87171;font-weight:700;text-decoration:underline wavy #f87171}
+.sqlerr{background:#1e0a0a;border:1px solid #7f1d1d;border-radius:6px;padding:10px 13px;font-family:monospace;font-size:10.5px;color:#fca5a5;display:none;margin-bottom:13px;white-space:pre-wrap}
+.form-footer{text-align:center;font-size:12px;color:var(--muted);margin-top:14px}
+.form-footer a{color:var(--blue);cursor:pointer;text-decoration:none}
+.strengh-bar{height:4px;border-radius:2px;background:#e2e8f0;margin-top:5px;overflow:hidden}
+.strengh-fill{height:100%;border-radius:2px;transition:all .3s;width:0}
+.strengh-lbl{font-size:10px;margin-top:3px;color:var(--muted)}
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:11.5px;color:var(--muted)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.sso{width:100%;padding:8px;border:1.5px solid var(--border);background:#fff;border-radius:7px;font-size:12.5px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:7px;transition:background .15s}
+.sso:hover{background:#f8fafc}
+.auth-foot{text-align:center;padding:12px 28px;background:var(--surface);border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+
+/* USER DASHBOARD */
+#userDash{min-height:680px;display:none;flex-direction:column;background:#f0f4f8}
+.unav{background:var(--nav);height:50px;display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0}
+.unav-logo{display:flex;align-items:center;gap:9px;color:#fff;font-size:13.5px;font-weight:600}
+.ulogo-icon{width:28px;height:28px;background:#2563eb;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.unav-links{display:flex;gap:2px;margin-left:12px}
+.unav-links a{color:#94a3b8;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer;transition:all .15s}
+.unav-links a:hover,.unav-links a.on{color:#fff;background:rgba(255,255,255,.1)}
+.unav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.uavatar{width:28px;height:28px;background:#7c3aed;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.uname{color:#e2e8f0;font-size:12px}
+.ubtn{background:none;border:1px solid rgba(255,255,255,.2);color:#94a3b8;border-radius:5px;padding:3px 10px;font-size:11px;cursor:pointer;transition:all .15s}
+.ubtn:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.ucontent{padding:20px;flex:1}
+.welcome-banner{background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:10px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.wb-left h2{color:#fff;font-size:17px;font-weight:600}
+.wb-left p{color:#93c5fd;font-size:12px;margin-top:3px}
+.wb-right{background:rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center}
+.wb-right .wbr-val{color:#fff;font-size:20px;font-weight:700}
+.wb-right .wbr-lbl{color:#93c5fd;font-size:10px}
+.ugrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.ustat{background:#fff;border:1px solid var(--border);border-radius:9px;padding:14px 16px}
+.ustat .us-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ustat .us-lbl{font-size:11.5px;color:var(--muted);font-weight:500}
+.ustat .us-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ustat .us-val{font-size:22px;font-weight:700;color:var(--text)}
+.ustat .us-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.upanel{background:#fff;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.upanel-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.upanel-head h3{font-size:13px;font-weight:600;color:var(--text)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:600}
+.bg-ok{background:#dcfce7;color:#166534}
+.bg-warn{background:#fef3c7;color:#92400e}
+.bg-info{background:#dbeafe;color:#1e40af}
+.bg-err{background:#fef2f2;color:#991b1b}
+.act-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid #f8fafc}
+.act-row:last-child{border:none}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.act-body{font-size:12px;color:var(--text);line-height:1.5}
+.act-time{font-size:10.5px;color:var(--muted);margin-top:1px}
+
+/* ADMIN DASHBOARD */
+#adminDash{min-height:680px;display:none;flex-direction:column;background:#f0f4f8;position:relative}
+.anav{background:#0d1b2a;height:50px;display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.05)}
+.anav-logo{display:flex;align-items:center;gap:9px;color:#fff;font-size:13.5px;font-weight:600}
+.alogo-icon{width:28px;height:28px;background:#dc2626;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.anav-links a{color:#94a3b8;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer;transition:all .15s}
+.anav-links a:hover,.anav-links a.on{color:#fff;background:rgba(255,255,255,.1)}
+.anav-links{display:flex;gap:2px;margin-left:12px}
+.anav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.aavatar{width:28px;height:28px;background:#dc2626;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.abtn{background:none;border:1px solid rgba(239,68,68,.4);color:#fca5a5;border-radius:5px;padding:3px 10px;font-size:11px;cursor:pointer;transition:all .15s}
+.abtn:hover{background:rgba(239,68,68,.15);color:#fff}
+.alayout{display:flex;flex:1;overflow:hidden}
+.asidebar{width:180px;background:#fff;border-right:1px solid var(--border);padding:14px 0;flex-shrink:0}
+.asi-sec{margin-bottom:18px}
+.asi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;padding:0 14px;margin-bottom:5px}
+.asi{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
+.asi:hover{color:var(--text);background:#f8fafc}
+.asi.on{color:var(--blue);background:#eff6ff;font-weight:600;border-right:2px solid var(--blue)}
+.asi-badge{margin-left:auto;background:#ef4444;color:#fff;font-size:9.5px;padding:1px 5px;border-radius:8px}
+.acontent{flex:1;overflow-y:auto;padding:18px}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.ph h2{font-size:19px;font-weight:700;color:var(--text)}
+.ph p{font-size:12px;color:var(--muted);margin-top:3px}
+.ph-acts{display:flex;gap:7px}
+.btn-sm{padding:6px 13px;border-radius:6px;font-size:12px;cursor:pointer;border:none;font-weight:600}
+.bp{background:var(--blue);color:#fff}.bp:hover{background:var(--blue2)}
+.bo{background:#fff;color:var(--text);border:1px solid var(--border)}.bo:hover{background:#f8fafc}
+.bd{background:#fff;color:var(--red);border:1px solid #fecaca}.bd:hover{background:#fef2f2}
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.astat{background:#fff;border:1px solid var(--border);border-radius:9px;padding:13px 15px}
+.astat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.astat-lbl{font-size:11px;color:var(--muted);font-weight:600}
+.astat-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.astat-val{font-size:22px;font-weight:700;color:var(--text)}
+.astat-sub{font-size:10.5px;margin-top:3px}
+.apanel{background:#fff;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.apanel-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.apanel-head h3{font-size:13px;font-weight:600;color:var(--text)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{padding:8px 14px;text-align:left;color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;background:#fafafa;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 14px;border-bottom:1px solid #f8fafc;color:var(--text)}
+.tbl tr:last-child td{border:none}
+.tbl tr:hover td{background:#f8fafc}
+.act-btns{display:flex;gap:5px}
+.aab{width:24px;height:24px;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px}
+.aab-e{background:#eff6ff;color:#2563eb}.aab-d{background:#fef2f2;color:#dc2626}
+.apf{padding:9px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafafa;font-size:11.5px;color:var(--muted)}
+.pg{display:flex;gap:3px}
+.pgb{width:26px;height:26px;border:1px solid var(--border);border-radius:4px;background:#fff;cursor:pointer;font-size:11.5px;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.pgb.on,.pgb:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.two-g{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.actrow{display:flex;align-items:flex-start;gap:9px;padding:9px 14px;border-bottom:1px solid #f8fafc}
+.actrow:last-child{border:none}
+.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.atxt{font-size:11.5px;color:var(--text);line-height:1.5}
+.atme{font-size:10.5px;color:var(--muted);margin-top:1px}
+.bar-row{margin-bottom:12px}
+.bar-row .br-top{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:4px}
+.bar-track{height:6px;background:#f1f5f9;border-radius:3px}
+.bar-fill{height:100%;border-radius:3px}
+
+/* FLAG OVERLAY */
+#flagOverlay{display:none;min-height:680px;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:200;border-radius:10px;overflow:hidden;position:relative}
+.confetti-canvas{position:absolute;inset:0;pointer-events:none}
+.flag-modal{background:#fff;border-radius:16px;width:420px;overflow:hidden;position:relative;z-index:10;animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes popIn{0%{transform:scale(0.5) translateY(40px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+.flag-rainbow{height:6px;background:linear-gradient(90deg,#f59e0b,#ef4444,#8b5cf6,#3b82f6,#10b981,#f59e0b);background-size:200%;animation:rainbow 2s linear infinite}
+@keyframes rainbow{to{background-position:200% 0}}
+.flag-inner{padding:28px}
+.flag-trophy{text-align:center;margin-bottom:18px}
+.trophy-icon{font-size:54px;animation:trophyIn .6s cubic-bezier(.34,1.56,.64,1) .3s both;display:inline-block}
+@keyframes trophyIn{0%{transform:scale(0) rotate(-20deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.flag-trophy h2{font-size:20px;font-weight:700;color:var(--text);margin-top:10px}
+.flag-trophy p{font-size:12.5px;color:var(--muted);margin-top:4px}
+.flag-code-wrap{background:#0f172a;border-radius:9px;padding:14px 16px;margin:16px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.flag-code{font-family:monospace;font-size:13.5px;color:#22d3ee;letter-spacing:.5px;word-break:break-all}
+.copy-btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;border-radius:6px;padding:5px 12px;font-size:11.5px;cursor:pointer;flex-shrink:0;transition:all .2s}
+.copy-btn:hover{background:#334155;color:#e2e8f0}
+.copy-btn.copied{background:#065f46;border-color:#10b981;color:#6ee7b7}
+.flag-explain{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:16px}
+.fe-title{font-size:11.5px;font-weight:700;color:#0369a1;margin-bottom:6px}
+.fe-body{font-size:11.5px;color:#0c4a6e;line-height:1.7}
+.fe-body code{background:#e0f2fe;padding:1px 5px;border-radius:3px;font-size:10.5px;font-family:monospace}
+.flag-btns{display:flex;gap:8px}
+.flag-btns button{flex:1;padding:10px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:600;border:none;transition:all .2s}
+.fb-explore{background:var(--blue);color:#fff}.fb-explore:hover{background:var(--blue2)}
+.fb-retry{background:#f1f5f9;color:var(--text)}.fb-retry:hover{background:#e2e8f0}
+.stars-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:10px}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d) var(--dl) infinite}
+@keyframes twinkle{0%,100%{opacity:.1;transform:scale(1)}50%{opacity:.9;transform:scale(1.8)}}
+.pulse-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;border:2px solid rgba(255,215,0,.3);border-radius:50%;animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{transform:translate(-50%,-50%) scale(0.5);opacity:1}100%{transform:translate(-50%,-50%) scale(2);opacity:0}}
+</style>
+
+<div id="root">
+
+<!-- ======= AUTH PAGES ======= -->
+<div id="authPage" class="page">
+  <div class="browser-bar">
+    <div class="bdot" style="background:#ef4444"></div>
+    <div class="bdot" style="background:#f59e0b"></div>
+    <div class="bdot" style="background:#22c55e"></div>
+    <div class="burl">🔒 https://nexus-bank.internal/auth/<span id="urlSuffix">login</span></div>
+  </div>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-head">
+        <div class="auth-logo">🏦</div>
+        <div>
+          <h1>NexusBank Portal</h1>
+          <p>Secure Digital Banking — Staff & Customer Access</p>
+        </div>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab on" id="tabLogin" onclick="switchTab('login')">Sign In</div>
+        <div class="auth-tab" id="tabReg" onclick="switchTab('register')">Create Account</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm" class="auth-body">
+        <div class="toast toast-err" id="loginErr"></div>
+        <div class="toast toast-warn" id="loginWarn"></div>
+        <div class="query-box" id="loginQuery"></div>
+        <div class="sqlerr" id="loginSqlErr"></div>
+        <div class="fg">
+          <label>Username or Email</label>
+          <div class="iw"><span>👤</span>
+            <input type="text" id="lu" placeholder="Enter username or email" autocomplete="off" oninput="loginLive()">
+          </div>
+        </div>
+        <div class="fg">
+          <label>Password</label>
+          <div class="iw"><span>🔑</span>
+            <input type="password" id="lp" placeholder="••••••••••" oninput="loginLive()">
+            <button class="pw-toggle" onclick="togglePw('lp',this)">👁</button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:-4px 0 16px;font-size:12px">
+          <label style="display:flex;align-items:center;gap:5px;color:var(--muted);cursor:pointer"><input type="checkbox" style="width:auto"> Remember me</label>
+          <a style="color:var(--blue);cursor:pointer">Forgot password?</a>
+        </div>
+        <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+          <div class="spin" id="loginSpin"></div><span id="loginBtnTxt">Sign In →</span>
+        </button>
+        <div class="divider">or</div>
+        <button class="sso">🔷 Sign in with Microsoft</button>
+        <button class="sso">🟡 Sign in with Okta</button>
+        <div class="form-footer">Don't have an account? <a onclick="switchTab('register')">Create one free</a></div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="registerForm" class="auth-body" style="display:none">
+        <div class="toast toast-err" id="regErr"></div>
+        <div class="toast toast-ok" id="regOk"></div>
+        <div class="query-box" id="regQuery"></div>
+        <div class="sqlerr" id="regSqlErr"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#374151;margin-bottom:5px">First Name</label>
+            <input type="text" id="rfn" placeholder="John" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;color:var(--text)" oninput="regLive()">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#374151;margin-bottom:5px">Last Name</label>
+            <input type="text" id="rln" placeholder="Doe" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;color:var(--text)" oninput="regLive()">
+          </div>
+        </div>
+        <div class="fg">
+          <label>Email Address</label>
+          <div class="iw"><span>✉️</span>
+            <input type="text" id="rem" placeholder="john.doe@email.com" oninput="regLive()">
+          </div>
+        </div>
+        <div class="fg">
+          <label>Username</label>
+          <div class="iw"><span>👤</span>
+            <input type="text" id="run" placeholder="Choose a username" oninput="regLive()">
+          </div>
+        </div>
+        <div class="fg">
+          <label>Password</label>
+          <div class="iw"><span>🔑</span>
+            <input type="password" id="rpw" placeholder="Min 8 characters" oninput="regLive();checkStrength()">
+            <button class="pw-toggle" onclick="togglePw('rpw',this)">👁</button>
+          </div>
+          <div class="strengh-bar"><div class="strengh-fill" id="strBar"></div></div>
+          <div class="strengh-lbl" id="strLbl"></div>
+        </div>
+        <div class="fg">
+          <label>Confirm Password</label>
+          <div class="iw"><span>🔒</span>
+            <input type="password" id="rcp" placeholder="Repeat password" oninput="regLive()">
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:16px;font-size:12px;color:var(--muted)">
+          <input type="checkbox" id="tos" style="width:auto;margin-top:2px">
+          <label for="tos">I agree to the <a style="color:var(--blue);cursor:pointer">Terms of Service</a> and <a style="color:var(--blue);cursor:pointer">Privacy Policy</a></label>
+        </div>
+        <button class="submit-btn" id="regBtn" onclick="doRegister()">
+          <div class="spin" id="regSpin"></div><span id="regBtnTxt">Create Account</span>
+        </button>
+        <div class="form-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+      </div>
+
+      <div class="auth-foot">© 2024 NexusBank Corp. · FDIC Insured · <a style="color:var(--blue);cursor:pointer">Security</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= USER DASHBOARD ======= -->
+<div id="userDash">
+  <div class="unav">
+    <div class="unav-logo"><div class="ulogo-icon">🏦</div>NexusBank</div>
+    <div class="unav-links">
+      <a class="on">Dashboard</a><a>Accounts</a><a>Transfers</a><a>Cards</a><a>Support</a>
+    </div>
+    <div class="unav-right">
+      <div class="uavatar" id="uAvatarNav">JD</div>
+      <span class="uname" id="uNameNav">John Doe</span>
+      <button class="ubtn" onclick="goLogin()">Sign Out</button>
+    </div>
+  </div>
+  <div class="ucontent">
+    <div class="welcome-banner">
+      <div class="wb-left">
+        <h2>Welcome back, <span id="uWelcomeName">John</span>! 👋</h2>
+        <p>Your account is secure. Last login: <span id="uLastLogin"></span></p>
+      </div>
+      <div class="wb-right">
+        <div class="wbr-val">$4,821.50</div>
+        <div class="wbr-lbl">Total Balance</div>
+      </div>
+    </div>
+    <div class="ugrid">
+      <div class="ustat"><div class="us-top"><span class="us-lbl">Checking</span><div class="us-icon" style="background:#eff6ff">💳</div></div><div class="us-val">$2,341.20</div><div class="us-sub">**** 4821</div></div>
+      <div class="ustat"><div class="us-top"><span class="us-lbl">Savings</span><div class="us-icon" style="background:#f0fdf4">🏦</div></div><div class="us-val">$2,480.30</div><div class="us-sub">**** 9032 · 3.5% APY</div></div>
+      <div class="ustat"><div class="us-top"><span class="us-lbl">Points</span><div class="us-icon" style="background:#faf5ff">⭐</div></div><div class="us-val">1,240</div><div class="us-sub">Nexus Rewards</div></div>
+    </div>
+    <div class="upanel">
+      <div class="upanel-head"><h3>Recent Transactions</h3><span class="badge bg-ok">All clear</span></div>
+      <div class="act-row"><div class="act-dot" style="background:#22c55e"></div><div><div class="act-body"><b>Direct Deposit</b> — Payroll Inc.</div><div class="act-time">Today · +$1,850.00</div></div></div>
+      <div class="act-row"><div class="act-dot" style="background:#ef4444"></div><div><div class="act-body"><b>Amazon.com</b> — Online Purchase</div><div class="act-time">Yesterday · -$94.30</div></div></div>
+      <div class="act-row"><div class="act-dot" style="background:#ef4444"></div><div><div class="act-body"><b>Starbucks</b> — Coffee</div><div class="act-time">2 days ago · -$6.50</div></div></div>
+      <div class="act-row"><div class="act-dot" style="background:#3b82f6"></div><div><div class="act-body"><b>Transfer to Savings</b></div><div class="act-time">3 days ago · -$200.00</div></div></div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:12px 16px;font-size:12.5px;color:#92400e">
+      ⚠️ <b>CTF Hint:</b> This is a normal user account. There's an <b>admin panel</b> at <code style="background:#fef3c7;padding:1px 5px;border-radius:3px">/admin</code>. Try SQL injection on the login form to get there. Example: <code style="background:#fef3c7;padding:1px 5px;border-radius:3px">' OR 1=1--</code>
+    </div>
+  </div>
+</div>
+
+<!-- ======= ADMIN DASHBOARD ======= -->
+<div id="adminDash">
+  <div class="anav">
+    <div class="anav-logo"><div class="alogo-icon">🛡️</div>NexusBank Admin</div>
+    <div class="anav-links">
+      <a class="on" onclick="aTab('adash',this)">Dashboard</a>
+      <a onclick="aTab('ausers',this)">Users</a>
+      <a onclick="aTab('alogs',this)">Logs</a>
+      <a onclick="aTab('aconfig',this)">Config</a>
+    </div>
+    <div class="anav-right">
+      <div class="aavatar">SA</div>
+      <span style="color:#e2e8f0;font-size:12px">System Admin</span>
+      <button class="abtn" onclick="goLogin()">↩ Logout</button>
+    </div>
+  </div>
+  <div class="alayout">
+    <div class="asidebar">
+      <div class="asi-sec">
+        <div class="asi-lbl">Admin</div>
+        <div class="asi on" onclick="aTab('adash',null,this)"><span style="font-size:13px">📊</span>Dashboard</div>
+        <div class="asi" onclick="aTab('ausers',null,this)"><span style="font-size:13px">👥</span>All Users</div>
+        <div class="asi" onclick="aTab('alogs',null,this)"><span style="font-size:13px">📋</span>Audit Logs<span class="asi-badge">5</span></div>
+        <div class="asi" onclick="aTab('aconfig',null,this)"><span style="font-size:13px">⚙️</span>Config</div>
+      </div>
+      <div class="asi-sec">
+        <div class="asi-lbl">Security</div>
+        <div class="asi"><span style="font-size:13px">🔐</span>Permissions</div>
+        <div class="asi"><span style="font-size:13px">🛡️</span>WAF Rules<span class="asi-badge">!</span></div>
+        <div class="asi"><span style="font-size:13px">💾</span>DB Backup</div>
+        <div class="asi"><span style="font-size:13px">🔑</span>API Keys</div>
+      </div>
+    </div>
+    <div class="acontent">
+
+      <!-- admin dashboard tab -->
+      <div id="tab-adash">
+        <div class="ph"><div><h2>Admin Dashboard</h2><p id="adminTime">Loading...</p></div><div class="ph-acts"><button class="btn-sm bo">Export</button><button class="btn-sm bp">+ Add User</button></div></div>
+        <div class="agrid">
+          <div class="astat"><div class="astat-top"><span class="astat-lbl">Total Users</span><div class="astat-icon" style="background:#eff6ff">👥</div></div><div class="astat-val">2,841</div><div class="astat-sub" style="color:var(--green)">↑ 24 this week</div></div>
+          <div class="astat"><div class="astat-top"><span class="astat-lbl">Active Now</span><div class="astat-icon" style="background:#f0fdf4">🟢</div></div><div class="astat-val">143</div><div class="astat-sub" style="color:var(--green)">↑ 12 from yesterday</div></div>
+          <div class="astat"><div class="astat-top"><span class="astat-lbl">SQLi Attempts</span><div class="astat-icon" style="background:#fef2f2">⚠️</div></div><div class="astat-val" style="color:var(--red)">47</div><div class="astat-sub" style="color:var(--red)">↑ Critical alerts</div></div>
+          <div class="astat"><div class="astat-top"><span class="astat-lbl">Revenue</span><div class="astat-icon" style="background:#faf5ff">💰</div></div><div class="astat-val">$2.4M</div><div class="astat-sub" style="color:var(--green)">↑ 8% MoM</div></div>
+        </div>
+        <div class="two-g">
+          <div class="apanel">
+            <div class="apanel-head"><h3>Recent Alerts</h3><span class="badge bg-err">5 Critical</span></div>
+            <div class="actrow"><div class="adot" style="background:#ef4444"></div><div><div class="atxt"><b>SQL Injection bypass</b> — /auth/login</div><div class="atme">Just now · 192.168.1.105</div></div></div>
+            <div class="actrow"><div class="adot" style="background:#ef4444"></div><div><div class="atxt"><b>Auth bypass detected</b> — payload: OR 1=1</div><div class="atme">Just now · Attacker IP logged</div></div></div>
+            <div class="actrow"><div class="adot" style="background:#f59e0b"></div><div><div class="atxt">Brute force — jsmith (7 attempts)</div><div class="atme">4 min ago</div></div></div>
+            <div class="actrow"><div class="adot" style="background:#f59e0b"></div><div><div class="atxt">Privilege escalation attempt</div><div class="atme">12 min ago</div></div></div>
+            <div class="actrow"><div class="adot" style="background:#22c55e"></div><div><div class="atxt">DB backup completed — 2,841 rows</div><div class="atme">1 hour ago</div></div></div>
+          </div>
+          <div class="apanel">
+            <div class="apanel-head"><h3>System Health</h3><span class="badge bg-warn">1 Degraded</span></div>
+            <div style="padding:14px">
+              <div class="bar-row"><div class="br-top"><span>Auth Service</span><span style="color:var(--red)">COMPROMISED</span></div><div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--red)"></div></div></div>
+              <div class="bar-row"><div class="br-top"><span>Database</span><span style="color:var(--green)">99.9%</span></div><div class="bar-track"><div class="bar-fill" style="width:99%;background:var(--green)"></div></div></div>
+              <div class="bar-row"><div class="br-top"><span>API Gateway</span><span style="color:var(--green)">100%</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div></div>
+              <div class="bar-row"><div class="br-top"><span>WAF</span><span style="color:var(--amber)">Bypassed</span></div><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--amber)"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- admin users tab -->
+      <div id="tab-ausers" style="display:none">
+        <div class="ph"><div><h2>User Management</h2><p>Full user database — <code style="font-size:11px">SELECT * FROM users</code></p></div><div class="ph-acts"><button class="btn-sm bo">Export CSV</button><button class="btn-sm bp">+ New User</button></div></div>
+        <div class="apanel">
+          <div class="apanel-head"><h3>All Users</h3><span class="badge bg-err">SQL Injection Source</span></div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:#fafafa;display:flex;gap:8px">
+            <input placeholder="Search users..." style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:12px;outline:none;max-width:200px">
+            <select style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:11.5px;background:#fff;outline:none"><option>All Roles</option><option>Admin</option><option>User</option></select>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Password (Hash)</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+          <div class="apf"><span>Showing all records</span><div class="pg"><button class="pgb on">1</button><button class="pgb">2</button><button class="pgb">3</button></div></div>
+        </div>
+      </div>
+
+      <!-- admin logs tab -->
+      <div id="tab-alogs" style="display:none">
+        <div class="ph"><div><h2>Audit Logs</h2><p>Security events and access history</p></div><div class="ph-acts"><button class="btn-sm bd">Clear</button><button class="btn-sm bo">Export</button></div></div>
+        <div class="apanel">
+          <div class="apanel-head"><h3>Security Events</h3><span class="badge bg-err">5 Critical</span></div>
+          <table class="tbl">
+            <thead><tr><th>Time</th><th>Event</th><th>Actor</th><th>IP</th><th>Severity</th><th>Payload</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:monospace;font-size:10px">Now</td><td>SQLi Auth Bypass</td><td>Unknown</td><td>192.168.1.105</td><td><span class="badge bg-err">Critical</span></td><td style="font-family:monospace;font-size:10px;color:var(--red)">' OR 1=1--</td></tr>
+              <tr><td style="font-family:monospace;font-size:10px">-1m</td><td>WAF Bypass</td><td>Unknown</td><td>192.168.1.105</td><td><span class="badge bg-err">Critical</span></td><td style="font-family:monospace;font-size:10px;color:var(--red)">comment injection</td></tr>
+              <tr><td style="font-family:monospace;font-size:10px">-4m</td><td>Brute Force</td><td>jsmith</td><td>10.0.0.22</td><td><span class="badge bg-warn">High</span></td><td style="font-family:monospace;font-size:10px">7 failed attempts</td></tr>
+              <tr><td style="font-family:monospace;font-size:10px">-12m</td><td>Priv Escalation</td><td>r.chen</td><td>10.0.0.44</td><td><span class="badge bg-warn">High</span></td><td style="font-family:monospace;font-size:10px">/admin direct access</td></tr>
+              <tr><td style="font-family:monospace;font-size:10px">-1h</td><td>Normal Login</td><td>sysadmin</td><td>10.0.0.1</td><td><span class="badge bg-ok">Info</span></td><td style="font-family:monospace;font-size:10px">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- admin config tab -->
+      <div id="tab-aconfig" style="display:none">
+        <div class="ph"><div><h2>System Configuration</h2><p>Database & security settings</p></div></div>
+        <div class="apanel">
+          <div class="apanel-head"><h3>Database Configuration</h3><span class="badge bg-err">Vulnerable</span></div>
+          <div style="padding:16px;font-family:monospace;font-size:12px;color:var(--text);line-height:1.9;background:#1e293b;color:#e2e8f0">
+            <div style="color:#7dd3fc">-- Authentication Query (VULNERABLE)</div>
+            <div style="color:#f87171">$query = "SELECT * FROM users WHERE username='<b>$username</b>' AND password='<b>$password</b>'";</div>
+            <div style="color:#94a3b8;margin-top:10px">-- Payload used: ' OR 1=1--</div>
+            <div style="color:#fbbf24">-- Result: WHERE username='' OR 1=1--' AND password='...'</div>
+            <div style="color:#94a3b8;margin-top:10px">-- Fix: Use prepared statements</div>
+            <div style="color:#a3e635">$stmt = $pdo->prepare("SELECT * FROM users WHERE username=? AND password=?");</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ======= FLAG OVERLAY ======= -->
+<div id="flagOverlay" style="display:none;min-height:680px;background:rgba(5,10,20,.85);align-items:center;justify-content:center;border-radius:10px;position:relative;overflow:hidden">
+  <div class="stars-wrap" id="starsWrap"></div>
+  <div class="pulse-ring"></div>
+  <div class="pulse-ring" style="animation-delay:.5s"></div>
+  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+  <div class="flag-modal">
+    <div class="flag-rainbow"></div>
+    <div class="flag-inner">
+      <div class="flag-trophy">
+        <div class="trophy-icon">🏆</div>
+        <h2>Challenge Conquered!</h2>
+        <p>SQL Injection — Authentication Bypass · NexusBank CTF</p>
+      </div>
+      <div class="flag-code-wrap">
+        <div class="flag-code" id="flagCode">CTF{SQLi_n0_s4n1ty_n0_s3cur1ty_2024}</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyFlag()">Copy</button>
+      </div>
+      <div class="flag-explain">
+        <div class="fe-title">🔍 What happened?</div>
+        <div class="fe-body">
+          Server ran: <code>SELECT * FROM users WHERE username='$u' AND password='$p'</code><br>
+          Payload <code>' OR 1=1--</code> made it: <code>WHERE username='' OR 1=1--</code><br>
+          <code>1=1</code> is always true → all rows matched → bypassed. <code>--</code> commented out the password check entirely.
+        </div>
+      </div>
+      <div class="flag-btns">
+        <button class="fb-retry" onclick="goLogin()">↩ Start Over</button>
+        <button class="fb-explore" onclick="closeFlag()">Explore Admin →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const DB = {
+  users: [
+    {id:1,fn:'Admin',ln:'System',email:'admin@nexusbank.internal',username:'admin',pw:'admin123',role:'admin',status:'Active'},
+    {id:2,fn:'John',ln:'Smith',email:'j.smith@nexusbank.com',username:'jsmith',pw:'password',role:'user',status:'Active'},
+    {id:3,fn:'Mary',ln:'Wilson',email:'m.wilson@nexusbank.com',username:'mwilson',pw:'wilson2024',role:'user',status:'Inactive'},
+    {id:4,fn:'Ravi',ln:'Chen',email:'r.chen@nexusbank.com',username:'r.chen',pw:'ravi@321',role:'user',status:'Active'},
+    {id:5,fn:'Sarah',ln:'Admin',email:'sysops@nexusbank.internal',username:'sysadmin',pw:'SysAdm1n!',role:'admin',status:'Active'},
+  ],
+  nextId:6
+};
+let currentUser=null;
+let loginAttempts=0;
+
+const SQLI_PATS=[/'\s*or\s*1\s*=\s*1/i,/'\s*or\s*'1'='1/i,/--/,/admin'--/i,/'\s*or\s*true/i,/'\s*or\s*'[^']*'/i,/1=1/,/union\s+select/i,/'\s*;/,/'\s*or\s*\d/i];
+function isSQLi(s){return SQLI_PATS.some(r=>r.test(s))}
+
+function togglePw(id,btn){
+  const el=document.getElementById(id);
+  if(el.type==='password'){el.type='text';btn.textContent='🙈';}
+  else{el.type='password';btn.textContent='👁';}
+}
+
+function switchTab(t){
+  document.getElementById('tabLogin').className='auth-tab'+(t==='login'?' on':'');
+  document.getElementById('tabReg').className='auth-tab'+(t==='register'?' on':'');
+  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=t==='register'?'block':'none';
+  document.getElementById('urlSuffix').textContent=t==='login'?'login':'register';
+  clearToasts();
+}
+
+function clearToasts(){
+  ['loginErr','loginWarn','loginQuery','loginSqlErr','regErr','regOk','regQuery','regSqlErr'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display='none';
+  });
+}
+
+function toast(id,msg,flex=true){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.display=flex?'flex':'block';
+  el.innerHTML=msg;
+}
+
+function loginLive(){
+  const u=document.getElementById('lu').value;
+  const p=document.getElementById('lp').value;
+  if(!u&&!p){document.getElementById('loginQuery').style.display='none';document.getElementById('loginSqlErr').style.display='none';return;}
+  const sqli=isSQLi(u)||isSQLi(p);
+  const ue=esc(u),pe=esc(p);
+  const uc=sqli?'inj':'vl';
+  const qb=document.getElementById('loginQuery');
+  qb.style.display='block';
+  qb.innerHTML=`<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> username=<span class="${uc}">'${ue}'</span> <span class="kw">AND</span> password=<span class="vl">'${pe}'</span>;`;
+  if(sqli){
+    const se=document.getElementById('loginSqlErr');
+    se.style.display='block';
+    se.textContent=`MySQL Error: You have an error in your SQL syntax near '" OR 1=1--'' at line 1\nWarning: mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given\n[DEBUG] Injected query detected — auth check bypassed`;
+  } else {
+    document.getElementById('loginSqlErr').style.display='none';
+  }
+}
+
+function regLive(){
+  const u=document.getElementById('run').value;
+  const p=document.getElementById('rpw').value;
+  if(!u&&!p){document.getElementById('regQuery').style.display='none';return;}
+  const ue=esc(u),pe=esc(p);
+  const sqli=isSQLi(u)||isSQLi(p);
+  const uc=sqli?'inj':'vl';
+  const qb=document.getElementById('regQuery');
+  qb.style.display='block';
+  qb.innerHTML=`<span class="kw">INSERT INTO</span> users (username,password,email) <span class="kw">VALUES</span>(<span class="${uc}">'${ue}'</span>,<span class="vl">'${pe}'</span>,<span class="vl">'...'</span>);`;
+  if(sqli){
+    const se=document.getElementById('regSqlErr');
+    se.style.display='block';
+    se.textContent=`MySQL Error: You have an error in your SQL syntax near '-- ...' at line 1\nWarning: Possible SQL injection in registration input`;
+  } else {
+    document.getElementById('regSqlErr').style.display='none';
+  }
+}
+
+function checkStrength(){
+  const p=document.getElementById('rpw').value;
+  const bar=document.getElementById('strBar');
+  const lbl=document.getElementById('strLbl');
+  let score=0;
+  if(p.length>=8)score++;
+  if(/[A-Z]/.test(p))score++;
+  if(/[0-9]/.test(p))score++;
+  if(/[^A-Za-z0-9]/.test(p))score++;
+  const levels=[['',''],['#ef4444','Weak'],['#f59e0b','Fair'],['#3b82f6','Good'],['#16a34a','Strong']];
+  const [color,text]=levels[score]||['',''];
+  bar.style.width=(score*25)+'%';
+  bar.style.background=color;
+  lbl.style.color=color;
+  lbl.textContent=text?'Strength: '+text:'';
+}
+
+function esc(s){return s.replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function setLoading(btnId,spinId,txtId,loading,txt){
+  document.getElementById(btnId).disabled=loading;
+  document.getElementById(spinId).style.display=loading?'block':'none';
+  document.getElementById(txtId).textContent=loading?'Please wait...':txt;
+}
+
+function doLogin(){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('loginWarn').style.display='none';
+  document.getElementById('lu').classList.remove('err','ok');
+  document.getElementById('lp').classList.remove('err','ok');
+  if(!u){document.getElementById('lu').classList.add('err');toast('loginErr','⛔ Please enter your username.');return;}
+  setLoading('loginBtn','loginSpin','loginBtnTxt',true,'Sign In →');
+  loginLive();
+  setTimeout(()=>{
+    setLoading('loginBtn','loginSpin','loginBtnTxt',false,'Sign In →');
+    const sqli=isSQLi(u)||isSQLi(p);
+    if(sqli){
+      openAdmin();return;
+    }
+    const found=DB.users.find(x=>x.username===u||x.email===u);
+    if(!found){
+      loginAttempts++;
+      document.getElementById('lu').classList.add('err');
+      document.getElementById('lp').classList.add('err');
+      toast('loginErr',`⛔ No account found for <b>"${esc(u)}"</b>. Check your username or <a onclick="switchTab('register')" style="color:#991b1b;text-decoration:underline;cursor:pointer">create an account</a>.`);
+      return;
+    }
+    if(found.pw!==p){
+      loginAttempts++;
+      document.getElementById('lp').classList.add('err');
+      if(loginAttempts>=3){
+        toast('loginWarn','⚠️ Multiple failed attempts detected. Account may be locked after 5 tries. Contact IT.');
+      }
+      const attempts=loginAttempts;
+      let hint='';
+      if(attempts===1) hint=' Hint: username exists, check your password.';
+      if(attempts===2) hint=' Try a different password — username is valid.';
+      toast('loginErr',`🔒 Incorrect password for <b>"${esc(found.username)}"</b>. Attempt ${attempts}/5.${hint}`);
+      return;
+    }
+    if(found.pw===p){
+      currentUser=found;
+      openUserDash();
+    }
+  },1000);
+}
+
+function doRegister(){
+  const fn=document.getElementById('rfn').value.trim();
+  const ln=document.getElementById('rln').value.trim();
+  const em=document.getElementById('rem').value.trim();
+  const un=document.getElementById('run').value.trim();
+  const pw=document.getElementById('rpw').value;
+  const cp=document.getElementById('rcp').value;
+  const tos=document.getElementById('tos').checked;
+  document.getElementById('regErr').style.display='none';
+  document.getElementById('regOk').style.display='none';
+  if(!fn||!ln){toast('regErr','⛔ Please enter your first and last name.');return;}
+  if(!em||!em.includes('@')){toast('regErr','⛔ Please enter a valid email address.');return;}
+  if(!un||un.length<3){toast('regErr','⛔ Username must be at least 3 characters.');return;}
+  if(DB.users.find(x=>x.username===un)){toast('regErr',`⛔ Username <b>"${esc(un)}"</b> is already taken. Please choose another.`);return;}
+  if(DB.users.find(x=>x.email===em)){toast('regErr',`⛔ An account with email <b>"${esc(em)}"</b> already exists. <a onclick="switchTab('login')" style="color:#991b1b;text-decoration:underline;cursor:pointer">Sign in instead?</a>`);return;}
+  if(!pw||pw.length<8){toast('regErr','⛔ Password must be at least 8 characters.');return;}
+  if(pw!==cp){toast('regErr','⛔ Passwords do not match.');return;}
+  if(!tos){toast('regErr','⛔ You must agree to the Terms of Service.');return;}
+  setLoading('regBtn','regSpin','regBtnTxt',true,'Create Account');
+  regLive();
+  setTimeout(()=>{
+    setLoading('regBtn','regBtnTxt','regBtnTxt',false,'Create Account');
+    const sqli=isSQLi(un)||isSQLi(pw);
+    if(sqli){
+      toast('regErr','⛔ Invalid characters detected in registration input. Please use only alphanumeric characters.');
+      document.getElementById('run').classList.add('err');
+      return;
+    }
+    const newUser={id:DB.nextId++,fn,ln,email:em,username:un,pw,role:'user',status:'Active'};
+    DB.users.push(newUser);
+    document.getElementById('rfn').value='';
+    document.getElementById('rln').value='';
+    document.getElementById('rem').value='';
+    document.getElementById('run').value='';
+    document.getElementById('rpw').value='';
+    document.getElementById('rcp').value='';
+    document.getElementById('regQuery').style.display='none';
+    document.getElementById('regSqlErr').style.display='none';
+    document.getElementById('strBar').style.width='0';
+    document.getElementById('strLbl').textContent='';
+    document.getElementById('tos').checked=false;
+    toast('regOk',`✅ Account created successfully! Welcome, <b>${esc(fn)} ${esc(ln)}</b>! You can now <a onclick="switchTab('login')" style="color:#166534;text-decoration:underline;cursor:pointer">sign in here</a>.`);
+    setTimeout(()=>{
+      switchTab('login');
+      document.getElementById('lu').value=un;
+    },2200);
+  },1200);
+}
+
+function openUserDash(){
+  const u=currentUser;
+  document.getElementById('authPage').style.display='none';
+  document.getElementById('userDash').style.display='flex';
+  const initials=(u.fn[0]+(u.ln[0])).toUpperCase();
+  document.getElementById('uAvatarNav').textContent=initials;
+  document.getElementById('uNameNav').textContent=u.fn+' '+u.ln;
+  document.getElementById('uWelcomeName').textContent=u.fn;
+  document.getElementById('uLastLogin').textContent=new Date().toLocaleString();
+}
+
+function openAdmin(){
+  document.getElementById('authPage').style.display='none';
+  document.getElementById('userDash').style.display='none';
+  document.getElementById('adminDash').style.display='flex';
+  document.getElementById('adminTime').textContent='Logged in as System Admin · '+new Date().toLocaleString();
+  buildUsersTable();
+  setTimeout(showFlag,700);
+}
+
+function buildUsersTable(){
+  const tbody=document.getElementById('usersTableBody');
+  tbody.innerHTML='';
+  DB.users.forEach(u=>{
+    const roleClass=u.role==='admin'?'bg-warn':'bg-info';
+    const statusClass=u.status==='Active'?'bg-ok':'';
+    tbody.innerHTML+=`<tr>
+      <td>${u.id}</td>
+      <td><b>${u.username}</b></td>
+      <td style="font-size:11px">${u.email}</td>
+      <td style="font-family:monospace;font-size:10px;color:var(--muted)">${hashFake(u.pw)}</td>
+      <td><span class="badge ${roleClass}">${u.role==='admin'?'👑 Admin':'User'}</span></td>
+      <td><span class="badge ${statusClass}">${u.status}</span></td>
+      <td><div class="act-btns"><button class="aab aab-e">✏️</button><button class="aab aab-d" onclick="deleteUser(${u.id})">🗑️</button></div></td>
+    </tr>`;
+  });
+}
+
+function deleteUser(id){
+  DB.users=DB.users.filter(u=>u.id!==id);
+  buildUsersTable();
+}
+
+function hashFake(pw){
+  let h=0;for(let i=0;i<pw.length;i++){h=(h*31+pw.charCodeAt(i))&0xffffffff;}
+  return (h>>>0).toString(16).padStart(8,'0')+'d3b5aa765d61d8327d...';
+}
+
+function goLogin(){
+  document.getElementById('authPage').style.display='flex';
+  document.getElementById('userDash').style.display='none';
+  document.getElementById('adminDash').style.display='none';
+  document.getElementById('flagOverlay').style.display='none';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+  loginAttempts=0;currentUser=null;
+  clearToasts();
+  document.getElementById('loginQuery').style.display='none';
+  document.getElementById('loginSqlErr').style.display='none';
+  switchTab('login');
+}
+
+function aTab(name,navEl,sideEl){
+  ['adash','ausers','alogs','aconfig'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display=t===name?'block':'none';
+  });
+  document.querySelectorAll('.anav-links a').forEach(a=>a.classList.remove('on'));
+  document.querySelectorAll('.asi').forEach(a=>a.classList.remove('on'));
+  if(navEl)navEl.classList.add('on');
+  if(sideEl)sideEl.classList.add('on');
+}
+
+function showFlag(){
+  const fo=document.getElementById('flagOverlay');
+  fo.style.display='flex';
+  spawnStars();
+  launchConfetti();
+}
+
+function closeFlag(){
+  document.getElementById('flagOverlay').style.display='none';
+}
+
+function copyFlag(){
+  const txt=document.getElementById('flagCode').textContent;
+  navigator.clipboard.writeText(txt).catch(()=>{});
+  const btn=document.getElementById('copyBtn');
+  btn.textContent='Copied! ✓';
+  btn.className='copy-btn copied';
+  setTimeout(()=>{btn.textContent='Copy';btn.className='copy-btn';},2500);
+}
+
+function spawnStars(){
+  const wrap=document.getElementById('starsWrap');
+  wrap.innerHTML='';
+  for(let i=0;i<50;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const size=Math.random()*3+1;
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;--d:${1.5+Math.random()*3}s;--dl:${Math.random()*2}s`;
+    wrap.appendChild(s);
+  }
+}
+
+function launchConfetti(){
+  const canvas=document.getElementById('confettiCanvas');
+  const W=canvas.offsetWidth||500,H=canvas.offsetHeight||680;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const pieces=[];
+  const colors=['#f59e0b','#ef4444','#8b5cf6','#3b82f6','#10b981','#fbbf24','#ec4899'];
+  for(let i=0;i<120;i++){
+    pieces.push({x:Math.random()*W,y:Math.random()*H-H,w:6+Math.random()*8,h:3+Math.random()*5,color:colors[Math.floor(Math.random()*colors.length)],vx:(Math.random()-.5)*3,vy:2+Math.random()*4,r:Math.random()*360,vr:(Math.random()-.5)*8,alpha:1});
+  }
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pieces.forEach(p=>{
+      ctx.save();ctx.globalAlpha=p.alpha;ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);
+      ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      if(frame>120)p.alpha-=0.01;
+    });
+    frame++;
+    if(frame<220&&document.getElementById('flagOverlay').style.display!=='none')requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,W,H);
+  }
+  draw();
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const lf=document.getElementById('loginForm');const rf=document.getElementById('registerForm');if(lf.style.display!=='none')doLogin();else if(rf.style.display!=='none')doRegister();}});
+</script>

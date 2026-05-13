@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FlipDeals — Online Shopping</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2874f0;--secondary:#fb641b;--dark:#212121;--mid:#424242;--light:#f1f3f6;--white:#fff;--green:#26a541;--red:#ff6161;--gold:#ffc200}
+body{font-family:'Poppins',sans-serif;background:#f1f3f6;color:var(--dark);min-height:100vh}
+
+nav{background:var(--primary);padding:0 20px;display:flex;align-items:center;gap:20px;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nav-logo{color:#fff;font-size:22px;font-weight:700;letter-spacing:-1px;display:flex;flex-direction:column;line-height:1}
+.nav-logo span{font-size:9px;font-weight:300;font-style:italic;color:#ffffffcc}
+.nav-search{flex:1;max-width:600px;display:flex}
+.nav-search input{flex:1;padding:10px 16px;border:none;border-radius:2px 0 0 2px;font-size:14px;outline:none}
+.nav-search button{background:var(--secondary);border:none;padding:0 20px;border-radius:0 2px 2px 0;color:#fff;cursor:pointer;font-size:18px}
+.nav-links{margin-left:auto;display:flex;gap:24px;color:#fff;font-size:13px;font-weight:500}
+.nav-links a{color:#fff;text-decoration:none;cursor:pointer;white-space:nowrap}
+.cart-btn{background:var(--secondary);border:none;color:#fff;padding:8px 18px;border-radius:2px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+
+.hero{background:linear-gradient(135deg,#2874f0 0%,#1a5dc8 50%,#0f3d8a 100%);color:#fff;padding:30px 40px;display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:300px;height:300px;background:rgba(255,255,255,.05);border-radius:50%}
+.hero h1{font-size:28px;font-weight:700}
+.hero p{font-size:14px;opacity:.85;margin-top:6px}
+.hero-badge{background:var(--gold);color:#000;padding:6px 16px;border-radius:20px;font-weight:700;font-size:12px;margin-top:14px;display:inline-block}
+.hero-img{font-size:90px;opacity:.15;position:absolute;right:40px}
+
+.categories{background:#fff;padding:14px 30px;display:flex;gap:30px;overflow-x:auto;box-shadow:0 2px 4px rgba(0,0,0,.06)}
+.cat-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;min-width:70px}
+.cat-icon{font-size:28px}
+.cat-label{font-size:11px;font-weight:500;color:var(--mid);white-space:nowrap}
+
+.section{max-width:1200px;margin:20px auto;padding:0 16px}
+.section-header{background:#fff;padding:14px 20px;border-radius:4px 4px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--light)}
+.section-title{font-size:18px;font-weight:700;color:var(--dark)}
+.section-more{color:var(--primary);font-size:13px;cursor:pointer;font-weight:500}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0;background:#fff;border-radius:0 0 4px 4px}
+.product-card{padding:20px 14px;border:1px solid #f0f0f0;cursor:pointer;transition:box-shadow .2s;position:relative}
+.product-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:2}
+.product-img{width:100%;height:160px;object-fit:contain;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:12px}
+.product-name{font-size:13px;font-weight:500;color:var(--dark);margin-bottom:4px;line-height:1.4;height:36px;overflow:hidden}
+.product-rating{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.rating-badge{background:var(--green);color:#fff;font-size:11px;padding:2px 6px;border-radius:2px;font-weight:600}
+.rating-count{font-size:11px;color:#878787}
+.product-price{font-size:16px;font-weight:700;color:var(--dark)}
+.product-mrp{font-size:12px;color:#878787;text-decoration:line-through;margin-left:6px}
+.product-discount{font-size:12px;color:var(--green);font-weight:600;margin-left:4px}
+.product-tag{position:absolute;top:10px;left:10px;background:var(--red);color:#fff;font-size:10px;padding:2px 8px;border-radius:2px;font-weight:600}
+.add-to-cart{width:100%;margin-top:12px;background:var(--secondary);color:#fff;border:none;padding:9px;border-radius:2px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.add-to-cart:hover{opacity:.9}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200}
+.overlay.active{display:block}
+.cart-panel{position:fixed;right:0;top:0;bottom:0;width:420px;background:#fff;z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s;box-shadow:-4px 0 20px rgba(0,0,0,.2)}
+.cart-panel.active{transform:translateX(0)}
+.cart-header{background:var(--primary);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.cart-header h2{font-size:16px;font-weight:600}
+.cart-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.cart-items{flex:1;overflow-y:auto;padding:16px}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--light)}
+.cart-item-img{font-size:40px;width:60px;text-align:center}
+.cart-item-info{flex:1}
+.cart-item-name{font-size:13px;font-weight:500}
+.cart-item-price{font-size:14px;font-weight:700;color:var(--primary);margin-top:4px}
+.cart-item-remove{background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;margin-top:4px}
+.cart-footer{padding:16px;border-top:2px solid var(--light);background:#fafafa}
+.price-breakdown{margin-bottom:14px}
+.price-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--mid)}
+.price-row.total{font-size:15px;font-weight:700;color:var(--dark);border-top:1px dashed #ccc;margin-top:6px;padding-top:10px}
+.checkout-btn{width:100%;background:var(--secondary);color:#fff;border:none;padding:14px;font-size:15px;font-weight:700;border-radius:2px;cursor:pointer;letter-spacing:.5px}
+
+.modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-box{background:#fff;border-radius:8px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--light);display:flex;justify-content:space-between;align-items:center}
+.modal-header h2{font-size:17px;font-weight:700}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--mid)}
+.modal-body{padding:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--mid);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:4px;font-size:14px;font-family:inherit;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.section-label{font-size:14px;font-weight:700;color:var(--dark);margin:20px 0 14px;padding-bottom:6px;border-bottom:2px solid var(--primary)}
+.price-summary-box{background:var(--light);border-radius:6px;padding:14px;margin-bottom:20px}
+.price-summary-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--mid)}
+.price-summary-row.total{font-size:15px;font-weight:700;color:var(--dark);border-top:1px solid #ccc;margin-top:8px;padding-top:10px}
+.hidden-field-hint{background:#fff3cd;border:1px solid #ffc107;border-radius:4px;padding:8px 12px;font-size:11px;color:#856404;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.pay-btn{width:100%;background:var(--primary);color:#fff;border:none;padding:14px;font-size:15px;font-weight:700;border-radius:4px;cursor:pointer;margin-top:6px;letter-spacing:.5px;position:relative}
+.pay-btn:hover{background:#1a5dc8}
+.pay-btn:disabled{opacity:.7;cursor:not-allowed}
+.pay-btn .spinner{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;vertical-align:middle}
+.pay-btn.loading .spinner{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* FLAG MODAL */
+.flag-modal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.8);align-items:center;justify-content:center}
+.flag-modal.active{display:flex}
+.flag-box{background:#0d1117;color:#00ff41;border:2px solid #00ff41;border-radius:12px;padding:40px;max-width:600px;width:90%;font-family:'Courier New',monospace;box-shadow:0 0 40px rgba(0,255,65,.3);max-height:90vh;overflow-y:auto}
+.flag-box h2{font-size:22px;margin-bottom:20px;text-align:center;text-shadow:0 0 10px #00ff41}
+.flag-value{background:#000;border:1px solid #00ff41;border-radius:6px;padding:16px;font-size:20px;font-weight:700;text-align:center;letter-spacing:2px;margin:16px 0;color:#00ff41;text-shadow:0 0 8px #00ff41;word-break:break-all}
+.flag-section{margin-top:24px;border-top:1px solid #00ff4140;padding-top:20px}
+.flag-section h3{color:#ffc200;font-size:14px;margin-bottom:10px}
+.flag-section p{font-size:12px;color:#aaa;line-height:1.7;font-family:'Poppins',sans-serif}
+.flag-section ul{font-size:12px;color:#aaa;line-height:1.8;padding-left:20px;font-family:'Poppins',sans-serif}
+.flag-section ul li span{color:#00ff41}
+.flag-close{width:100%;margin-top:20px;background:#00ff41;color:#000;border:none;padding:12px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif}
+.vuln-badge{display:inline-block;background:#ff3333;color:#fff;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:700;margin-bottom:16px}
+
+.normal-win{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);align-items:center;justify-content:center}
+.normal-win.active{display:flex}
+.normal-win-box{background:#fff;border-radius:12px;padding:40px;max-width:420px;width:90%;text-align:center}
+.normal-win-box h2{color:var(--green);font-size:22px;margin-bottom:12px}
+.normal-win-box p{color:var(--mid);font-size:14px;margin-bottom:20px}
+.normal-close{background:var(--primary);color:#fff;border:none;padding:12px 30px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:24px;font-size:13px;font-weight:500;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+.empty-cart{text-align:center;padding:60px 20px;color:#878787}
+.empty-cart .icon{font-size:64px;margin-bottom:16px}
+.empty-cart p{font-size:15px}
+
+footer{background:#172337;color:#fff;padding:40px;margin-top:40px}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;max-width:1200px;margin:0 auto}
+.footer-col h4{font-size:13px;font-weight:600;color:#878787;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
+.footer-col a{display:block;font-size:12px;color:#ccc;text-decoration:none;margin-bottom:8px;cursor:pointer}
+.footer-bottom{text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #2d4a6b;font-size:12px;color:#878787}
+
+.banner{background:linear-gradient(90deg,#ff6b35,#f7c59f);padding:10px 20px;text-align:center;font-size:13px;font-weight:600;color:#000}
+
+/* Error state */
+.error-box{background:#fff0f0;border:1px solid #ff6161;border-radius:6px;padding:12px 16px;font-size:12px;color:#c00;margin-bottom:12px;display:none}
+
+@media(max-width:600px){
+.nav-links{display:none}.cart-panel{width:100%}.footer-grid{grid-template-columns:1fr 1fr}.products-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="banner">🎉 MEGA SALE: Up to 80% OFF on Electronics + Extra 10% with FlipDeals Pay | Use code: FLIP10</div>
+
+<nav>
+  <div class="nav-logo">FlipDeals<span>India's Best Shop</span></div>
+  <div class="nav-search">
+    <input type="text" placeholder="Search for products, brands and more" id="searchInput">
+    <button>🔍</button>
+  </div>
+  <div class="nav-links">
+    <a>Become a Seller</a>
+    <a>More ▾</a>
+    <a onclick="openCart()" style="display:flex;align-items:center;gap:5px">
+      <span>🛒</span> Cart <span id="cartBadge" style="background:#ff6161;border-radius:50%;width:18px;height:18px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700">0</span>
+    </a>
+    <a>Login</a>
+  </div>
+  <button class="cart-btn" onclick="openCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
+</nav>
+
+<div class="hero">
+  <div>
+    <div class="hero-badge">⚡ FLASH SALE — ENDS MIDNIGHT</div>
+    <h1 style="margin-top:10px">Grab Deals Before They're Gone!</h1>
+    <p>Lowest prices on Electronics, Fashion, Home & More</p>
+    <button style="margin-top:18px;background:var(--secondary);color:#fff;border:none;padding:12px 28px;border-radius:2px;font-size:14px;font-weight:700;cursor:pointer;border-radius:24px">Shop Now →</button>
+  </div>
+  <div class="hero-img">🛍️</div>
+</div>
+
+<div class="categories">
+  <div class="cat-item"><div class="cat-icon">📱</div><div class="cat-label">Mobiles</div></div>
+  <div class="cat-item"><div class="cat-icon">👕</div><div class="cat-label">Fashion</div></div>
+  <div class="cat-item"><div class="cat-icon">💻</div><div class="cat-label">Electronics</div></div>
+  <div class="cat-item"><div class="cat-icon">🏠</div><div class="cat-label">Home</div></div>
+  <div class="cat-item"><div class="cat-icon">🍳</div><div class="cat-label">Kitchen</div></div>
+  <div class="cat-item"><div class="cat-icon">📚</div><div class="cat-label">Books</div></div>
+  <div class="cat-item"><div class="cat-icon">🎮</div><div class="cat-label">Gaming</div></div>
+  <div class="cat-item"><div class="cat-icon">💄</div><div class="cat-label">Beauty</div></div>
+  <div class="cat-item"><div class="cat-icon">⌚</div><div class="cat-label">Watches</div></div>
+  <div class="cat-item"><div class="cat-icon">🏋️</div><div class="cat-label">Sports</div></div>
+  <div class="cat-item"><div class="cat-icon">🚗</div><div class="cat-label">Auto</div></div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">🔥 Deals of the Day</span>
+    <span class="section-more">View All →</span>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h2>🛒 My Cart</h2>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="price-breakdown">
+      <div class="price-row"><span>Price (<span id="itemCount">0</span> items)</span><span>₹<span id="totalMRP">0</span></span></div>
+      <div class="price-row"><span>Discount</span><span style="color:var(--green)">-₹<span id="totalDiscount">0</span></span></div>
+      <div class="price-row"><span>Delivery</span><span style="color:var(--green)">FREE</span></div>
+      <div class="price-row total"><span>Total Amount</span><span>₹<span id="totalAmount">0</span></span></div>
+    </div>
+    <button class="checkout-btn" onclick="openCheckout()">PLACE ORDER →</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>🔒 Secure Checkout</h2>
+      <button class="modal-close" onclick="closeCheckout()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-label">📦 Delivery Address</div>
+      <div class="form-group"><label>Full Name</label><input type="text" placeholder="Enter your full name"></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="10-digit mobile number"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Pincode</label><input type="text" placeholder="6-digit pincode" maxlength="6"></div>
+        <div class="form-group"><label>City</label><input type="text" placeholder="City"></div>
+      </div>
+      <div class="form-group"><label>Address</label><input type="text" placeholder="House No., Building, Street"></div>
+      <div class="form-group"><label>State</label>
+        <select><option>Tamil Nadu</option><option>Karnataka</option><option>Maharashtra</option><option>Delhi</option><option>Gujarat</option></select>
+      </div>
+
+      <div class="section-label">💳 Payment Details</div>
+      <div class="hidden-field-hint">🔒 SSL Secured | PCI DSS Compliant | 256-bit Encryption</div>
+
+      <div class="price-summary-box">
+        <div class="price-summary-row"><span>Subtotal</span><span>₹<span id="co_subtotal">0</span></span></div>
+        <div class="price-summary-row"><span>Discount Applied</span><span style="color:var(--green)">-₹<span id="co_discount">0</span></span></div>
+        <div class="price-summary-row"><span>Shipping</span><span style="color:var(--green)">FREE</span></div>
+        <div class="price-summary-row total"><span>Amount to Pay</span><span>₹<span id="co_total">0</span></span></div>
+      </div>
+
+      <!--
+        ===== CTF TARGET ZONE =====
+        These hidden fields are sent in the POST body.
+        Intercept with Burp Suite and set price=0 to get the flag.
+        Endpoint: https://httpbin.org/post
+      -->
+      <input type="hidden" id="h_price"    name="price"          value="0">
+      <input type="hidden" id="h_subtotal" name="subtotal"        value="0">
+      <input type="hidden" id="h_discount" name="discount"        value="0">
+      <input type="hidden" id="h_items"    name="items"           value="">
+      <input type="hidden" id="h_session"  name="session_token"   value="sess_8f2a1b9c3d7e4f05">
+      <input type="hidden" id="h_uid"      name="user_id"         value="usr_00142">
+
+      <div class="form-group"><label>Card Number</label><input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="formatCard(this)"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Expiry Date</label><input type="text" placeholder="MM/YY" maxlength="5" oninput="formatExp(this)"></div>
+        <div class="form-group"><label>CVV</label><input type="password" placeholder="3 digits" maxlength="3"></div>
+      </div>
+      <div class="form-group"><label>Name on Card</label><input type="text" placeholder="As printed on card"></div>
+
+      <div class="error-box" id="payError"></div>
+
+      <button class="pay-btn" id="payBtn" onclick="processPayment()">
+        PAY ₹<span id="payBtnAmount">0</span> SECURELY →
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- FLAG MODAL -->
+<div class="flag-modal" id="flagModal">
+  <div class="flag-box">
+    <div style="text-align:center;margin-bottom:10px">
+      <div class="vuln-badge">🚨 VULNERABILITY EXPLOITED</div>
+    </div>
+    <h2>🎉 CHALLENGE COMPLETE!</h2>
+    <div style="text-align:center;font-size:12px;color:#aaa;margin-bottom:10px">You successfully tampered the <code style="color:#ffc200">price</code> parameter to ₹0 in the HTTP request</div>
+    <div class="flag-value">CTF{PR1C3_T4MP3R_P4R4M_1NJ3CT10N}</div>
+
+    <div class="flag-section">
+      <h3>⚠️ VULNERABILITY EXPLANATION</h3>
+      <p>This site used <strong style="color:#00ff41">client-side hidden form fields</strong> to pass the price in the POST body. The backend blindly trusted the <code style="color:#ffc200">price</code> parameter without server-side recalculation.</p>
+      <br>
+      <p><strong style="color:#ffc200">What you did with Burp Suite:</strong></p>
+      <ul style="margin-top:8px">
+        <li>Intercepted the <span>POST https://httpbin.org/post</span> request</li>
+        <li>Found the hidden field: <span>price=XXXX</span> in the request body</li>
+        <li>Modified it to: <span>price=0</span></li>
+        <li>Forwarded the tampered request → Server accepted it!</li>
+      </ul>
+    </div>
+
+    <div class="flag-section">
+      <h3>🛡️ HOW TO FIX THIS (Remediation)</h3>
+      <ul>
+        <li><span>✅ Never trust client-side data</span> — Always recalculate price server-side using product ID + quantity from your DB</li>
+        <li><span>✅ Store cart in server session</span> — Keep cart state on the server, not in hidden fields</li>
+        <li><span>✅ HMAC signing</span> — If passing values client-side, sign with HMAC-SHA256 and verify server-side</li>
+        <li><span>✅ Re-validate at payment</span> — Before charging, re-fetch prices from DB and compare</li>
+        <li><span>✅ Anomaly detection</span> — Flag orders where price &lt; expected threshold for manual review</li>
+      </ul>
+    </div>
+
+    <button class="flag-close" onclick="document.getElementById('flagModal').classList.remove('active')">✕ Close Challenge</button>
+  </div>
+</div>
+
+<!-- NORMAL WIN -->
+<div class="normal-win" id="normalWin">
+  <div class="normal-win-box">
+    <div style="font-size:64px;margin-bottom:12px">🎊</div>
+    <h2>Order Placed!</h2>
+    <p>Your order has been placed successfully. Expected delivery in 2–4 business days.</p>
+    <p style="font-size:12px;color:#aaa;margin-top:8px">(No flag for honest payments! 😄 Try intercepting with Burp Suite and set <code>price=0</code>)</p>
+    <button class="normal-close" onclick="document.getElementById('normalWin').classList.remove('active')">Continue Shopping</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col"><h4>About</h4><a>About Us</a><a>Careers</a><a>Press</a><a>FlipDeals Stories</a></div>
+    <div class="footer-col"><h4>Help</h4><a>Payments</a><a>Shipping</a><a>Returns</a><a>FAQ</a></div>
+    <div class="footer-col"><h4>Policy</h4><a>Return Policy</a><a>Terms of Use</a><a>Security</a><a>Privacy</a></div>
+    <div class="footer-col"><h4>Social</h4><a>Facebook</a><a>Twitter</a><a>YouTube</a><a>Instagram</a></div>
+  </div>
+  <div class="footer-bottom">© 2025 FlipDeals.com — CTF Educational Challenge | For Security Training Only</div>
+</footer>
+
+<script>
+const products=[
+  {id:1,name:"Samsung Galaxy S24 Ultra 5G (256GB)",emoji:"📱",price:89999,mrp:124999,rating:4.5,reviews:"2.4K",tag:"BESTSELLER"},
+  {id:2,name:"Apple MacBook Air M3 (8GB/256GB)",emoji:"💻",price:99990,mrp:134900,rating:4.7,reviews:"1.8K",tag:"HOT"},
+  {id:3,name:"Sony WH-1000XM5 Noise Cancelling Headphones",emoji:"🎧",price:24990,mrp:34990,rating:4.6,reviews:"5.1K",tag:"DEAL"},
+  {id:4,name:"boAt Airdopes 141 TWS Earbuds",emoji:"🎵",price:1299,mrp:4990,rating:4.1,reviews:"82K",tag:"74% OFF"},
+  {id:5,name:"Nike Air Max 270 Running Shoes",emoji:"👟",price:7495,mrp:12995,rating:4.4,reviews:"3.2K",tag:"SALE"},
+  {id:6,name:"Instant Pot Duo 7-in-1 Electric Cooker",emoji:"🍳",price:6999,mrp:12999,rating:4.5,reviews:"9.4K",tag:"DEAL"},
+  {id:7,name:"Fire-Boltt Phoenix Pro Smartwatch",emoji:"⌚",price:1799,mrp:6999,rating:4.0,reviews:"44K",tag:"74% OFF"},
+  {id:8,name:"LG 43-inch 4K UHD Smart TV",emoji:"📺",price:32990,mrp:54990,rating:4.3,reviews:"11K",tag:"HOT"},
+];
+
+let cart=[];
+
+function renderProducts(){
+  const g=document.getElementById('productsGrid');
+  g.innerHTML=products.map(p=>{
+    const disc=Math.round((p.mrp-p.price)/p.mrp*100);
+    return `<div class="product-card">
+      ${p.tag?`<div class="product-tag">${p.tag}</div>`:''}
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-rating">
+        <span class="rating-badge">⭐ ${p.rating}</span>
+        <span class="rating-count">(${p.reviews})</span>
+      </div>
+      <div>
+        <span class="product-price">₹${p.price.toLocaleString('en-IN')}</span>
+        <span class="product-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>
+        <span class="product-discount">${disc}% off</span>
+      </div>
+      <button class="add-to-cart" onclick="addToCart(${p.id})">🛒 Add to Cart</button>
+    </div>`;
+  }).join('');
+}
+
+function addToCart(id){
+  const p=products.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex){ex.qty++;showToast(`${p.emoji} Quantity updated!`);}
+  else{cart.push({...p,qty:1});showToast(`${p.emoji} Added to cart!`);}
+  updateCartBadge();
+}
+
+function updateCartBadge(){
+  const c=cart.reduce((a,x)=>a+x.qty,0);
+  document.getElementById('cartBadge').textContent=c;
+  document.getElementById('cartCount').textContent=c;
+}
+
+function openCart(){
+  renderCart();
+  document.getElementById('cartPanel').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+}
+function closeCart(){
+  document.getElementById('cartPanel').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function renderCart(){
+  const ci=document.getElementById('cartItems');
+  const cf=document.getElementById('cartFooter');
+  if(!cart.length){
+    ci.innerHTML=`<div class="empty-cart"><div class="icon">🛒</div><p>Your cart is empty</p></div>`;
+    cf.style.display='none';return;
+  }
+  let mrp=0,total=0;
+  ci.innerHTML=cart.map(item=>{
+    mrp+=item.mrp*item.qty;total+=item.price*item.qty;
+    return `<div class="cart-item">
+      <div class="cart-item-img">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₹${(item.price*item.qty).toLocaleString('en-IN')} <span style="font-size:11px;color:#878787;text-decoration:line-through;font-weight:400">₹${(item.mrp*item.qty).toLocaleString('en-IN')}</span></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+          <button onclick="changeQty(${item.id},-1)" style="background:var(--light);border:1px solid #ddd;width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:700">−</button>
+          <span style="font-size:13px;font-weight:600">${item.qty}</span>
+          <button onclick="changeQty(${item.id},1)" style="background:var(--light);border:1px solid #ddd;width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:700">+</button>
+          <button class="cart-item-remove" onclick="removeItem(${item.id})">🗑 Remove</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const disc=mrp-total;
+  document.getElementById('itemCount').textContent=cart.reduce((a,x)=>a+x.qty,0);
+  document.getElementById('totalMRP').textContent=mrp.toLocaleString('en-IN');
+  document.getElementById('totalDiscount').textContent=disc.toLocaleString('en-IN');
+  document.getElementById('totalAmount').textContent=total.toLocaleString('en-IN');
+  cf.style.display='block';
+}
+
+function changeQty(id,d){
+  const i=cart.findIndex(x=>x.id===id);
+  if(i<0)return;
+  cart[i].qty+=d;
+  if(cart[i].qty<=0)cart.splice(i,1);
+  renderCart();updateCartBadge();
+}
+function removeItem(id){cart=cart.filter(x=>x.id!==id);renderCart();updateCartBadge();}
+
+function openCheckout(){
+  if(!cart.length){showToast('Your cart is empty!');return;}
+  closeCart();
+  let mrp=0,total=0;
+  cart.forEach(x=>{mrp+=x.mrp*x.qty;total+=x.price*x.qty;});
+  const disc=mrp-total;
+  document.getElementById('co_subtotal').textContent=mrp.toLocaleString('en-IN');
+  document.getElementById('co_discount').textContent=disc.toLocaleString('en-IN');
+  document.getElementById('co_total').textContent=total.toLocaleString('en-IN');
+  document.getElementById('payBtnAmount').textContent=total.toLocaleString('en-IN');
+  // 🚨 VULNERABLE: Hidden fields populated client-side — interceptable via Burp Suite
+  document.getElementById('h_price').value=total;
+  document.getElementById('h_subtotal').value=mrp;
+  document.getElementById('h_discount').value=disc;
+  document.getElementById('h_items').value=JSON.stringify(cart.map(x=>({id:x.id,qty:x.qty,price:x.price})));
+  document.getElementById('checkoutModal').classList.add('active');
+}
+function closeCheckout(){document.getElementById('checkoutModal').classList.remove('active');}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CORE FIX: processPayment() now makes a REAL fetch() POST to httpbin.org/post
+// Burp Suite can intercept this request, see "price=XXXX" in the body,
+// and tamper it to "price=0". The echoed response is then parsed to detect
+// the tampered value — triggering the flag.
+// ─────────────────────────────────────────────────────────────────────────────
+async function processPayment(){
+  const btn=document.getElementById('payBtn');
+  const errBox=document.getElementById('payError');
+  errBox.style.display='none';
+
+  // Collect all hidden field values at time of submission
+  const payload={
+    price:       document.getElementById('h_price').value,
+    subtotal:    document.getElementById('h_subtotal').value,
+    discount:    document.getElementById('h_discount').value,
+    items:       document.getElementById('h_items').value,
+    session_token: document.getElementById('h_session').value,
+    user_id:     document.getElementById('h_uid').value,
+  };
+
+  // Log for Burp/DevTools visibility
+  console.log('%c[CTF] ► POST https://httpbin.org/post','color:orange;font-weight:bold;font-size:13px');
+  console.log('%c[CTF] Request body (intercept THIS in Burp Suite):','color:#ffc200');
+  console.table(payload);
+  console.log('%cTIP: Set price=0 and forward the request!','color:#00ff41;font-size:12px');
+
+  // Build URL-encoded form body (same as a real HTML form submission)
+  const body=new URLSearchParams(payload).toString();
+
+  btn.disabled=true;
+  btn.classList.add('loading');
+  btn.querySelector('.spinner').style.display='inline-block';
+
+  try {
+    // ✅ REAL HTTP POST — visible in Burp Suite proxy
+    const res=await fetch('https://httpbin.org/post',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:body
+    });
+
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    // httpbin echoes the posted form back in JSON under .form
+    const data=await res.json();
+    const returnedPrice=parseFloat(data.form?.price ?? payload.price);
+
+    console.log('%c[CTF] ◄ Server echoed back price:','color:cyan', returnedPrice);
+
+    document.getElementById('checkoutModal').classList.remove('active');
+
+    // 🎯 Vulnerability check: if the price in the echoed response is 0 or negative,
+    // the player successfully tampered the request via Burp Suite
+    if(returnedPrice<=0){
+      setTimeout(()=>document.getElementById('flagModal').classList.add('active'),300);
+    } else {
+      setTimeout(()=>document.getElementById('normalWin').classList.add('active'),300);
+    }
+
+  } catch(err){
+    // Network error (CORS, offline, etc.) — fall back gracefully
+    console.warn('[CTF] Fetch failed:',err.message);
+    errBox.textContent='⚠️ Payment gateway unreachable. Make sure Burp Suite is set up correctly and try again. (Error: '+err.message+')';
+    errBox.style.display='block';
+  } finally {
+    btn.disabled=false;
+    btn.classList.remove('loading');
+    btn.querySelector('.spinner').style.display='none';
+  }
+}
+
+function formatCard(el){
+  let v=el.value.replace(/\D/g,'').substring(0,16);
+  el.value=v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExp(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>=2)v=v.substring(0,2)+'/'+v.substring(2,4);
+  el.value=v;
+}
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderProducts();
+
+// Console hints
+console.log('%c🚩 CTF CHALLENGE: FlipDeals Parameter Tampering','color:#00ff41;font-size:16px;font-weight:bold;background:#000;padding:8px');
+console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','color:#333');
+console.log('%cSTEPS:','color:#ffc200;font-weight:bold');
+console.log('%c  1. Open Burp Suite → set browser proxy to 127.0.0.1:8080','color:#aaa');
+console.log('%c  2. Enable Intercept (Proxy tab)','color:#aaa');
+console.log('%c  3. Add a product to cart and click "PLACE ORDER"','color:#aaa');
+console.log('%c  4. Fill checkout form and click PAY','color:#aaa');
+console.log('%c  5. In Burp, find the POST to httpbin.org/post','color:#aaa');
+console.log('%c  6. Locate the "price=XXXXX" parameter in the body','color:#00ff41;font-weight:bold');
+console.log('%c  7. Change it to "price=0" and forward','color:#00ff41;font-weight:bold');
+console.log('%c  8. 🎉 FLAG APPEARS!','color:#00ff41;font-weight:bold');
+</script>
+</body>
+</html>
