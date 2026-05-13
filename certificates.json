@@ -29,6 +29,7 @@
       "type": "Completion",
       "mode": "Online",
       "duration": "3 months",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-1769880644165.pdf",
       "issuedOn": "15/1/2026"
     },
     {
@@ -38,6 +39,7 @@
       "type": "Internship",
       "mode": "Online",
       "duration": "1 month",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-1769866528941.pdf",
       "issuedOn": "25/2/2026"
     },
     {
@@ -47,6 +49,7 @@
       "type": "Internship",
       "mode": "Online",
       "duration": "1",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-1771250674353.pdf",
       "issuedOn": "25/2/2026"
     },
     {
@@ -56,6 +59,7 @@
       "type": "Internship",
       "mode": "Online",
       "duration": "1 month",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-01.pdf",
       "issuedOn": "26/2/2026"
     },
     {
@@ -65,17 +69,8 @@
       "type": "Internship",
       "mode": "Online",
       "duration": "1 month",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-02.pdf",
       "issuedOn": "26/2/2026"
-    },
-    {
-      "certId": "CBA-CERT-1773852531532",
-      "name": "Mohamed Mubeen",
-      "course": "123456",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "111",
-      "email": "new@gmail.com",
-      "issuedOn": "18/3/2026"
     },
     {
       "certId": "CBA-CERT-1778347583197",
@@ -86,17 +81,6 @@
       "duration": "10",
       "issuedOn": "9/5/2026",
       "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1778347583197"
-    },
-    {
-      "certId": "CBA-CERT-1778348214830",
-      "name": "Abdul Kader",
-      "course": "Monster",
-      "type": "Internship",
-      "mode": "Online",
-      "duration": "1 month",
-      "email": "maemubeen576@gmail.com",
-      "issuedOn": "9/5/2026",
-      "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1778348214830"
     },
     {
       "certId": "CBA-CERT-1778348216891",
