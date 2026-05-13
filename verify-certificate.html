@@ -1,328 +1,384 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Certificate Verification | Cyber Buddy Academy</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Cyber Buddy Academy - Certificate Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
 
-    <style>
-        :root {
-            --primary: #0a3d62;
-            --secondary: #0b1f33;
-            --accent: #3cadd4;
-            --success: #10b981;
-            --error: #ef4444;
-            --glass: rgba(255, 255, 255, 0.98);
-        }
+*{
+    box-sizing:border-box;
+}
 
-        * { box-sizing: border-box; }
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#0f0f0f,#1a1a2e);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
 
-        body {
-            margin: 0;
-            background: radial-gradient(circle at top right, #0b1f33, #050c16);
-            font-family: "Inter", sans-serif;
-            color: #1f2937;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            overflow-x: hidden;
-        }
+.container{
+    background:rgba(0,0,0,0.65);
+    padding:40px;
+    border-radius:20px;
+    width:100%;
+    max-width:520px;
+    text-align:center;
+    box-shadow:0 0 30px #00f2ff;
+    backdrop-filter:blur(12px);
+}
 
-        /* App Container */
-        .app {
-            width: 100%;
-            max-width: 800px;
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border-radius: 28px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-            overflow: hidden;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
+.logo{
+    width:120px;
+    margin-bottom:15px;
+    filter:drop-shadow(0 0 15px #00f2ff);
+}
 
-        /* Header with Logo */
-        .header {
-            background: linear-gradient(135deg, #0b1f33 0%, #0a3d62 100%);
-            color: #fff;
-            text-align: center;
-            padding: 40px 20px;
-            position: relative;
-        }
+h1{
+    color:#00f2ff;
+    margin-top:5px;
+    margin-bottom:10px;
+}
 
-        .academy-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 15px;
-            border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.1);
-            background: #fff;
-            padding: 5px;
-            object-fit: contain;
-        }
+p{
+    color:#ccc;
+    margin-bottom:20px;
+}
 
-        .header h1 {
-            font-family: "Cormorant Garamond", serif;
-            margin: 0;
-            font-size: clamp(24px, 5vw, 32px);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+input{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    font-size:15px;
+    background:#f5f5f5;
+    color:#111;
+}
 
-        .header p {
-            margin-top: 8px;
-            font-size: 12px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            opacity: 0.8;
-        }
+.btn{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border-radius:10px;
+    border:none;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.3s;
+    text-decoration:none;
+    display:block;
+}
 
-        .body { padding: 40px 30px; }
+.get-btn{
+    background:#00f2ff;
+    color:black;
+}
 
-        /* Search Interface */
-        .search-container {
-            display: flex;
-            gap: 12px;
-            max-width: 500px;
-            margin: 0 auto 35px;
-        }
+.get-btn:hover{
+    background:#00c3cc;
+    transform:scale(1.03);
+}
 
-        input {
-            flex: 1;
-            padding: 14px 18px;
-            border-radius: 12px;
-            border: 2px solid #e5e7eb;
-            font-size: 15px;
-            transition: 0.3s;
-            outline: none;
-            width: 100%;
-        }
+.verify-btn{
+    background:#ff9800;
+    color:black;
+}
 
-        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(60, 173, 212, 0.15); }
+.verify-btn:hover{
+    background:#e68900;
+    transform:scale(1.03);
+}
 
-        .verify-btn {
-            padding: 14px 24px;
-            border-radius: 12px;
-            border: none;
-            background: var(--primary);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            white-space: nowrap;
-        }
+.download-btn{
+    display:none;
+    background:#00ff88;
+    color:black;
+}
 
-        .verify-btn:hover { background: var(--secondary); transform: translateY(-2px); }
+.download-btn:hover{
+    background:#00cc6d;
+    transform:scale(1.03);
+}
 
-        /* Animated Verified Tick */
-        .success-animation { margin: 20px auto; text-align: center; }
-        
-        .checkmark {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 3;
-            stroke: var(--success);
-            stroke-miterlimit: 10;
-            margin: 10% auto;
-            box-shadow: inset 0px 0px 0px var(--success);
-            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-        }
+.success{
+    color:#00ff88;
+    margin-top:15px;
+    font-weight:bold;
+    font-size:22px;
+}
 
-        .checkmark__circle {
-            stroke-dasharray: 166;
-            stroke-dashoffset: 166;
-            stroke-width: 3;
-            stroke-miterlimit: 10;
-            stroke: var(--success);
-            fill: none;
-            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-        }
+.error{
+    color:#ff4b4b;
+    margin-top:15px;
+    font-weight:bold;
+    font-size:20px;
+}
 
-        .checkmark__check {
-            transform-origin: 50% 50%;
-            stroke-dasharray: 48;
-            stroke-dashoffset: 48;
-            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-        }
+.loading{
+    color:#00f2ff;
+    margin-top:15px;
+    font-weight:bold;
+    font-size:20px;
+}
 
-        /* Result Grid */
-        .result-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            animation: fadeIn 0.5s ease;
-        }
+.cert-details{
+    margin-top:20px;
+    text-align:left;
+    background:rgba(255,255,255,0.06);
+    padding:18px;
+    border-radius:15px;
+    display:none;
+}
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
+.cert-details p{
+    margin:10px 0;
+    color:white;
+    font-size:15px;
+}
 
-        .info-item {
-            padding: 10px;
-            border-bottom: 1px solid #f8fafc;
-        }
+.cert-details span{
+    color:#00f2ff;
+    font-weight:bold;
+}
 
-        .info-item label {
-            display: block;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
+iframe{
+    margin-top:20px;
+    width:100%;
+    height:700px;
+    border-radius:15px;
+    border:none;
+    display:none;
+    background:white;
+}
 
-        .info-item value {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        /* Mobile Adjustments */
-        @media (max-width: 600px) {
-            .body { padding: 30px 15px; }
-            .search-container { flex-direction: column; }
-            .info-grid { grid-template-columns: 1fr; gap: 10px; }
-            .verify-btn { width: 100%; }
-            .header { padding: 30px 15px; }
-        }
-
-        /* Footer Actions */
-        .footer-links {
-            margin-top: 40px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .visit-btn {
-            text-decoration: none;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 13px;
-            padding: 10px 20px;
-            border: 1.5px solid var(--primary);
-            border-radius: 50px;
-            transition: 0.3s;
-        }
-
-        .visit-btn:hover { background: var(--primary); color: #fff; }
-
-        /* Animations */
-        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
-        @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
-        @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 40px rgba(16, 185, 129, 0.05); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .loading { display: none; text-align: center; padding: 20px; }
-    </style>
+</style>
 </head>
+
 <body>
 
-<div class="app">
-    <div class="header">
-        <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/mylogo.png" class="academy-logo" alt="CBA Logo">
-        <h1>Cyber Buddy Academy</h1>
-        <p>SECURE VERIFICATION GATEWAY</p>
-    </div>
+<div class="container">
 
-    <div class="body">
-        <div class="search-container">
-            <input id="certInput" placeholder="Enter Certificate ID">
-            <button class="verify-btn" onclick="verify()">Verify</button>
-        </div>
+    <!-- LOGO -->
+    <img
+        src="https://raw.githubusercontent.com/Mubyyy404/photo-2/main/mylogo.png"
+        class="logo"
+        alt="Cyber Buddy Academy Logo"
+    >
 
-        <div id="loading" class="loading">Processing Security Check...</div>
-        <div id="status"></div>
-        <div id="result"></div>
+    <h1>Cyber Buddy Academy</h1>
 
-        <div class="footer-links">
-            <a href="https://mubyyy404.github.io/Cyber-Buddy/" class="visit-btn">Visit Official Website</a>
-            <div style="font-size: 11px; color: #94a3b8;">
-                © <span id="year"></span> Cyber Buddy Academy. All Rights Reserved.
-            </div>
-        </div>
-    </div>
+    <p>Download or Verify Your Certificate</p>
+
+    <!-- INPUT -->
+    <input
+        type="text"
+        id="billNumber"
+        placeholder="Enter Certificate ID (CBA-CERT-XXXXXXXX)"
+    >
+
+    <!-- GET CERTIFICATE -->
+    <button
+        class="btn get-btn"
+        onclick="getCertificate()"
+    >
+        Get Certificate
+    </button>
+
+    <!-- VERIFY -->
+    <button
+        class="btn verify-btn"
+        onclick="redirectVerify()"
+    >
+        Verify Certificate
+    </button>
+
+    <!-- MESSAGE -->
+    <div id="message"></div>
+
+    <!-- DETAILS -->
+    <div
+        class="cert-details"
+        id="certDetails"
+    ></div>
+
+    <!-- DOWNLOAD -->
+    <a
+        id="downloadBtn"
+        class="btn download-btn"
+        target="_blank"
+    >
+        Download Certificate
+    </a>
+
+    <!-- PDF PREVIEW -->
+    <iframe id="pdfViewer"></iframe>
+
 </div>
 
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
-const DATA_URL = "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates.json";
 
-function verify() {
-    const certId = document.getElementById("certInput").value.trim();
-    if(!certId) return;
+let currentCertificate = null;
 
-    document.getElementById("loading").style.display = "block";
-    document.getElementById("result").innerHTML = "";
-    document.getElementById("status").innerHTML = "";
+// GET CERTIFICATE
+async function getCertificate(){
 
-    fetch(DATA_URL)
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById("loading").style.display = "none";
-        const cert = data.certificates.find(c => c.certId === certId);
+    const certId =
+        document.getElementById("billNumber").value.trim();
 
-        if(!cert) {
-            document.getElementById("status").innerHTML = `
-                <div style="color:var(--error); text-align:center; padding: 20px; font-weight:600;">
-                    Invalid Credential ID. Please verify and try again.
-                </div>`;
+    const message =
+        document.getElementById("message");
+
+    const viewer =
+        document.getElementById("pdfViewer");
+
+    const downloadBtn =
+        document.getElementById("downloadBtn");
+
+    const certDetails =
+        document.getElementById("certDetails");
+
+    // RESET
+    viewer.style.display = "none";
+    viewer.src = "";
+    downloadBtn.style.display = "none";
+    certDetails.style.display = "none";
+    currentCertificate = null;
+
+    // EMPTY CHECK
+    if(certId === ""){
+        message.innerHTML = `
+            <div class='error'>
+                Please enter Certificate ID ❌
+            </div>
+        `;
+        return;
+    }
+
+    message.innerHTML = `
+        <div class='loading'>
+            Checking certificate...
+        </div>
+    `;
+
+    try{
+
+        // FETCH JSON
+        const response =
+            await fetch("certificates.json");
+
+        const data =
+            await response.json();
+
+        // FIND CERTIFICATE BY certId
+        const certificate =
+            data.certificates.find(
+                cert => cert.certId === certId
+            );
+
+        // NOT FOUND
+        if(!certificate){
+            message.innerHTML = `
+                <div class='error'>
+                    Invalid Certificate ID ❌
+                </div>
+            `;
             return;
         }
 
-        // Animated Success Content
-        document.getElementById("result").innerHTML = `
-            <div class="success-animation">
-                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                </svg>
-                <div style="color:var(--success); font-weight:700; margin-bottom:25px;">VERIFIED SUCCESSFULLY</div>
+        currentCertificate = certificate;
+
+        // SUCCESS MESSAGE
+        message.innerHTML = `
+            <div class='success'>
+                Certificate Found ✅
             </div>
+        `;
 
-            <div class="result-card">
-                <div class="info-grid">
-                    <div class="info-item"><label>Student Name</label><value>${cert.name}</value></div>
-                    <div class="info-item"><label>Course</label><value>${cert.course}</value></div>
-                    <div class="info-item"><label>Type</label><value>${cert.type}</value></div>
-                    <div class="info-item"><label>Mode</label><value>${cert.mode}</value></div>
-                    <div class="info-item"><label>Duration</label><value>${cert.duration}</value></div>
-                    <div class="info-item"><label>Issued On</label><value>${cert.issuedOn}</value></div>
-                    <div class="info-item" style="grid-column: span 2; border:none; background:#f8fafc; border-radius:10px; margin-top:10px;">
-                        <label>Certificate ID</label>
-                        <value style="color:var(--primary); font-family:monospace;">${cert.certId}</value>
-                    </div>
-                </div>
-            </div>`;
-    });
+        // DETAILS
+        certDetails.innerHTML = `
+            <p><span>Name:</span> ${certificate.name || "N/A"}</p>
+            <p><span>Course:</span> ${certificate.course || "N/A"}</p>
+            <p><span>Type:</span> ${certificate.type || "N/A"}</p>
+            <p><span>Mode:</span> ${certificate.mode || "N/A"}</p>
+            <p><span>Duration:</span> ${certificate.duration || "N/A"}</p>
+            <p><span>Issued On:</span> ${certificate.issuedOn || "N/A"}</p>
+            <p><span>Certificate ID:</span> ${certificate.certId}</p>
+        `;
+
+        certDetails.style.display = "block";
+
+        // PDF DOWNLOAD + PREVIEW
+        if(certificate.download){
+
+            const pdfURL = certificate.download;
+
+            // DOWNLOAD BUTTON — direct link to the raw PDF
+            downloadBtn.href = pdfURL;
+            downloadBtn.style.display = "block";
+
+            // PDF PREVIEW — use Google Docs viewer so it renders inline
+            // instead of triggering a browser download
+            viewer.src =
+                "https://docs.google.com/gview?url=" +
+                encodeURIComponent(pdfURL) +
+                "&embedded=true";
+
+            viewer.style.display = "block";
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        message.innerHTML = `
+            <div class='error'>
+                Error loading certificates.json ❌
+            </div>
+        `;
+    }
 }
 
-// Auto-run if ID is in URL
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("certid");
+// VERIFY REDIRECT
+// Always appends ?certid= so the verify page can auto-fill the field.
+// If the JSON has a custom verifyUrl, we use that as the base;
+// otherwise we fall back to the default verify page.
+function redirectVerify(){
 
-if(certId){
-    document.getElementById("certInput").value = certId;
-    verify();
+    const certId =
+        document.getElementById("billNumber").value.trim();
+
+    // EMPTY CHECK
+    if(certId === ""){
+        alert("Enter Certificate ID first");
+        return;
+    }
+
+    let baseUrl;
+
+    if(
+        currentCertificate &&
+        currentCertificate.verifyUrl
+    ){
+        // Use the custom URL from JSON as the base
+        baseUrl = currentCertificate.verifyUrl;
+    }else{
+        // Default verify page
+        baseUrl =
+            "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html";
+    }
+
+    // Always append ?certid= so the verify page auto-fills the input
+    window.location.href =
+        baseUrl + "?certid=" + encodeURIComponent(certId);
 }
+
 </script>
 
 </body>
