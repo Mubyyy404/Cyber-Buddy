@@ -17,6 +17,7 @@ function toast(msg, type='ok'){
 }
 
 let userData=null, allCourses=[], currentUser=null;
+let issuedCertCourseIds=[]; // tracks course titles already issued via GitHub JSON
 
 // ─────────────────────────────────────────────────────────
 // STREAK: update daily login streak
@@ -283,14 +284,35 @@ function renderProgress(courses, purchased, cp, completedCount, avgPct){
 
 // ─────────────────────────────────────────────────────────
 // EARNED CERTIFICATES (Firestore-authoritative)
+// Excludes courses that already have an issued certificate
+// from the GitHub JSON (matched by course title, case-insensitive)
 // ─────────────────────────────────────────────────────────
 function renderEarnedCerts(courses, purchased, cp){
   const el=document.getElementById('earnedCertList'); if(!el)return;
-  const completed=purchased.filter(cid=>cp[cid]?.completed===true);
+  const completed=purchased.filter(cid=>{
+    if(!(cp[cid]?.completed===true)) return false;
+    // Hide from earned list if an issued certificate already exists for this course
+    const course=courses.find(c=>c.id===cid);
+    const title=(course?.title||'').toLowerCase().trim();
+    return !issuedCertCourseIds.includes(title);
+  });
   const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  s('statCerts',completed.length);
-  s('pStatCerts',completed.length);
-  if(!completed.length){el.innerHTML='<p style="font-size:.78rem;color:var(--dim);">Complete a course to earn your certificate. Progress is saved securely.</p>';return;}
+  // For stats, count ALL completed (including issued ones)
+  const allCompleted=purchased.filter(cid=>cp[cid]?.completed===true);
+  s('statCerts',allCompleted.length);
+  s('pStatCerts',allCompleted.length);
+  if(!completed.length){
+    // Check if all completed ones are already issued
+    const allIssued=allCompleted.length>0&&allCompleted.every(cid=>{
+      const course=courses.find(c=>c.id===cid);
+      const title=(course?.title||'').toLowerCase().trim();
+      return issuedCertCourseIds.includes(title);
+    });
+    el.innerHTML=allIssued
+      ?'<p style="font-size:.78rem;color:var(--dim);">All your certificates have been officially issued. Check the <strong style="color:var(--c);">Issued Certificates</strong> section above to download them.</p>'
+      :'<p style="font-size:.78rem;color:var(--dim);">Complete a course to earn your certificate. Progress is saved securely.</p>';
+    return;
+  }
   const cm={};courses.forEach(c=>cm[c.id]=c);
   el.innerHTML=completed.map(cid=>{
     const c=cm[cid]||{}; const title=c.title||cid;
@@ -322,6 +344,10 @@ async function loadCertificates(email){
     const data=await res.json();
     const arr=Array.isArray(data)?data:(data.certificates||[]);
     const mine=arr.filter(c=>c.email?.toLowerCase()===email.toLowerCase());
+
+    // Store issued course titles (lowercase) and re-render earned certs to hide duplicates
+    issuedCertCourseIds=mine.map(c=>(c.course||'').toLowerCase().trim());
+    renderEarnedCerts(allCourses, userData?.purchasedCourses||[], userData?.courseProgress||{});
 
     if(!mine.length){
       el.innerHTML=`
