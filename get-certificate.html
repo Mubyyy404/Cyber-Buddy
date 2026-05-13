@@ -71,6 +71,8 @@ input{
     font-size:15px;
     cursor:pointer;
     transition:0.3s;
+    text-decoration:none;
+    display:block;
 }
 
 .get-btn{
@@ -95,15 +97,8 @@ input{
 
 .download-btn{
     display:none;
-    width:100%;
-    padding:14px;
-    margin-top:15px;
-    border-radius:10px;
     background:#00ff88;
     color:black;
-    font-weight:bold;
-    text-decoration:none;
-    transition:0.3s;
 }
 
 .download-btn:hover{
@@ -115,48 +110,51 @@ input{
     color:#00ff88;
     margin-top:15px;
     font-weight:bold;
+    font-size:22px;
 }
 
 .error{
     color:#ff4b4b;
     margin-top:15px;
     font-weight:bold;
+    font-size:20px;
 }
 
 .loading{
     color:#00f2ff;
     margin-top:15px;
     font-weight:bold;
-}
-
-iframe{
-    margin-top:20px;
-    width:100%;
-    height:420px;
-    border-radius:12px;
-    border:none;
-    display:none;
-    background:white;
+    font-size:20px;
 }
 
 .cert-details{
     margin-top:20px;
     text-align:left;
     background:rgba(255,255,255,0.06);
-    padding:15px;
-    border-radius:12px;
+    padding:18px;
+    border-radius:15px;
     display:none;
 }
 
 .cert-details p{
-    margin:8px 0;
+    margin:10px 0;
     color:white;
-    font-size:14px;
+    font-size:15px;
 }
 
 .cert-details span{
     color:#00f2ff;
     font-weight:bold;
+}
+
+iframe{
+    margin-top:20px;
+    width:100%;
+    height:700px;
+    border-radius:15px;
+    border:none;
+    display:none;
+    background:white;
 }
 
 </style>
@@ -167,9 +165,9 @@ iframe{
 <div class="container">
 
     <!-- LOGO -->
-    <img 
-        src="https://raw.githubusercontent.com/Mubyyy404/photo-2/main/mylogo.png" 
-        class="logo" 
+    <img
+        src="https://raw.githubusercontent.com/Mubyyy404/photo-2/main/mylogo.png"
+        class="logo"
         alt="Cyber Buddy Academy Logo"
     >
 
@@ -177,60 +175,84 @@ iframe{
 
     <p>Download or Verify Your Certificate</p>
 
-    <input 
-        type="text" 
-        id="billNumber" 
+    <!-- INPUT -->
+    <input
+        type="text"
+        id="billNumber"
         placeholder="Enter Certificate ID (CBA-CERT-XXXXXXXX)"
     >
 
     <!-- GET CERTIFICATE -->
-    <button class="btn get-btn" onclick="getCertificate()">
+    <button
+        class="btn get-btn"
+        onclick="getCertificate()"
+    >
         Get Certificate
     </button>
 
-    <!-- VERIFY PAGE -->
-    <button class="btn verify-btn" onclick="redirectVerify()">
+    <!-- VERIFY -->
+    <button
+        class="btn verify-btn"
+        onclick="redirectVerify()"
+    >
         Verify Certificate
     </button>
 
     <!-- MESSAGE -->
     <div id="message"></div>
 
-    <!-- CERTIFICATE DETAILS -->
-    <div class="cert-details" id="certDetails"></div>
+    <!-- DETAILS -->
+    <div
+        class="cert-details"
+        id="certDetails"
+    ></div>
 
-    <!-- DOWNLOAD BUTTON -->
-    <a 
-        id="downloadBtn" 
-        class="download-btn" 
+    <!-- DOWNLOAD -->
+    <a
+        id="downloadBtn"
+        class="btn download-btn"
         target="_blank"
     >
         Download Certificate
     </a>
 
-    <!-- PDF VIEWER -->
+    <!-- PDF PREVIEW -->
     <iframe id="pdfViewer"></iframe>
 
 </div>
 
 <script>
 
+let currentCertificate = null;
+
+// GET CERTIFICATE
 async function getCertificate(){
 
-    const certId = document.getElementById("billNumber").value.trim();
+    const certId =
+        document.getElementById("billNumber").value.trim();
 
-    const message = document.getElementById("message");
+    const message =
+        document.getElementById("message");
 
-    const viewer = document.getElementById("pdfViewer");
+    const viewer =
+        document.getElementById("pdfViewer");
 
-    const downloadBtn = document.getElementById("downloadBtn");
+    const downloadBtn =
+        document.getElementById("downloadBtn");
 
-    const certDetails = document.getElementById("certDetails");
+    const certDetails =
+        document.getElementById("certDetails");
 
     // RESET
     viewer.style.display = "none";
+
+    viewer.src = "";
+
     downloadBtn.style.display = "none";
+
     certDetails.style.display = "none";
+
+    currentCertificate = null;
 
     message.innerHTML = `
         <div class='loading'>
@@ -238,6 +260,7 @@ async function getCertificate(){
         </div>
     `;
 
+    // EMPTY CHECK
     if(certId === ""){
 
         message.innerHTML = `
@@ -251,78 +274,97 @@ async function getCertificate(){
 
     try{
 
-        // FETCH certificates.json
-        const response = await fetch("certificates.json");
+        // FETCH JSON
+        const response =
+            await fetch("certificates.json");
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         // FIND CERTIFICATE
-        const certificate = data.certificates.find(
-            cert => cert.certId === certId
-        );
+        const certificate =
+            data.certificates.find(
+                cert => cert.certId === certId
+            );
 
-        // FOUND
-        if(certificate){
-
-            message.innerHTML = `
-                <div class='success'>
-                    Certificate Found ✅
-                </div>
-            `;
-
-            // SHOW DETAILS
-            certDetails.innerHTML = `
-                <p><span>Name:</span> ${certificate.name || "N/A"}</p>
-
-                <p><span>Course:</span> ${certificate.course || "N/A"}</p>
-
-                <p><span>Type:</span> ${certificate.type || "N/A"}</p>
-
-                <p><span>Mode:</span> ${certificate.mode || "N/A"}</p>
-
-                <p><span>Duration:</span> ${certificate.duration || "N/A"}</p>
-
-                <p><span>Issued On:</span> ${certificate.issuedOn || "N/A"}</p>
-
-                <p><span>Certificate ID:</span> ${certificate.certId}</p>
-            `;
-
-            certDetails.style.display = "block";
-
-            // CHECK DOWNLOAD URL
-            if(certificate.download){
-
-                const pdfURL = certificate.download;
-
-                // PDF PREVIEW
-                viewer.src =
-                    "https://docs.google.com/gview?url=" +
-                    encodeURIComponent(pdfURL) +
-                    "&embedded=true";
-
-                viewer.style.display = "block";
-
-                // DOWNLOAD BUTTON
-                downloadBtn.href = pdfURL;
-
-                downloadBtn.style.display = "block";
-
-            }else{
-
-                message.innerHTML += `
-                    <div class='error'>
-                        PDF not uploaded yet ❌
-                    </div>
-                `;
-            }
-
-        }else{
+        // NOT FOUND
+        if(!certificate){
 
             message.innerHTML = `
                 <div class='error'>
                     Invalid Certificate ID ❌
                 </div>
             `;
+
+            return;
+        }
+
+        currentCertificate = certificate;
+
+        // SUCCESS MESSAGE
+        message.innerHTML = `
+            <div class='success'>
+                Certificate Found ✅
+            </div>
+        `;
+
+        // DETAILS
+        certDetails.innerHTML = `
+
+            <p>
+                <span>Name:</span>
+                ${certificate.name || "N/A"}
+            </p>
+
+            <p>
+                <span>Course:</span>
+                ${certificate.course || "N/A"}
+            </p>
+
+            <p>
+                <span>Type:</span>
+                ${certificate.type || "N/A"}
+            </p>
+
+            <p>
+                <span>Mode:</span>
+                ${certificate.mode || "N/A"}
+            </p>
+
+            <p>
+                <span>Duration:</span>
+                ${certificate.duration || "N/A"}
+            </p>
+
+            <p>
+                <span>Issued On:</span>
+                ${certificate.issuedOn || "N/A"}
+            </p>
+
+            <p>
+                <span>Certificate ID:</span>
+                ${certificate.certId}
+            </p>
+
+        `;
+
+        certDetails.style.display = "block";
+
+        // PDF DOWNLOAD + PREVIEW
+        if(certificate.download){
+
+            const pdfURL = certificate.download;
+
+            // DOWNLOAD BUTTON
+            downloadBtn.href = pdfURL;
+
+            downloadBtn.style.display = "block";
+
+            // DIRECT PDF PREVIEW
+            viewer.src = pdfURL;
+
+            viewer.style.display = "block";
+
         }
 
     }catch(error){
@@ -337,10 +379,36 @@ async function getCertificate(){
     }
 }
 
+// VERIFY REDIRECT
 function redirectVerify(){
 
-    window.location.href =
-        "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html";
+    const certId =
+        document.getElementById("billNumber").value.trim();
+
+    // EMPTY CHECK
+    if(certId === ""){
+
+        alert("Enter Certificate ID first");
+
+        return;
+    }
+
+    // USE verifyUrl FROM JSON IF AVAILABLE
+    if(
+        currentCertificate &&
+        currentCertificate.verifyUrl
+    ){
+
+        window.location.href =
+            currentCertificate.verifyUrl;
+
+    }else{
+
+        // FALLBACK
+        window.location.href =
+            "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=" +
+            encodeURIComponent(certId);
+    }
 }
 
 </script>
