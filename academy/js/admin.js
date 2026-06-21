@@ -153,11 +153,13 @@ return;
 }
 courses.forEach(c => {
 const lessonCount = c.lessons?.length || 0;
-const vType = c.video?.includes('youtube') ? 'yt' : c.video?.includes('drive') ? 'drive' : '';
+const vType = c.video?.includes('youtube') ? 'yt' : c.video?.includes('drive') ? 'drive' : (c.video ? 'embed' : '');
 const vBadge = vType === 'yt'
 ? '<span class="bdg byt"><i class="fab fa-youtube"></i> YouTube</span>'
 : vType === 'drive'
 ? '<span class="bdg bdv"><i class="fab fa-google-drive"></i> Drive</span>'
+: vType === 'embed'
+? '<span class="bdg bpur"><i class="fas fa-code"></i> Embed</span>'
 : '';
 const div = document.createElement('div');
 div.style.cssText = 'background:var(--bg3);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;transition:border-color .2s;';
