@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin
+Disallow: /backup
+Disallow: /.git
+Disallow: /secret
+
+# Note to self: don't forget the /api/v1/config endpoint
+# Also check /notes.txt when you get a chance
