@@ -200,7 +200,7 @@
 
   /* UPI app selector */
   .app-grid{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+    display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
     margin-top:10px;
   }
   .app-option{
@@ -261,6 +261,31 @@
     line-height:1.6; padding:0 12px;
   }
   .footer-note .lock{color:var(--green); font-weight:700;}
+
+  /* Responsive adjustments */
+  @media (min-width: 700px){
+    body{padding: 60px 16px 80px; align-items:flex-start;}
+    .wrap{max-width: 480px;}
+    .card{box-shadow: 0 16px 40px -14px rgba(11,46,107,0.22);}
+  }
+  @media (max-width: 380px){
+    body{padding: 22px 10px 40px;}
+    .brand{margin-bottom:14px;}
+    #stepCourse{padding:18px 16px 16px;}
+    .pay-head{padding:16px 16px 14px;}
+    .pay-body{padding:16px 16px 6px;}
+    .result{padding:16px 16px 20px;}
+    .card-title{font-size:16px;}
+    #payTitle{font-size:16px;}
+    .amount-shell .cur{font-size:18px;}
+    .amount-shell input{font-size:19px;}
+    .quick-amounts button{min-width:58px; font-size:11.5px;}
+    .qr-frame{width:170px; height:170px;}
+  }
+  @media (max-width: 340px){
+    .app-grid{gap:8px;}
+    .app-icon{width:32px; height:32px; font-size:11px;}
+  }
 </style>
 </head>
 <body>
@@ -291,7 +316,7 @@
     <!-- STEP 2: Payment -->
     <div id="stepPay">
       <div class="pay-head">
-        <div class="selected-course-tag" id="courseTag">Course</div>
+        <div class="selected-course-tag">Selected course</div>
         <h1 id="payTitle">—</h1>
         <div class="payee-row">
           <span class="dot"></span>
@@ -317,40 +342,13 @@
         </div>
         <div class="error-msg" id="errorMsg">Please enter a valid amount to continue.</div>
 
-        <div class="section-gap">
-          <label class="field-label" for="noteInput">Note (optional)</label>
-          <input class="note-input" id="noteInput" type="text" maxlength="50" placeholder="e.g. Batch 4, July intake">
-        </div>
-
-        <div class="section-gap">
-          <label class="field-label">Choose your UPI app</label>
-          <div class="app-grid" id="appGrid">
-            <div class="app-option selected" data-app="gpay">
-              <div class="app-icon gpay">G</div>
-              <span class="app-label">GPay</span>
-            </div>
-            <div class="app-option" data-app="phonepe">
-              <div class="app-icon phonepe">Pe</div>
-              <span class="app-label">PhonePe</span>
-            </div>
-            <div class="app-option" data-app="paytm">
-              <div class="app-icon paytm">P</div>
-              <span class="app-label">Paytm</span>
-            </div>
-            <div class="app-option" data-app="bhim">
-              <div class="app-icon bhim">₹</div>
-              <span class="app-label">Any UPI</span>
-            </div>
-          </div>
-        </div>
-
         <button class="primary-btn" id="generateBtn">Generate QR &amp; Payment Link</button>
         <button class="ghost-btn" id="backBtn">← Change course</button>
       </div>
 
       <div class="result" id="resultBlock">
         <div class="qr-frame"><div id="qrcode"></div></div>
-        <div class="scan-hint">Scan with <b id="chosenAppLabel">any UPI app</b> to pay instantly</div>
+        <div class="scan-hint">Scan with <b>any UPI app</b> to pay instantly</div>
 
         <a class="pay-link-btn" id="mainPayLink" href="#">Pay ₹<span id="payAmtLabel">0</span> Now</a>
       </div>
@@ -419,7 +417,6 @@ continueBtn.addEventListener('click', () => {
   if(!selectedCourse) return;
   document.getElementById('stepCourse').style.display = 'none';
   document.getElementById('stepPay').style.display = 'block';
-  document.getElementById('courseTag').textContent = selectedCourse;
   document.getElementById('payTitle').textContent = selectedCourse;
   document.getElementById('dot1').classList.replace('active','done');
   document.getElementById('dot1').textContent = '✓';
@@ -437,15 +434,11 @@ document.getElementById('backBtn').addEventListener('click', () => {
   document.getElementById('resultBlock').classList.remove('show');
 });
 
-// ---------- STEP 2: amount, app choice, QR ----------
+// ---------- STEP 2: amount, QR ----------
 const amountInput = document.getElementById('amountInput');
 const quickAmounts = document.getElementById('quickAmounts');
 const errorMsg = document.getElementById('errorMsg');
 const resultBlock = document.getElementById('resultBlock');
-const appGrid = document.getElementById('appGrid');
-
-let selectedApp = 'gpay';
-const appNames = { gpay: 'Google Pay', phonepe: 'PhonePe', paytm: 'Paytm', bhim: 'your UPI app' };
 
 quickAmounts.addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-amt]');
@@ -457,14 +450,6 @@ quickAmounts.addEventListener('click', (e) => {
 });
 amountInput.addEventListener('input', () => {
   [...quickAmounts.children].forEach(b => b.classList.remove('active'));
-});
-
-appGrid.addEventListener('click', (e) => {
-  const opt = e.target.closest('.app-option');
-  if (!opt) return;
-  [...appGrid.children].forEach(o => o.classList.remove('selected'));
-  opt.classList.add('selected');
-  selectedApp = opt.dataset.app;
 });
 
 function buildUpiUri(amount, note) {
@@ -487,7 +472,7 @@ document.getElementById('generateBtn').addEventListener('click', () => {
   }
   errorMsg.style.display = 'none';
 
-  const note = document.getElementById('noteInput').value.trim() || selectedCourse;
+  const note = selectedCourse;
   const uri = buildUpiUri(amount.toFixed(2), note);
 
   const qrEl = document.getElementById('qrcode');
@@ -503,7 +488,6 @@ document.getElementById('generateBtn').addEventListener('click', () => {
 
   document.getElementById('mainPayLink').href = uri;
   document.getElementById('payAmtLabel').textContent = amount.toFixed(2);
-  document.getElementById('chosenAppLabel').textContent = appNames[selectedApp];
 
   resultBlock.classList.add('show');
   resultBlock.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
