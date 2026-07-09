@@ -99,5 +99,14 @@
     "date": "9/5/2026",
     "paymentMode": "Cash",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1778348675772"
+  },
+  {
+    "billId": "CBA-1783621884470",
+    "name": "Sivaganesh R",
+    "course": "Introduction to Cybersecurity & Internship",
+    "amount": "3000",
+    "date": "10/7/2026",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1783621884470"
   }
 ]
