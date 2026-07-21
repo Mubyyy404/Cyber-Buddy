@@ -111,30 +111,36 @@
       "name": "Suha Arifa",
       "course": "Cybersecurity Training & Internship Program",
       "type": "Internship",
-      "mode": "Online",
+      "mode": "Onsite",
       "duration": "1 month",
       "email": "Suhazayd123@gmail.com",
-      "issuedOn": "21/7/2026"
+      "issuedOn": "22/7/2026",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-1784645185820.pdf",
+      "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1784645185820"
     },
     {
       "certId": "CBA-CERT-1784645957889",
       "name": "Sivaganesh R",
       "course": "Cybersecurity Training & Internship Program",
       "type": "Internship",
-      "mode": "Online",
+      "mode": "Onsite",
       "duration": "1 month",
       "email": "sivaganesh3188@gmail.com",
-      "issuedOn": "21/7/2026"
+      "issuedOn": "22/7/2026",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-1784645957889.pdf",
+      "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1784645957889"
     },
     {
       "certId": "CBA-CERT-1784646449350",
       "name": "Nithiyasree S",
       "course": "Cybersecurity Training & Internship Program",
       "type": "Internship",
-      "mode": "Online",
+      "mode": "Onsite",
       "duration": "1 month",
       "email": "nithukok@gmail.com",
-      "issuedOn": "21/7/2026"
+      "issuedOn": "22/7/2026",
+      "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-1784646449350.pdf",
+      "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1784646449350"
     }
   ]
 }
