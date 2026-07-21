@@ -115,6 +115,16 @@
       "duration": "1 month",
       "email": "Suhazayd123@gmail.com",
       "issuedOn": "21/7/2026"
+    },
+    {
+      "certId": "CBA-CERT-1784645957889",
+      "name": "Sivaganesh R",
+      "course": "Cybersecurity Training & Internship Program",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "email": "sivaganesh3188@gmail.com",
+      "issuedOn": "21/7/2026"
     }
   ]
 }
