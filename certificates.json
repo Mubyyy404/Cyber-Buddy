@@ -105,6 +105,16 @@
       "issuedOn": "13/5/2026",
       "download": "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/main/certificates_list/CBA-CERT-1769880644165.pdf",
       "verifyUrl": "https://mubyyy404.github.io/Cyber-Buddy/verify-certificate.html?certid=CBA-CERT-1778690737459"
+    },
+    {
+      "certId": "CBA-CERT-1784645185820",
+      "name": "Suha Arifa",
+      "course": "Cybersecurity Training & Internship Program",
+      "type": "Internship",
+      "mode": "Online",
+      "duration": "1 month",
+      "email": "Suhazayd123@gmail.com",
+      "issuedOn": "21/7/2026"
     }
   ]
 }
