@@ -108,5 +108,14 @@
     "date": "10/7/2026",
     "paymentMode": "UPI",
     "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1783621884470"
+  },
+  {
+    "billId": "CBA-1784640507891",
+    "name": "Suha Arifa",
+    "course": "Introduction to Cybersecurity & Internship",
+    "amount": "3000",
+    "date": "21/7/2026",
+    "paymentMode": "UPI",
+    "verifyUrl": "https://Mubyyy404.github.io/Cyber-Buddy/verifybill.html?billid=CBA-1784640507891"
   }
 ]
