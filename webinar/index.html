@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07080f">
 <title>Introduction to Cybersecurity — Free Webinar | Cyber Buddy Academy</title>
-<meta name="description" content="Register free for Cyber Buddy Academy's Introduction to Cybersecurity webinar — 12 Sept 2026, 6 PM, live on Microsoft Teams.">
+<meta name="description" content="Register free for Cyber Buddy Academy's Introduction to Cybersecurity webinar — 12 Sept 2026, 8 PM, live on Microsoft Teams.">
 <link rel="icon" href="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,9 +157,9 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
 .field .inp-wrap{position:relative}
 .inp-wrap .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--muted-2);
   pointer-events:none;transition:stroke .15s var(--ease);z-index:1}
-.inp-wrap input:focus ~ .ico,.inp-wrap input:not(:placeholder-shown) ~ .ico{stroke:var(--violet-2)}
+.inp-wrap:focus-within .ico,.field.valid .ico{stroke:var(--violet-2)}
 .inp-wrap input{width:100%;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;color:var(--ink);
-  padding:19px 40px 9px 42px;font-size:.96rem;font-family:var(--ff-body);outline:none;height:56px;
+  padding:19px 40px 9px 42px;font-size:1rem;font-family:var(--ff-body);outline:none;height:56px;
   transition:border-color .15s var(--ease),box-shadow .15s var(--ease),background .15s var(--ease)}
 .inp-wrap label{position:absolute;left:42px;top:50%;transform:translateY(-50%);font-size:.94rem;color:var(--muted-2);
   pointer-events:none;transition:all .15s var(--ease);background:transparent}
@@ -170,7 +171,12 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
   transition:transform .2s var(--spring),opacity .2s var(--ease);pointer-events:none;z-index:1}
 .field .check svg{width:16px;height:16px;stroke:var(--amber)}
 .field.valid .check{opacity:1;transform:translateY(-50%) scale(1)}
-.field .err{color:var(--err);font-size:.77rem;margin-top:6px;min-height:14px;padding-left:2px}
+.field .err{color:var(--err);font-size:.77rem;margin-top:6px;min-height:14px;padding-left:2px;
+  opacity:0;transform:translateY(-4px);transition:opacity .22s var(--ease),transform .22s var(--ease)}
+.field .err.show{opacity:1;transform:translateY(0)}
+@keyframes fieldShake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+.field.shake .inp-wrap{animation:fieldShake .4s var(--ease)}
+.field.shake .inp-wrap input{border-color:var(--err)!important;box-shadow:0 0 0 4px rgba(255,107,124,.14)!important}
 
 .years{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
 @media (max-width:380px){.years{grid-template-columns:repeat(2,1fr)}}
@@ -317,7 +323,7 @@ footer a:hover{color:var(--ink)}
       <p class="lede">A live, beginner-friendly session from Cyber Buddy Academy on cybersecurity and ethical hacking fundamentals — real tools, real demonstrations, and time for your questions.</p>
 
       <div class="meta-row">
-        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="mono">12 Sep 2026 · 6:00 PM IST</span></span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="mono">12 Sep 2026 · 8:00 PM IST</span></span>
         <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/></svg>Microsoft Teams</span>
         <span class="chip accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Free</span>
         <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 1 3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-6.4L2.5 8l6.5-1Z"/></svg>Beginner friendly</span>
@@ -491,7 +497,7 @@ import { saveRegistration } from './firebase.js';
 
 /* ── live countdown to the webinar ───────────────────────────────── */
 (function countdown(){
-  const target = new Date('2026-09-12T18:00:00+05:30').getTime();
+  const target = new Date('2026-09-12T20:00:00+05:30').getTime();
   const out = document.getElementById('countdown');
   function tick(){
     const diff = target - Date.now();
@@ -513,34 +519,60 @@ const errs = id => document.getElementById('err-' + id);
 const CONTACT_RE = /^[6-9]\d{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function setErr(id, text){ errs(id).textContent = text || ''; }
+function setErr(id, text){
+  const el = errs(id);
+  el.textContent = text || '';
+  el.classList.toggle('show', !!text);
+}
 
-function liveValidate(fieldWrapId, ok){
+// Clears the error the moment the field becomes valid again, and toggles
+// the checkmark — previously the red error text stayed on screen even
+// after the person had already fixed the value.
+function liveValidate(fieldWrapId, ok, errId){
   const wrap = document.getElementById(fieldWrapId);
-  if (!wrap) return;
-  wrap.classList.toggle('valid', ok);
+  if (wrap){
+    wrap.classList.toggle('valid', ok);
+    if (ok) wrap.classList.remove('shake');
+  }
+  if (ok && errId) setErr(errId, '');
 }
 
 ['name','college'].forEach(id => {
   document.getElementById(id).addEventListener('input', e => {
-    liveValidate('f-'+id, e.target.value.trim().length >= 2);
+    liveValidate('f-'+id, e.target.value.trim().length >= 2, id);
   });
 });
 document.getElementById('contact').addEventListener('input', e => {
-  liveValidate('f-contact', CONTACT_RE.test(e.target.value.trim()));
+  // keep it digits-only and capped at 10 chars as the person types
+  e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
+  liveValidate('f-contact', CONTACT_RE.test(e.target.value.trim()), 'contact');
 });
 document.getElementById('email').addEventListener('input', e => {
-  liveValidate('f-email', EMAIL_RE.test(e.target.value.trim()));
+  liveValidate('f-email', EMAIL_RE.test(e.target.value.trim()), 'email');
+});
+document.querySelectorAll('input[name="year"]').forEach(r => {
+  r.addEventListener('change', () => setErr('year',''));
 });
 
+function markInvalid(wrapId, focusEl){
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return focusEl;
+  wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake');
+  return focusEl || wrap.querySelector('input');
+}
+
 function validate(v){
-  let ok = true;
+  let ok = true, firstInvalid = null;
   setErr('name',''); setErr('college',''); setErr('degree',''); setErr('year',''); setErr('contact',''); setErr('email','');
-  if(!v.name || v.name.trim().length < 2){ setErr('name','Enter your full name'); ok=false; }
-  if(!v.college || v.college.trim().length < 2){ setErr('college','Enter your college name'); ok=false; }
+  if(!v.name || v.name.trim().length < 2){ setErr('name','Enter your full name'); ok=false; firstInvalid = firstInvalid || markInvalid('f-name'); }
+  if(!v.college || v.college.trim().length < 2){ setErr('college','Enter your college name'); ok=false; firstInvalid = firstInvalid || markInvalid('f-college'); }
   if(!v.year){ setErr('year','Select your year of studying'); ok=false; }
-  if(!CONTACT_RE.test(v.contact)){ setErr('contact','Enter a valid 10-digit number'); ok=false; }
-  if(!EMAIL_RE.test(v.email)){ setErr('email','Enter a valid email address'); ok=false; }
+  if(!CONTACT_RE.test(v.contact)){ setErr('contact','Enter a valid 10-digit number'); ok=false; firstInvalid = firstInvalid || markInvalid('f-contact'); }
+  if(!EMAIL_RE.test(v.email)){ setErr('email','Enter a valid email address'); ok=false; firstInvalid = firstInvalid || markInvalid('f-email'); }
+  if(!ok && firstInvalid){
+    firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(() => firstInvalid.focus(), 250);
+  }
   return ok;
 }
 
@@ -588,6 +620,8 @@ function closeOverlay(){
   setTimeout(() => { document.getElementById('burst').innerHTML = ''; }, 500);
   form.reset();
   document.querySelectorAll('.field.valid').forEach(f => f.classList.remove('valid'));
+  document.querySelectorAll('.field.shake').forEach(f => f.classList.remove('shake'));
+  document.querySelectorAll('.field .err.show').forEach(e => { e.classList.remove('show'); e.textContent = ''; });
   btn.classList.remove('success');
 }
 function restartTimer(){
