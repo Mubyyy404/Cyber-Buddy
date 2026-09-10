@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /registrations/{id} {
+      // Public visitors can only ADD a registration — never read, edit or delete.
+      allow create: if request.resource.data.keys().hasAll(['name','college','year','contact','email'])
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string
+                    && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$');
+      // Only a signed-in admin (used by admin.html) can read the list.
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
+  }
+}

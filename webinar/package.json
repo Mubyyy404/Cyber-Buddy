@@ -1,0 +1,11 @@
+{
+  "name": "cyberbuddy-functions",
+  "engines": { "node": "20" },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.3.0",
+    "firebase-functions": "^5.0.1",
+    "nodemailer": "^6.9.14"
+  },
+  "private": true
+}

@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Buddy Academy — Admin</title>
+<link rel="icon" href="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#05070a; --panel:#0c1420; --panel-2:#0f1a2c; --panel-3:#0a1120;
+  --line:#1c2c42; --line-soft:#152234;
+  --cyan:#3ee8ff; --cyan-dim:rgba(62,232,255,.14);
+  --green:#2dffb0; --green-dim:rgba(45,255,176,.14);
+  --amber:#ffcf5c; --err:#ff5d7a;
+  --ink:#eef6ff; --muted:#8ba0bd; --muted-2:#5d7391;
+  --ff-head:'Space Grotesk',sans-serif; --ff-body:'Inter',sans-serif; --ff-mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ff-body);
+  background-image:radial-gradient(circle at 14% -6%,#0d2338 0%,transparent 42%),radial-gradient(circle at 100% 6%,#0a1c2e 0%,transparent 40%);
+  min-height:100vh}
+.wrap{max-width:1180px;margin:auto;padding:26px 18px 60px}
+@media (max-width:480px){.wrap{padding:18px 14px 50px}}
+
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px}
+.brand img{width:38px;height:38px;border-radius:50%;box-shadow:0 0 0 2px var(--line),0 0 20px -4px var(--cyan)}
+.brand .n{font-family:var(--ff-head);font-weight:700;font-size:1rem}
+.brand .s{font-size:.72rem;color:var(--muted)}
+#signOutBtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:8px 14px;
+  font-size:.82rem;cursor:pointer;display:none;align-items:center;gap:6px}
+#signOutBtn:hover{border-color:var(--err);color:var(--err)}
+
+.panel{background:linear-gradient(175deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:16px}
+
+/* login */
+#loginCard{max-width:400px;margin:60px auto;padding:30px}
+#loginCard h1{font-family:var(--ff-head);font-size:1.15rem;margin:0 0 6px}
+#loginCard p{color:var(--muted);font-size:.85rem;margin:0 0 20px;line-height:1.5}
+input{width:100%;background:#081120;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 13px;
+  margin-bottom:12px;font-size:.92rem;font-family:var(--ff-body);outline:none}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+button.primary{background:linear-gradient(135deg,var(--cyan),var(--green));color:#05121c;border:none;border-radius:10px;
+  padding:12px 18px;font-weight:700;cursor:pointer;font-family:var(--ff-head);width:100%}
+button.primary:disabled{opacity:.55;cursor:not-allowed}
+#err{color:var(--err);font-size:.83rem;min-height:18px;margin-top:2px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+@media (max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:18px}
+.stat .lbl{color:var(--muted);font-size:.74rem;font-family:var(--ff-mono);margin-bottom:8px;letter-spacing:.02em}
+.stat .val{font-family:var(--ff-head);font-size:1.7rem;font-weight:700}
+.stat .val.accent{color:var(--cyan)}
+.stat .val.green{color:var(--green)}
+
+.year-bars{padding:18px 20px}
+.year-bars .lbl{color:var(--muted);font-size:.74rem;font-family:var(--ff-mono);margin-bottom:14px;letter-spacing:.02em}
+.ybar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.8rem}
+.ybar-row:last-child{margin-bottom:0}
+.ybar-row .yname{width:64px;flex:none;color:var(--muted)}
+.ybar-track{flex:1;height:8px;border-radius:6px;background:var(--panel-3);overflow:hidden}
+.ybar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .5s ease}
+.ybar-row .ycount{width:26px;text-align:right;color:var(--ink);font-family:var(--ff-mono);flex:none}
+
+/* toolbar */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:22px 0 14px}
+.toolbar input[type=search]{flex:1;min-width:180px;margin:0}
+.toolbar select{background:#081120;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 13px;
+  font-size:.88rem;font-family:var(--ff-body)}
+.toolbar .btn{background:#0d1a2b;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 15px;
+  font-size:.83rem;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.toolbar .btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.toolbar .btn.ok{color:var(--green)}
+.toolbar svg{width:14px;height:14px}
+.right-group{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.meta-line{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.meta-line .refresh{cursor:pointer;color:var(--cyan);background:none;border:none;font-size:.78rem;display:inline-flex;align-items:center;gap:5px;padding:0}
+
+/* table */
+.table-wrap{padding:6px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;padding:12px 14px;color:var(--muted);font-weight:600;font-size:.76rem;text-transform:none;
+  cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+th:hover{color:var(--cyan)}
+th .arrow{opacity:.4;margin-left:3px;font-size:.7rem}
+th.sorted .arrow{opacity:1;color:var(--cyan)}
+td{padding:12px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tbody tr:hover{background:rgba(62,232,255,.04)}
+.pill-year{display:inline-block;background:var(--cyan-dim);color:var(--cyan);font-size:.74rem;padding:3px 9px;border-radius:999px;font-family:var(--ff-mono)}
+.email-cell{color:var(--muted)}
+.contact-cell{font-family:var(--ff-mono);font-size:.82rem}
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
+
+/* pagination */
+.pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:16px;color:var(--muted);font-size:.83rem}
+.pager button{background:#0d1a2b;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:.82rem}
+.pager button:disabled{opacity:.4;cursor:not-allowed}
+
+/* mobile card table */
+@media (max-width:720px){
+  thead{display:none}
+  table, tbody, tr, td{display:block;width:100%}
+  tbody tr{border:1px solid var(--line-soft);border-radius:12px;margin-bottom:12px;padding:6px 4px;background:var(--panel-3)}
+  td{border-bottom:none;padding:8px 12px;display:flex;justify-content:space-between;gap:10px;text-align:right}
+  td::before{content:attr(data-label);color:var(--muted);font-size:.74rem;text-align:left;flex:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="logo">
+      <div><div class="n">Cyber Buddy Academy</div><div class="s">Registrations admin</div></div>
+    </div>
+    <button id="signOutBtn">Sign out</button>
+  </div>
+
+  <div class="panel" id="loginCard">
+    <h1>Admin sign-in</h1>
+    <p>Sign in with your Firebase admin account (create one in Firebase Console → Authentication).</p>
+    <input id="email" type="email" placeholder="Admin email" autocomplete="username">
+    <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
+    <div id="err"></div>
+    <button class="primary" id="loginBtn">Sign in</button>
+  </div>
+
+  <div id="dataCard" style="display:none">
+
+    <div class="stats">
+      <div class="panel stat"><div class="lbl">TOTAL REGISTRATIONS</div><div class="val" id="statTotal">0</div></div>
+      <div class="panel stat"><div class="lbl">TODAY</div><div class="val accent" id="statToday">0</div></div>
+      <div class="panel stat"><div class="lbl">UNIQUE COLLEGES</div><div class="val" id="statColleges">0</div></div>
+      <div class="panel stat"><div class="lbl">LAST 7 DAYS</div><div class="val green" id="statWeek">0</div></div>
+    </div>
+
+    <div class="panel year-bars">
+      <div class="lbl">REGISTRATIONS BY YEAR</div>
+      <div id="yearBars"></div>
+    </div>
+
+    <div class="meta-line">
+      <span id="lastRefreshed"></span>
+      <button class="refresh" id="refreshBtn">↻ Refresh data</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search name, college, email, or contact…">
+      <select id="yearFilter">
+        <option value="">All years</option>
+        <option value="1st Year">1st Year</option>
+        <option value="2nd Year">2nd Year</option>
+        <option value="3rd Year">3rd Year</option>
+        <option value="4th Year">4th Year</option>
+      </select>
+      <div class="right-group">
+        <button class="btn" id="copyEmailsBtn">📋 Copy emails</button>
+        <button class="btn" id="csvBtn">⬇ CSV</button>
+        <button class="btn ok" id="exportBtn">⬇ Excel (.xlsx)</button>
+      </div>
+    </div>
+
+    <div class="panel table-wrap">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th data-key="name">Name <span class="arrow">↕</span></th>
+            <th data-key="college">College <span class="arrow">↕</span></th>
+            <th data-key="degree">Degree <span class="arrow">↕</span></th>
+            <th data-key="year">Year <span class="arrow">↕</span></th>
+            <th data-key="contact">Contact <span class="arrow">↕</span></th>
+            <th data-key="email">Email <span class="arrow">↕</span></th>
+            <th data-key="createdAt">Registered <span class="arrow">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none">No registrations match your filters.</div>
+      <div class="pager" id="pager"></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut, fetchAllRegistrations } from './firebase.js';
+
+const loginCard = document.getElementById('loginCard');
+const dataCard = document.getElementById('dataCard');
+const signOutBtn = document.getElementById('signOutBtn');
+const err = document.getElementById('err');
+
+let rows = [];        // raw data from Firestore
+let filtered = [];     // after search/filter
+let sortKey = 'createdAt';
+let sortDir = -1;      // -1 desc, 1 asc
+let page = 1;
+const PAGE_SIZE = 25;
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  err.textContent = '';
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+  } catch (e) {
+    err.textContent = 'Sign-in failed. Check your email/password.';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+});
+
+signOutBtn.addEventListener('click', () => signOut(auth));
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    loginCard.style.display = 'block'; dataCard.style.display = 'none'; signOutBtn.style.display = 'none';
+    return;
+  }
+  loginCard.style.display = 'none'; dataCard.style.display = 'block'; signOutBtn.style.display = 'inline-flex';
+  await loadData();
+});
+
+async function loadData(){
+  rows = await fetchAllRegistrations();
+  document.getElementById('lastRefreshed').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString();
+  applyFiltersAndRender();
+}
+
+document.getElementById('refreshBtn').addEventListener('click', loadData);
+
+function toDate(r){ return r.createdAt?.toDate ? r.createdAt.toDate() : null; }
+
+function computeStats(list){
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+  let today = 0, week = 0;
+  const colleges = new Set();
+  const yearCounts = {'1st Year':0,'2nd Year':0,'3rd Year':0,'4th Year':0};
+  list.forEach(r => {
+    const d = toDate(r);
+    if (d && d >= startOfToday) today++;
+    if (d && d >= weekAgo) week++;
+    if (r.college) colleges.add(r.college.trim().toLowerCase());
+    if (yearCounts.hasOwnProperty(r.year)) yearCounts[r.year]++;
+  });
+  document.getElementById('statTotal').textContent = list.length;
+  document.getElementById('statToday').textContent = today;
+  document.getElementById('statWeek').textContent = week;
+  document.getElementById('statColleges').textContent = colleges.size;
+
+  const maxCount = Math.max(1, ...Object.values(yearCounts));
+  const bars = document.getElementById('yearBars');
+  bars.innerHTML = Object.entries(yearCounts).map(([y,c]) => `
+    <div class="ybar-row">
+      <span class="yname">${y}</span>
+      <div class="ybar-track"><div class="ybar-fill" style="width:${(c/maxCount*100).toFixed(0)}%"></div></div>
+      <span class="ycount">${c}</span>
+    </div>`).join('');
+}
+
+function applyFiltersAndRender(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const yf = document.getElementById('yearFilter').value;
+
+  filtered = rows.filter(r => {
+    if (yf && r.year !== yf) return false;
+    if (!q) return true;
+    return [r.name, r.college, r.email, r.contact].some(f => (f||'').toLowerCase().includes(q));
+  });
+
+  filtered.sort((a,b) => {
+    let av, bv;
+    if (sortKey === 'createdAt'){ av = toDate(a)?.getTime() || 0; bv = toDate(b)?.getTime() || 0; }
+    else { av = (a[sortKey]||'').toString().toLowerCase(); bv = (b[sortKey]||'').toString().toLowerCase(); }
+    if (av < bv) return -1*sortDir;
+    if (av > bv) return 1*sortDir;
+    return 0;
+  });
+
+  computeStats(rows);
+  page = 1;
+  renderTable();
+}
+
+function renderTable(){
+  const tbody = document.getElementById('tbody');
+  const emptyState = document.getElementById('emptyState');
+  const start = (page-1)*PAGE_SIZE;
+  const pageRows = filtered.slice(start, start+PAGE_SIZE);
+
+  if (filtered.length === 0){
+    tbody.innerHTML = ''; emptyState.style.display = 'block';
+  } else {
+    emptyState.style.display = 'none';
+    tbody.innerHTML = pageRows.map(r => `
+      <tr>
+        <td data-label="Name">${esc(r.name)}</td>
+        <td data-label="College">${esc(r.college)}</td>
+        <td data-label="Degree">${esc(r.degree)}</td>
+        <td data-label="Year"><span class="pill-year">${esc(r.year)}</span></td>
+        <td data-label="Contact" class="contact-cell">${esc(r.contact)}</td>
+        <td data-label="Email" class="email-cell">${esc(r.email)}</td>
+        <td data-label="Registered">${toDate(r) ? toDate(r).toLocaleString() : ''}</td>
+      </tr>`).join('');
+  }
+
+  document.querySelectorAll('#tbl thead th').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.key === sortKey);
+    th.querySelector('.arrow').textContent = th.dataset.key === sortKey ? (sortDir === 1 ? '↑' : '↓') : '↕';
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pager = document.getElementById('pager');
+  pager.innerHTML = `
+    <button id="prevPg" ${page<=1?'disabled':''}>← Prev</button>
+    <span>Page ${page} of ${totalPages} · ${filtered.length} result${filtered.length===1?'':'s'}</span>
+    <button id="nextPg" ${page>=totalPages?'disabled':''}>Next →</button>`;
+  document.getElementById('prevPg').addEventListener('click', () => { if(page>1){page--; renderTable();} });
+  document.getElementById('nextPg').addEventListener('click', () => { if(page<totalPages){page++; renderTable();} });
+}
+
+document.querySelectorAll('#tbl thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = key === 'createdAt' ? -1 : 1; }
+    applyFiltersAndRender();
+  });
+});
+
+document.getElementById('search').addEventListener('input', applyFiltersAndRender);
+document.getElementById('yearFilter').addEventListener('change', applyFiltersAndRender);
+
+function esc(s=''){ return String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+function toRows(){
+  return filtered.map(r => ({
+    Name: r.name, College: r.college, Degree: r.degree, Year: r.year,
+    Contact: r.contact, Email: r.email,
+    'Registered At': toDate(r) ? toDate(r).toLocaleString() : ''
+  }));
+}
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const ws = XLSX.utils.json_to_sheet(toRows());
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
+  XLSX.writeFile(wb, `cyberbuddy-registrations-${Date.now()}.xlsx`);
+});
+
+document.getElementById('csvBtn').addEventListener('click', () => {
+  const data = toRows();
+  if (!data.length) return;
+  const headers = Object.keys(data[0]);
+  const csvRows = [headers.join(',')].concat(
+    data.map(row => headers.map(h => `"${String(row[h]??'').replace(/"/g,'""')}"`).join(','))
+  );
+  const blob = new Blob([csvRows.join('\n')], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `cyberbuddy-registrations-${Date.now()}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+});
+
+document.getElementById('copyEmailsBtn').addEventListener('click', async () => {
+  const emails = filtered.map(r => r.email).filter(Boolean).join(', ');
+  try {
+    await navigator.clipboard.writeText(emails);
+    const b = document.getElementById('copyEmailsBtn');
+    const original = b.textContent;
+    b.textContent = '✓ Copied!';
+    setTimeout(() => b.textContent = original, 1800);
+  } catch {
+    alert('Could not copy automatically — select and copy manually:\n\n' + emails);
+  }
+});
+</script>
+</body>
+</html>

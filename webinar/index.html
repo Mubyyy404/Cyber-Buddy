@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Introduction to Cybersecurity — Free Webinar | Cyber Buddy Academy</title>
+<meta name="description" content="Register free for Cyber Buddy Academy's Introduction to Cybersecurity webinar — 12 Sept 2026, 6 PM, live on Microsoft Teams.">
+<link rel="icon" href="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --bg:#07080f; --bg-2:#0a0c18;
+  --glass:rgba(20,23,48,.58); --glass-2:rgba(15,18,38,.7); --glass-border:rgba(255,255,255,.08);
+  --line:#262b55; --line-soft:rgba(255,255,255,.07);
+  --violet:#8c7cff; --violet-2:#b6acff; --violet-deep:#5d4fe0; --violet-dim:rgba(140,124,255,.16);
+  --amber:#ffb454; --amber-dim:rgba(255,180,84,.16);
+  --ink:#f5f6fc; --muted:#a3aad0; --muted-2:#666d95;
+  --err:#ff6b7c; --wa:#25d366;
+  --r-xl:26px; --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --ff-head:'Sora',sans-serif;
+  --ff-body:'Inter',sans-serif;
+  --ff-mono:'IBM Plex Mono',monospace;
+  --ease:cubic-bezier(.22,.85,.32,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--ff-body);
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;position:relative;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:var(--violet-2)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+@media (max-width:640px){.wrap{padding:0 18px}}
+
+/* ── ambient backdrop ─────────────────────────────────────────── */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:
+  radial-gradient(circle at 20% 8%,#181c46 0%,transparent 46%),
+  radial-gradient(circle at 88% 4%,#3a2a4a 0%,transparent 40%),
+  radial-gradient(circle at 55% 100%,#161a3e 0%,transparent 50%)}
+.aurora i{position:absolute;border-radius:50%;filter:blur(100px);opacity:.34;animation:drift 28s var(--ease) infinite alternate}
+.aurora i:nth-child(1){width:42vw;height:42vw;left:-10vw;top:-12vw;background:var(--violet-deep)}
+.aurora i:nth-child(2){width:30vw;height:30vw;right:-8vw;top:10vw;background:var(--amber);opacity:.12;animation-duration:34s;animation-delay:-6s}
+.aurora i:nth-child(3){width:34vw;height:34vw;left:22vw;bottom:-18vw;background:var(--violet);opacity:.15;animation-duration:40s;animation-delay:-12s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(4vw,3vw) scale(1.12)}}
+.grid-tex{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(ellipse 75% 55% at 50% 0%,#000 30%,transparent 85%)}
+
+/* ── header ─────────────────────────────────────────────────────── */
+header.top{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:24px 0;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:42px;height:42px;border-radius:12px;box-shadow:0 0 0 1px var(--glass-border),0 10px 24px -8px rgba(140,124,255,.5)}
+.brand .name{font-family:var(--ff-head);font-weight:700;font-size:1.08rem;line-height:1.2}
+.brand .tag{font-size:.78rem;color:var(--muted);margin-top:1px}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:8px;border:1px solid var(--glass-border);color:var(--muted);
+  font-size:.79rem;padding:8px 14px;border-radius:999px;background:var(--glass);backdrop-filter:blur(14px)}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 0 rgba(255,180,84,.6);flex:none;
+  animation:pulseDot 2.1s infinite}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(255,180,84,.55)}70%{box-shadow:0 0 0 8px rgba(255,180,84,0)}100%{box-shadow:0 0 0 0 rgba(255,180,84,0)}}
+.pill strong{font-family:var(--ff-mono);color:var(--amber);font-weight:500}
+.wa-pill{color:#bdf5d3;transition:transform .15s var(--ease),border-color .15s var(--ease)}
+.wa-pill svg{width:15px;height:15px;fill:var(--wa)}
+.wa-pill:hover{transform:translateY(-1px);border-color:rgba(37,211,102,.4)}
+
+/* ── hero ───────────────────────────────────────────────────────── */
+main{position:relative;z-index:2}
+.hero{padding:26px 0 20px;text-align:left}
+.badge{display:inline-flex;align-items:center;gap:9px;background:var(--violet-dim);border:1px solid rgba(140,124,255,.28);color:var(--violet-2);
+  font-size:.8rem;padding:7px 14px;border-radius:999px;margin-bottom:24px}
+.badge svg{width:14px;height:14px}
+
+h1{font-family:var(--ff-head);font-size:clamp(2rem,4.4vw,3.35rem);line-height:1.08;margin:0 0 18px;font-weight:700;
+  letter-spacing:-.015em;max-width:16ch}
+h1 .word{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
+h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animation:riseWord .8s var(--spring) forwards}
+@keyframes riseWord{to{transform:translateY(0);opacity:1}}
+
+.lede{color:var(--muted);font-size:1.06rem;line-height:1.7;margin:0 0 28px;max-width:56ch}
+
+.meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
+.chip{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(14px);
+  padding:10px 16px;border-radius:999px;font-size:.85rem;color:var(--ink)}
+.chip svg{width:15px;height:15px;stroke:var(--violet-2);flex:none}
+.chip.accent{color:var(--amber)}
+.chip .mono{font-family:var(--ff-mono);font-size:.82rem}
+
+.hero-cta{display:inline-flex;align-items:center;gap:9px;background:transparent;border:1px solid var(--glass-border);color:var(--ink);
+  font-family:var(--ff-body);font-weight:600;font-size:.92rem;padding:13px 22px;border-radius:13px;text-decoration:none;
+  transition:transform .15s var(--ease),border-color .15s var(--ease),background .15s var(--ease)}
+.hero-cta:hover{transform:translateY(-1px);border-color:rgba(140,124,255,.5);background:var(--violet-dim)}
+.hero-cta svg{width:16px;height:16px;transition:transform .2s var(--ease)}
+.hero-cta:hover svg{transform:translateY(2px)}
+
+/* ── content grid ───────────────────────────────────────────────── */
+.content{padding:8px 0 80px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:start}
+@media (max-width:960px){
+  .grid{grid-template-columns:1fr}
+  .form-card{order:1}
+  .info-col{order:2}
+}
+
+.panel{background:var(--glass-2);border:1px solid var(--glass-border);border-radius:var(--r-xl);
+  backdrop-filter:blur(18px);box-shadow:0 30px 70px -35px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.04)}
+
+.info-col{display:flex;flex-direction:column;gap:22px}
+.info-card{padding:32px 34px}
+@media (max-width:640px){.info-card{padding:24px 22px}}
+.section-h{font-family:var(--ff-head);font-size:1.1rem;font-weight:700;margin:0 0 18px}
+
+.agenda{display:grid;gap:12px}
+.agenda .item{display:flex;gap:16px;border:1px solid var(--line-soft);border-radius:var(--r-md);padding:16px 17px;background:rgba(255,255,255,.02);
+  transition:border-color .18s var(--ease),background .18s var(--ease)}
+.agenda .item:hover{border-color:rgba(140,124,255,.35);background:rgba(140,124,255,.05)}
+.agenda .num{flex:none;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--violet-dim),var(--amber-dim));
+  display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;color:var(--violet-2);font-size:1.02rem}
+.agenda .t{font-weight:600;font-size:.94rem;margin-bottom:4px}
+.agenda .d{color:var(--muted);font-size:.83rem;line-height:1.55}
+
+.host{display:flex;gap:14px;align-items:center;margin-top:24px;border-top:1px solid var(--line-soft);padding-top:22px}
+.host .av{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#332a66,#12152c);
+  border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);
+  color:var(--violet-2);font-weight:700;flex:none;font-size:.85rem}
+.host .n{font-weight:600;font-size:.93rem;display:flex;align-items:center;gap:6px}
+.host .n svg{width:13px;height:13px;fill:var(--amber)}
+.host .r{color:var(--muted);font-size:.8rem}
+
+.wa-card{padding:22px 24px;display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
+.wa-card .l{display:flex;align-items:center;gap:14px}
+.wa-card .ic{flex:none;width:46px;height:46px;border-radius:13px;background:rgba(37,211,102,.14);display:flex;align-items:center;justify-content:center}
+.wa-card .ic svg{width:23px;height:23px;fill:var(--wa)}
+.wa-card .t{font-weight:600;font-size:.93rem;margin-bottom:2px}
+.wa-card .d{color:var(--muted);font-size:.81rem}
+.wa-link{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#1fae63,#20c96b);color:#04170c;
+  font-weight:700;font-size:.85rem;padding:11px 18px;border-radius:11px;text-decoration:none;white-space:nowrap;
+  transition:transform .15s var(--ease)}
+.wa-link:hover{transform:translateY(-1px)}
+
+/* ── form panel ─────────────────────────────────────────────────── */
+.form-card{position:relative;overflow:hidden;padding:34px 36px}
+@media (min-width:961px){.form-card{position:sticky;top:22px}}
+@media (max-width:640px){.form-card{padding:24px 22px}}
+.form-card h2{font-family:var(--ff-head);font-size:1.44rem;font-weight:700;margin:0 0 6px}
+.form-card .sub{color:var(--muted);font-size:.87rem;margin:0 0 28px;line-height:1.55}
+
+.field{margin-bottom:19px;position:relative}
+.field .inp-wrap{position:relative}
+.inp-wrap .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--muted-2);
+  pointer-events:none;transition:stroke .15s var(--ease);z-index:1}
+.inp-wrap input:focus ~ .ico,.inp-wrap input:not(:placeholder-shown) ~ .ico{stroke:var(--violet-2)}
+.inp-wrap input{width:100%;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;color:var(--ink);
+  padding:19px 40px 9px 42px;font-size:.96rem;font-family:var(--ff-body);outline:none;height:56px;
+  transition:border-color .15s var(--ease),box-shadow .15s var(--ease),background .15s var(--ease)}
+.inp-wrap label{position:absolute;left:42px;top:50%;transform:translateY(-50%);font-size:.94rem;color:var(--muted-2);
+  pointer-events:none;transition:all .15s var(--ease);background:transparent}
+.inp-wrap input:focus,.inp-wrap input:not(:placeholder-shown){background:rgba(255,255,255,.06)}
+.inp-wrap input:focus ~ label,.inp-wrap input:not(:placeholder-shown) ~ label{
+  top:13px;font-size:.7rem;color:var(--violet-2);transform:translateY(0)}
+.inp-wrap input:focus{border-color:var(--violet);box-shadow:0 0 0 4px var(--violet-dim)}
+.field .check{position:absolute;right:14px;top:50%;transform:translateY(-50%) scale(.5);width:16px;height:16px;opacity:0;
+  transition:transform .2s var(--spring),opacity .2s var(--ease);pointer-events:none;z-index:1}
+.field .check svg{width:16px;height:16px;stroke:var(--amber)}
+.field.valid .check{opacity:1;transform:translateY(-50%) scale(1)}
+.field .err{color:var(--err);font-size:.77rem;margin-top:6px;min-height:14px;padding-left:2px}
+
+.years{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+@media (max-width:380px){.years{grid-template-columns:repeat(2,1fr)}}
+.years input{display:none;position:absolute}
+.years label{cursor:pointer;text-align:center;border:1px solid var(--line);border-radius:12px;padding:12px 4px;font-size:.85rem;
+  color:var(--muted);background:rgba(255,255,255,.035);transition:border-color .15s var(--ease),color .15s var(--ease),background .15s var(--ease),transform .1s}
+.years label:active{transform:scale(.97)}
+.years input:checked + label{border-color:transparent;color:var(--bg);background:linear-gradient(135deg,var(--violet),var(--amber));font-weight:700;box-shadow:0 8px 20px -6px rgba(140,124,255,.5)}
+.field-label{display:block;font-size:.83rem;color:var(--muted);margin-bottom:8px;font-weight:500}
+
+.submit{width:100%;margin-top:8px;border:none;border-radius:14px;padding:17px;font-family:var(--ff-body);font-weight:700;
+  font-size:1rem;color:var(--bg);background:linear-gradient(135deg,var(--violet),var(--amber));cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:9px;position:relative;overflow:hidden;
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease),background .3s var(--ease)}
+.submit::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
+  transform:translateX(-120%);transition:transform .6s var(--ease)}
+.submit:hover::after{transform:translateX(120%)}
+.submit:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(140,124,255,.55)}
+.submit:disabled{opacity:.75;cursor:not-allowed;transform:none}
+.submit .spin{width:17px;height:17px;border-radius:50%;border:2.5px solid rgba(10,12,23,.3);border-top-color:var(--bg);
+  animation:spin .7s linear infinite;display:none}
+.submit .okico{width:19px;height:19px;display:none;transform:scale(0)}
+.submit.loading .spin{display:inline-block}
+.submit.loading .btxt{display:none}
+.submit.success{background:linear-gradient(135deg,#20c96b,#8c7cff)}
+.submit.success .btxt,.submit.success .spin{display:none}
+.submit.success .okico{display:inline-block;animation:popIn .4s var(--spring) forwards}
+@keyframes popIn{to{transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.formmsg{font-size:.83rem;color:var(--err);margin-top:12px;text-align:center;min-height:16px}
+.privacy{font-size:.76rem;color:var(--muted-2);text-align:center;margin-top:18px;line-height:1.55}
+
+footer{position:relative;z-index:2;text-align:center;color:var(--muted-2);font-size:.82rem;padding:10px 0 34px;
+  display:flex;flex-direction:column;align-items:center;gap:12px}
+footer a{color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+footer a svg{width:14px;height:14px;fill:var(--wa)}
+footer a:hover{color:var(--ink)}
+
+/* ══════════════════════════ SUCCESS OVERLAY — pro sequence ══════════════════════════ */
+.overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.overlay.show{opacity:1;pointer-events:auto}
+.overlay-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 35%,#1b1f46 0%,#04050c 75%);backdrop-filter:blur(0px);
+  transition:backdrop-filter .6s var(--ease)}
+.overlay.show .overlay-bg{backdrop-filter:blur(10px)}
+.burst{position:absolute;left:50%;top:38%;width:0;height:0;pointer-events:none}
+.burst i{position:absolute;left:0;top:0;display:block;opacity:0;
+  animation:burstOut var(--dur,1.6s) var(--del,0s) cubic-bezier(.16,.84,.44,1) forwards}
+@keyframes burstOut{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:1}
+  55%{opacity:1}
+  100%{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(1) rotate(var(--rot));opacity:0}
+}
+
+.oc-card{position:relative;max-width:452px;width:100%;text-align:center;padding:50px 32px 36px;border-radius:26px;
+  background:var(--glass-2);border:1px solid var(--glass-border);backdrop-filter:blur(20px);
+  transform:scale(.8) translateY(24px);opacity:0;transition:transform .55s var(--spring),opacity .4s var(--ease);
+  box-shadow:0 50px 100px -30px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.05)}
+.overlay.show .oc-card{transform:scale(1) translateY(0);opacity:1}
+
+.rings{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:150px;height:150px;pointer-events:none}
+.rings i{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--amber);opacity:0}
+.overlay.show .rings i{animation:ringPulse 2.2s ease-out infinite}
+.overlay.show .rings i:nth-child(2){animation-delay:.5s}
+.overlay.show .rings i:nth-child(3){animation-delay:1s}
+@keyframes ringPulse{0%{transform:scale(.5);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+
+.tick{width:82px;height:82px;border-radius:50%;background:radial-gradient(circle,rgba(255,180,84,.22),transparent 70%);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 22px;position:relative;z-index:1}
+.tick svg{width:44px;height:44px}
+.tick circle{stroke:var(--amber);stroke-width:2;fill:none;stroke-dasharray:157;stroke-dashoffset:157}
+.tick path{stroke:var(--amber);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24}
+.overlay.show .tick circle{animation:ring .6s var(--ease) .2s forwards}
+.overlay.show .tick path{animation:check .3s var(--ease) .75s forwards}
+@keyframes ring{to{stroke-dashoffset:0}}
+@keyframes check{to{stroke-dashoffset:0}}
+
+.oc-reveal{opacity:0;transform:translateY(10px);animation:revealUp .5s var(--ease) forwards}
+.overlay.show .oc-reveal{animation-play-state:running}
+.oc-card h2{font-family:var(--ff-head);font-size:1.5rem;font-weight:700;margin:0 0 10px;animation-delay:.85s}
+.oc-card p{color:var(--muted);font-size:.92rem;max-width:33ch;margin:0 auto 26px;line-height:1.6;animation-delay:.95s}
+.oc-card .oc-cta-wrap{animation-delay:1.08s}
+@keyframes revealUp{to{opacity:1;transform:translateY(0)}}
+.oc-card .name-hl{color:var(--violet-2)}
+
+.wa-btn{position:relative;display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#1fae63,#20c96b);
+  color:#04170c;font-weight:700;padding:15px 26px;border-radius:14px;text-decoration:none;font-size:.94rem;
+  transition:transform .15s var(--ease);isolation:isolate}
+.wa-btn::before{content:"";position:absolute;inset:-4px;border-radius:18px;background:#20c96b;opacity:.5;z-index:-1;
+  animation:waPulse 2.4s ease-out infinite}
+@keyframes waPulse{0%{transform:scale(.96);opacity:.55}70%{transform:scale(1.18);opacity:0}100%{opacity:0}}
+.wa-btn svg{width:19px;height:19px;fill:#04170c}
+.wa-btn .arrow{transition:transform .2s var(--ease)}
+.wa-btn:hover{transform:translateY(-2px)}
+.wa-btn:hover .arrow{transform:translateX(3px)}
+
+.oc-timer{margin-top:24px;display:flex;align-items:center;justify-content:center;gap:8px}
+.oc-track{flex:1;max-width:150px;height:3px;border-radius:3px;background:var(--line-soft);overflow:hidden}
+.oc-fill{height:100%;width:100%;background:var(--muted-2);transform-origin:left;animation:none}
+.oc-fill.run{animation:drain 8s linear forwards}
+@keyframes drain{to{transform:scaleX(0)}}
+.oc-close{background:none;border:none;color:var(--muted-2);font-size:.76rem;cursor:pointer;text-decoration:underline;
+  padding:0;font-family:var(--ff-body)}
+
+/* ── accessibility / reduced motion ────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .aurora{display:none}
+  h1 .word span{transform:none;opacity:1;animation:none}
+  .oc-reveal{opacity:1;transform:none}
+}
+:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="aurora"><i></i><i></i><i></i></div>
+<div class="grid-tex"></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="Cyber Buddy Academy logo">
+      <div><div class="name">Cyber Buddy Academy</div><div class="tag">Practical, beginner-friendly security training</div></div>
+    </div>
+    <div class="status">
+      <span class="pill"><span class="pulse-dot"></span>Registration open</span>
+      <span class="pill">Starts in <strong id="countdown">—</strong></span>
+      <a class="pill wa-pill" href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.06 16.9L2 22l5.24-1.02A8.86 8.86 0 0 0 12.14 22 8.87 8.87 0 0 0 17.6 6.32ZM12.14 20.3a7.28 7.28 0 0 1-3.7-1.02l-.27-.16-2.83.75.76-2.76-.18-.28a7.32 7.32 0 1 1 6.22 3.47Z"/></svg>
+        Community
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/></svg>
+        Introduction to Cybersecurity
+      </span>
+      <h1 id="heroHead"></h1>
+      <p class="lede">A live, beginner-friendly session from Cyber Buddy Academy on cybersecurity and ethical hacking fundamentals — real tools, real demonstrations, and time for your questions.</p>
+
+      <div class="meta-row">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="mono">12 Sep 2026 · 6:00 PM IST</span></span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/></svg>Microsoft Teams</span>
+        <span class="chip accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Free</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 1 3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-6.4L2.5 8l6.5-1Z"/></svg>Beginner friendly</span>
+      </div>
+
+      <a class="hero-cta" href="#formCard">
+        Reserve your seat
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </section>
+
+    <div class="wrap" style="padding:0"></div>
+
+    <section class="content">
+      <div class="grid">
+
+        <!-- LEFT: info column -->
+        <div class="info-col">
+          <section class="panel info-card">
+            <div class="section-h">How the session runs</div>
+            <div class="agenda">
+              <div class="item"><div class="num">1</div>
+                <div><div class="t">Basics of cybersecurity &amp; its domains</div><div class="d">Fundamentals across network security, application security, cloud security, digital forensics, SOC, and ethical hacking.</div></div></div>
+              <div class="item"><div class="num">2</div>
+                <div><div class="t">Ethical hacking skills &amp; career path</div><div class="d">Key technical skills, tools, certifications, and career opportunities to start your ethical hacking journey.</div></div></div>
+              <div class="item"><div class="num">3</div>
+                <div><div class="t">Live tools demonstration</div><div class="d">A practical, beginner-friendly walkthrough of cybersecurity tools and techniques in action.</div></div></div>
+            </div>
+
+            <div class="host">
+              <div class="av">CB</div>
+              <div>
+                <div class="n">Cyber Buddy Academy <svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/></svg></div>
+                <div class="r">Host &amp; session lead</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel wa-card">
+            <div class="l">
+              <div class="ic"><svg viewBox="0 0 24 24"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.06 16.9L2 22l5.24-1.02A8.86 8.86 0 0 0 12.14 22 8.87 8.87 0 0 0 17.6 6.32ZM12.14 20.3a7.28 7.28 0 0 1-3.7-1.02l-.27-.16-2.83.75.76-2.76-.18-.28a7.32 7.32 0 1 1 6.22 3.47Z"/></svg></div>
+              <div>
+                <div class="t">Join the community</div>
+                <div class="d">Updates, reminders and the Teams link land here first.</div>
+              </div>
+            </div>
+            <a class="wa-link" href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">Open WhatsApp</a>
+          </section>
+        </div>
+
+        <!-- RIGHT: form -->
+        <section class="panel form-card" id="formCard">
+          <h2>Reserve your seat</h2>
+          <p class="sub">Fill in your details — a confirmation email lands in your inbox right after.</p>
+
+          <form id="regForm" novalidate>
+            <div class="field" id="f-name">
+              <div class="inp-wrap">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                <input id="name" name="name" type="text" placeholder=" " autocomplete="name" required>
+                <label for="name">Full name</label>
+                <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
+              </div>
+              <div class="err" id="err-name"></div>
+            </div>
+            <div class="field" id="f-college">
+              <div class="inp-wrap">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
+                <input id="college" name="college" type="text" placeholder=" " required>
+                <label for="college">College name</label>
+                <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
+              </div>
+              <div class="err" id="err-college"></div>
+            </div>
+            <div class="field">
+              <div class="inp-wrap">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5Zm5 2.6V17c0 1.5 2.5 3 5 3s5-1.5 5-3v-4.4"/></svg>
+                <input id="degree" name="degree" type="text" placeholder=" ">
+                <label for="degree">Degree with specialization (optional)</label>
+              </div>
+              <div class="err" id="err-degree"></div>
+            </div>
+            <div class="field">
+              <label class="field-label">Year of studying</label>
+              <div class="years">
+                <input type="radio" name="year" id="y1" value="1st Year" required><label for="y1">1st Year</label>
+                <input type="radio" name="year" id="y2" value="2nd Year"><label for="y2">2nd Year</label>
+                <input type="radio" name="year" id="y3" value="3rd Year"><label for="y3">3rd Year</label>
+                <input type="radio" name="year" id="y4" value="4th Year"><label for="y4">4th Year</label>
+              </div>
+              <div class="err" id="err-year"></div>
+            </div>
+            <div class="field" id="f-contact">
+              <div class="inp-wrap">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.99.36 1.96.68 2.9a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.18-1.25a2 2 0 0 1 2.11-.45c.94.32 1.91.55 2.9.68A2 2 0 0 1 22 16.92Z"/></svg>
+                <input id="contact" name="contact" type="tel" placeholder=" " autocomplete="tel" required>
+                <label for="contact">Contact number</label>
+                <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
+              </div>
+              <div class="err" id="err-contact"></div>
+            </div>
+            <div class="field" id="f-email">
+              <div class="inp-wrap">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>
+                <input id="email" name="email" type="email" placeholder=" " autocomplete="email" required>
+                <label for="email">Email address</label>
+                <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
+              </div>
+              <div class="err" id="err-email"></div>
+            </div>
+
+            <button class="submit" type="submit" id="submitBtn">
+              <span class="btxt">Register for free</span>
+              <span class="spin"></span>
+              <svg class="okico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg>
+            </button>
+            <div class="formmsg" id="formMsg"></div>
+            <p class="privacy">Your details are stored securely and used only for this webinar and Cyber Buddy Academy updates.</p>
+          </form>
+        </section>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 Cyber Buddy Academy — Learn security. Practice it.</span>
+    <a href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.06 16.9L2 22l5.24-1.02A8.86 8.86 0 0 0 12.14 22 8.87 8.87 0 0 0 17.6 6.32ZM12.14 20.3a7.28 7.28 0 0 1-3.7-1.02l-.27-.16-2.83.75.76-2.76-.18-.28a7.32 7.32 0 1 1 6.22 3.47Z"/></svg>
+      Join the WhatsApp community
+    </a>
+  </footer>
+</div>
+
+<!-- Full-screen success overlay -->
+<div class="overlay" id="overlay">
+  <div class="overlay-bg"></div>
+  <div class="burst" id="burst"></div>
+  <div class="oc-card">
+    <div class="rings"><i></i><i></i><i></i></div>
+    <div class="tick"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-15"/></svg></div>
+    <h2 class="oc-reveal">Congrats, <span class="name-hl" id="successName">Friend</span>! 🎉</h2>
+    <p class="oc-reveal">You've successfully registered for the Introduction to Cybersecurity webinar. A confirmation email is on its way to your inbox.</p>
+    <div class="oc-cta-wrap oc-reveal">
+      <a class="wa-btn" href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.06 16.9L2 22l5.24-1.02A8.86 8.86 0 0 0 12.14 22 8.87 8.87 0 0 0 17.6 6.32ZM12.14 20.3a7.28 7.28 0 0 1-3.7-1.02l-.27-.16-2.83.75.76-2.76-.18-.28a7.32 7.32 0 1 1 6.22 3.47Zm4-5.47c-.22-.11-1.3-.64-1.5-.72s-.35-.11-.5.11-.57.72-.7.87-.26.17-.48.06a5.97 5.97 0 0 1-1.76-1.09 6.6 6.6 0 0 1-1.22-1.52c-.13-.22 0-.34.1-.45s.22-.26.33-.39.14-.22.22-.37a.4.4 0 0 0 0-.39c-.06-.11-.5-1.2-.68-1.65s-.36-.37-.5-.38h-.43a.82.82 0 0 0-.6.28 2.5 2.5 0 0 0-.78 1.86 4.35 4.35 0 0 0 .91 2.3 9.96 9.96 0 0 0 3.81 3.37c.53.23.95.37 1.27.47.53.17 1.02.15 1.4.09.43-.06 1.3-.53 1.48-1.04s.18-.95.13-1.04-.2-.15-.42-.26Z"/></svg>
+        Join the WhatsApp group <span class="arrow">→</span>
+      </a>
+    </div>
+    <div class="oc-timer">
+      <button class="oc-close" id="ocClose">Close now</button>
+      <div class="oc-track"><div class="oc-fill" id="ocFill"></div></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { saveRegistration } from './firebase.js';
+
+/* ── orchestrated hero load: headline rises in word by word ── */
+(function heroReveal(){
+  const el = document.getElementById('heroHead');
+  const text = "Where beginners learn to think like attackers.";
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const words = text.split(' ');
+  el.innerHTML = words.map((w, i) => {
+    const delay = reduced ? 0 : (i * 0.06).toFixed(3);
+    return `<span class="word"><span style="animation-delay:${delay}s">${w}</span></span>`;
+  }).join(' ');
+})();
+
+/* ── live countdown to the webinar ───────────────────────────────── */
+(function countdown(){
+  const target = new Date('2026-09-12T18:00:00+05:30').getTime();
+  const out = document.getElementById('countdown');
+  function tick(){
+    const diff = target - Date.now();
+    if (diff <= 0){ out.textContent = 'now'; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    out.textContent = d > 0 ? `${d}d ${h}h` : (h > 0 ? `${h}h ${m}m` : `${m}m`);
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+
+/* ── form logic ───────────────────────────────────────────────────── */
+const form = document.getElementById('regForm');
+const btn = document.getElementById('submitBtn');
+const msg = document.getElementById('formMsg');
+const errs = id => document.getElementById('err-' + id);
+const CONTACT_RE = /^[6-9]\d{9}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setErr(id, text){ errs(id).textContent = text || ''; }
+
+function liveValidate(fieldWrapId, ok){
+  const wrap = document.getElementById(fieldWrapId);
+  if (!wrap) return;
+  wrap.classList.toggle('valid', ok);
+}
+
+['name','college'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    liveValidate('f-'+id, e.target.value.trim().length >= 2);
+  });
+});
+document.getElementById('contact').addEventListener('input', e => {
+  liveValidate('f-contact', CONTACT_RE.test(e.target.value.trim()));
+});
+document.getElementById('email').addEventListener('input', e => {
+  liveValidate('f-email', EMAIL_RE.test(e.target.value.trim()));
+});
+
+function validate(v){
+  let ok = true;
+  setErr('name',''); setErr('college',''); setErr('degree',''); setErr('year',''); setErr('contact',''); setErr('email','');
+  if(!v.name || v.name.trim().length < 2){ setErr('name','Enter your full name'); ok=false; }
+  if(!v.college || v.college.trim().length < 2){ setErr('college','Enter your college name'); ok=false; }
+  if(!v.year){ setErr('year','Select your year of studying'); ok=false; }
+  if(!CONTACT_RE.test(v.contact)){ setErr('contact','Enter a valid 10-digit number'); ok=false; }
+  if(!EMAIL_RE.test(v.email)){ setErr('email','Enter a valid email address'); ok=false; }
+  return ok;
+}
+
+/* ── pro-level radial confetti burst ─────────────────────────────── */
+function fireBurst(){
+  const burst = document.getElementById('burst');
+  burst.innerHTML = '';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#8c7cff','#ffb454','#f5f6fc','#20c96b','#b6acff'];
+  const shapes = ['circle','rect'];
+  const count = 46;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('i');
+    const angle = (Math.PI * 2 * i / count) + (Math.random()*0.5 - 0.25);
+    const dist = 90 + Math.random()*170;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist - 40; // slight upward bias
+    const size = 6 + Math.random()*7;
+    const shape = shapes[Math.floor(Math.random()*shapes.length)];
+    s.style.setProperty('--tx', tx.toFixed(0) + 'px');
+    s.style.setProperty('--ty', ty.toFixed(0) + 'px');
+    s.style.setProperty('--rot', (Math.random()*720 - 360).toFixed(0) + 'deg');
+    s.style.setProperty('--dur', (1.1 + Math.random()*0.7).toFixed(2) + 's');
+    s.style.setProperty('--del', (Math.random()*0.25).toFixed(2) + 's');
+    s.style.width = size + 'px';
+    s.style.height = (shape === 'rect' ? size * 1.7 : size) + 'px';
+    s.style.background = colors[i % colors.length];
+    s.style.borderRadius = shape === 'circle' ? '50%' : '3px';
+    burst.appendChild(s);
+  }
+}
+
+function openOverlay(firstName){
+  document.getElementById('successName').textContent = firstName;
+  overlay.classList.add('show');
+  fireBurst();
+  document.body.style.overflow = 'hidden';
+  restartTimer();
+}
+function closeOverlay(){
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
+  clearTimeout(vanishTimer);
+  ocFill.classList.remove('run');
+  setTimeout(() => { document.getElementById('burst').innerHTML = ''; }, 500);
+  form.reset();
+  document.querySelectorAll('.field.valid').forEach(f => f.classList.remove('valid'));
+  btn.classList.remove('success');
+}
+function restartTimer(){
+  clearTimeout(vanishTimer);
+  ocFill.classList.remove('run'); void ocFill.offsetWidth; ocFill.classList.add('run');
+  vanishTimer = setTimeout(closeOverlay, 8000);
+}
+const overlay = document.getElementById('overlay');
+const ocFill = document.getElementById('ocFill');
+const ocClose = document.getElementById('ocClose');
+let vanishTimer = null;
+overlay.addEventListener('mouseenter', () => { clearTimeout(vanishTimer); ocFill.classList.remove('run'); });
+overlay.addEventListener('mouseleave', () => { if (overlay.classList.contains('show')) restartTimer(); });
+ocClose.addEventListener('click', closeOverlay);
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = Object.fromEntries(new FormData(form).entries());
+  v.name = (v.name||'').trim(); v.college = (v.college||'').trim(); v.degree = (v.degree||'').trim();
+  v.contact = (v.contact||'').trim(); v.email = (v.email||'').trim().toLowerCase();
+
+  if(!validate(v)) return;
+
+  btn.classList.add('loading'); btn.disabled = true; msg.textContent = '';
+  try{
+    await saveRegistration({
+      name: v.name, college: v.college, degree: v.degree || 'Not specified',
+      year: v.year, contact: v.contact, email: v.email
+    });
+    // button morphs to a success checkmark for a beat before the overlay takes over
+    btn.classList.remove('loading');
+    btn.classList.add('success');
+    setTimeout(() => openOverlay(v.name.split(' ')[0]), 420);
+  }catch(err){
+    console.error(err);
+    msg.textContent = 'Something went wrong. Please check your connection and try again.';
+    btn.classList.remove('loading');
+  }finally{
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
