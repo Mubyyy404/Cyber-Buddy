@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07080f">
+<meta name="color-scheme" content="dark">
 <title>Introduction to Cybersecurity — Free Webinar | Cyber Buddy Academy</title>
-<meta name="description" content="Register free for Cyber Buddy Academy's Introduction to Cybersecurity webinar — 12 Sept 2026, 8 PM, live on Microsoft Teams.">
+<meta name="description" content="Register free for Cyber Buddy Academy's Introduction to Cybersecurity webinar — 26 Sept 2026, 8 PM, live on Microsoft Teams.">
 <link rel="icon" href="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<noscript><style>h1.decrypt{opacity:1}</style></noscript>
 <style>
 /* ============================================================
    TOKENS
@@ -40,6 +42,7 @@ img{max-width:100%;display:block}
 a{color:var(--violet-2)}
 .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
 @media (max-width:640px){.wrap{padding:0 18px}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
 /* ── ambient backdrop ─────────────────────────────────────────── */
 .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:
@@ -51,9 +54,19 @@ a{color:var(--violet-2)}
 .aurora i:nth-child(2){width:30vw;height:30vw;right:-8vw;top:10vw;background:var(--amber);opacity:.12;animation-duration:34s;animation-delay:-6s}
 .aurora i:nth-child(3){width:34vw;height:34vw;left:22vw;bottom:-18vw;background:var(--violet);opacity:.15;animation-duration:40s;animation-delay:-12s}
 @keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(4vw,3vw) scale(1.12)}}
+
+/* live network — nodes drift, link up, and reach for the cursor */
+#net{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.95}
+
 .grid-tex{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
   background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
-  background-size:64px 64px;mask-image:radial-gradient(ellipse 75% 55% at 50% 0%,#000 30%,transparent 85%)}
+  background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 75% 55% at 50% 0%,#000 30%,transparent 85%);mask-image:radial-gradient(ellipse 75% 55% at 50% 0%,#000 30%,transparent 85%)}
+/* brighter copy of the same grid, revealed only around the cursor */
+.grid-glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(182,172,255,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(182,172,255,.2) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(circle 240px at var(--mx,-500px) var(--my,-500px),#000,transparent);
+  mask-image:radial-gradient(circle 240px at var(--mx,-500px) var(--my,-500px),#000,transparent)}
 
 /* ── header ─────────────────────────────────────────────────────── */
 header.top{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:24px 0;gap:14px;flex-wrap:wrap}
@@ -63,32 +76,42 @@ header.top{position:relative;z-index:3;display:flex;align-items:center;justify-c
 .brand .tag{font-size:.78rem;color:var(--muted);margin-top:1px}
 .status{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .pill{display:flex;align-items:center;gap:8px;border:1px solid var(--glass-border);color:var(--muted);
-  font-size:.79rem;padding:8px 14px;border-radius:999px;background:var(--glass);backdrop-filter:blur(14px)}
+  font-size:.79rem;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 0 rgba(255,180,84,.6);flex:none;
   animation:pulseDot 2.1s infinite}
 @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(255,180,84,.55)}70%{box-shadow:0 0 0 8px rgba(255,180,84,0)}100%{box-shadow:0 0 0 0 rgba(255,180,84,0)}}
-.pill strong{font-family:var(--ff-mono);color:var(--amber);font-weight:500}
-.wa-pill{color:#bdf5d3;transition:transform .15s var(--ease),border-color .15s var(--ease)}
+.pulse-dot.off{background:var(--muted-2);animation:none}
+.wa-pill{color:#bdf5d3;text-decoration:none;transition:transform .15s var(--ease),border-color .15s var(--ease)}
 .wa-pill svg{width:15px;height:15px;fill:var(--wa)}
 .wa-pill:hover{transform:translateY(-1px);border-color:rgba(37,211,102,.4)}
 
-/* ── hero ───────────────────────────────────────────────────────── */
+/* ── hero — one orchestrated load sequence ───────────────────────── */
 main{position:relative;z-index:2}
-.hero{padding:26px 0 20px;text-align:left}
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:44px;align-items:center;padding:26px 0 34px}
+@media (max-width:960px){.hero{grid-template-columns:1fr;gap:30px}}
+.hero-copy{min-width:0}
+
+.rise{animation:rise .9s var(--ease) var(--d,0s) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+
 .badge{display:inline-flex;align-items:center;gap:9px;background:var(--violet-dim);border:1px solid rgba(140,124,255,.28);color:var(--violet-2);
   font-size:.8rem;padding:7px 14px;border-radius:999px;margin-bottom:24px}
 .badge svg{width:14px;height:14px}
 
-h1{font-family:var(--ff-head);font-size:clamp(2rem,4.4vw,3.35rem);line-height:1.08;margin:0 0 18px;font-weight:700;
+h1{font-family:var(--ff-head);font-size:clamp(2.1rem,4.6vw,3.5rem);line-height:1.08;margin:0 0 18px;font-weight:700;
   letter-spacing:-.015em;max-width:16ch}
-h1 .word{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
-h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animation:riseWord .8s var(--spring) forwards}
-@keyframes riseWord{to{transform:translateY(0);opacity:1}}
+/* headline decrypts character by character — see JS */
+h1.decrypt{opacity:0}
+h1.decrypt.go{opacity:1}
+h1 .w{display:inline-block;white-space:nowrap}
+h1 .c{display:inline-block;text-align:center;color:var(--ink);transition:color .7s var(--ease),text-shadow .7s var(--ease)}
+h1 .c.scr{color:var(--violet);opacity:.85;transition:none}
+h1 .c.hot{color:var(--amber);text-shadow:0 0 26px rgba(255,180,84,.6);transition:none}
 
 .lede{color:var(--muted);font-size:1.06rem;line-height:1.7;margin:0 0 28px;max-width:56ch}
 
 .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
-.chip{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(14px);
+.chip{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   padding:10px 16px;border-radius:999px;font-size:.85rem;color:var(--ink)}
 .chip svg{width:15px;height:15px;stroke:var(--violet-2);flex:none}
 .chip.accent{color:var(--amber)}
@@ -101,6 +124,24 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
 .hero-cta svg{width:16px;height:16px;transition:transform .2s var(--ease)}
 .hero-cta:hover svg{transform:translateY(2px)}
 
+/* ── countdown ──────────────────────────────────────────────────── */
+.clock{padding:26px 26px 22px}
+.clock-top{display:flex;align-items:center;gap:10px;margin-bottom:18px;color:var(--muted);font-size:.88rem}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none;animation:pulseDot 2.1s infinite}
+.units{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:6px}
+.unit{background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:14px;padding:14px 4px 10px;text-align:center;min-width:0}
+.num{display:grid;overflow:hidden;height:1.2em;font:500 clamp(1.6rem,3.4vw,2.35rem)/1.2 var(--ff-mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.num span{grid-area:1/1;display:block}
+.unit.sec .num{color:var(--amber)}
+.lab{font-size:.72rem;color:var(--muted-2);margin-top:3px}
+.sep{color:var(--muted-2);font-family:var(--ff-mono);font-size:1.3rem;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.2}}
+.clock-date{margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);color:var(--muted);font-size:.84rem;
+  display:flex;justify-content:space-between;gap:6px 14px;flex-wrap:wrap}
+.clock.ended .num,.clock.ended .unit.sec .num{color:var(--muted-2)}
+.clock.ended .live-dot{background:var(--muted-2);animation:none}
+.clock.ended .sep{animation:none}
+
 /* ── content grid ───────────────────────────────────────────────── */
 .content{padding:8px 0 80px}
 .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:start}
@@ -110,20 +151,37 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
   .info-col{order:2}
 }
 
-.panel{background:var(--glass-2);border:1px solid var(--glass-border);border-radius:var(--r-xl);
-  backdrop-filter:blur(18px);box-shadow:0 30px 70px -35px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.04)}
+.panel{position:relative;background:var(--glass-2);border:1px solid var(--glass-border);border-radius:var(--r-xl);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 30px 70px -35px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.04)}
+/* border light that follows the cursor across every panel */
+.panel::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;
+  background:radial-gradient(280px circle at var(--px,50%) var(--py,0%),rgba(182,172,255,.9),rgba(255,180,84,.35) 45%,transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  transition:opacity .35s var(--ease)}
+.panel:hover::before,.panel:focus-within::before{opacity:1}
 
 .info-col{display:flex;flex-direction:column;gap:22px}
 .info-card{padding:32px 34px}
 @media (max-width:640px){.info-card{padding:24px 22px}}
-.section-h{font-family:var(--ff-head);font-size:1.1rem;font-weight:700;margin:0 0 18px}
+.section-h{font-family:var(--ff-head);font-size:1.1rem;font-weight:700;margin:0 0 20px}
 
-.agenda{display:grid;gap:12px}
-.agenda .item{display:flex;gap:16px;border:1px solid var(--line-soft);border-radius:var(--r-md);padding:16px 17px;background:rgba(255,255,255,.02);
-  transition:border-color .18s var(--ease),background .18s var(--ease)}
-.agenda .item:hover{border-color:rgba(140,124,255,.35);background:rgba(140,124,255,.05)}
-.agenda .num{flex:none;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--violet-dim),var(--amber-dim));
-  display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;color:var(--violet-2);font-size:1.02rem}
+/* agenda — a real sequence, so it gets a rail that fills as you scroll */
+.agenda{display:block}
+.agenda .item{position:relative;margin-bottom:12px;padding:16px 18px 16px 70px;border:1px solid var(--line-soft);border-radius:var(--r-md);
+  background:rgba(255,255,255,.02);transition:border-color .5s var(--ease),background .5s var(--ease)}
+.agenda .item:last-child{margin-bottom:0}
+.agenda .item.on{border-color:rgba(140,124,255,.4);background:rgba(140,124,255,.06)}
+.agenda .item:not(:last-child)::after{content:"";position:absolute;left:33px;top:52px;width:2px;height:calc(100% - 24px);border-radius:2px;
+  background:linear-gradient(180deg,var(--violet),var(--amber)) 0 0/100% calc(var(--seg,0)*100%) no-repeat,rgba(255,255,255,.08)}
+.agenda .node{position:absolute;left:16px;top:16px;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-weight:700;font-size:1.02rem;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);
+  transition:transform .55s var(--spring),background .4s var(--ease),color .3s var(--ease),box-shadow .4s var(--ease),border-color .3s var(--ease)}
+.agenda .node::after{content:"";position:absolute;inset:-1px;border-radius:inherit;border:1.5px solid var(--amber);opacity:0;pointer-events:none}
+.agenda .item.on .node{background:linear-gradient(135deg,var(--violet),var(--amber));border-color:transparent;color:var(--bg);transform:scale(1.08);
+  box-shadow:0 10px 24px -6px rgba(140,124,255,.65)}
+.agenda .item.on .node::after{animation:nodePing .9s var(--ease) 1}
+@keyframes nodePing{0%{transform:scale(1);opacity:.85}100%{transform:scale(1.9);opacity:0}}
 .agenda .t{font-weight:600;font-size:.94rem;margin-bottom:4px}
 .agenda .d{color:var(--muted);font-size:.83rem;line-height:1.55}
 
@@ -151,7 +209,14 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
 @media (min-width:961px){.form-card{position:sticky;top:22px}}
 @media (max-width:640px){.form-card{padding:24px 22px}}
 .form-card h2{font-family:var(--ff-head);font-size:1.44rem;font-weight:700;margin:0 0 6px}
-.form-card .sub{color:var(--muted);font-size:.87rem;margin:0 0 28px;line-height:1.55}
+.form-card .sub{color:var(--muted);font-size:.87rem;margin:0 0 20px;line-height:1.55}
+
+/* completion meter */
+.progress{height:4px;border-radius:4px;background:var(--line-soft);overflow:hidden;margin-bottom:9px}
+.progress i{display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(0);border-radius:4px;
+  background:linear-gradient(90deg,var(--violet),var(--amber));transition:transform .65s var(--spring)}
+.prog-txt{font-size:.78rem;color:var(--muted-2);margin-bottom:24px;transition:color .3s var(--ease)}
+.prog-txt.done{color:var(--amber)}
 
 .field{margin-bottom:19px;position:relative}
 .field .inp-wrap{position:relative}
@@ -162,7 +227,7 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
   padding:19px 40px 9px 42px;font-size:1rem;font-family:var(--ff-body);outline:none;height:56px;
   transition:border-color .15s var(--ease),box-shadow .15s var(--ease),background .15s var(--ease)}
 .inp-wrap label{position:absolute;left:42px;top:50%;transform:translateY(-50%);font-size:.94rem;color:var(--muted-2);
-  pointer-events:none;transition:all .15s var(--ease);background:transparent}
+  pointer-events:none;transition:all .15s var(--ease);background:transparent;max-width:calc(100% - 84px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .inp-wrap input:focus,.inp-wrap input:not(:placeholder-shown){background:rgba(255,255,255,.06)}
 .inp-wrap input:focus ~ label,.inp-wrap input:not(:placeholder-shown) ~ label{
   top:13px;font-size:.7rem;color:var(--violet-2);transform:translateY(0)}
@@ -178,32 +243,43 @@ h1 .word span{display:inline-block;transform:translateY(108%);opacity:0;animatio
 .field.shake .inp-wrap{animation:fieldShake .4s var(--ease)}
 .field.shake .inp-wrap input{border-color:var(--err)!important;box-shadow:0 0 0 4px rgba(255,107,124,.14)!important}
 
-.years{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+/* year selector — one highlight that glides between options */
+.years{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
 @media (max-width:380px){.years{grid-template-columns:repeat(2,1fr)}}
-.years input{display:none;position:absolute}
-.years label{cursor:pointer;text-align:center;border:1px solid var(--line);border-radius:12px;padding:12px 4px;font-size:.85rem;
-  color:var(--muted);background:rgba(255,255,255,.035);transition:border-color .15s var(--ease),color .15s var(--ease),background .15s var(--ease),transform .1s}
+.years input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.years .thumb{position:absolute;left:0;top:0;z-index:0;border-radius:12px;opacity:0;pointer-events:none;
+  background:linear-gradient(135deg,var(--violet),var(--amber));box-shadow:0 10px 22px -8px rgba(140,124,255,.6);
+  transition:transform .5s var(--spring),width .3s var(--ease),height .3s var(--ease),opacity .25s var(--ease)}
+.years .thumb.vis{opacity:1}
+.years label{position:relative;z-index:1;cursor:pointer;text-align:center;border:1px solid var(--line);border-radius:12px;padding:12px 4px;font-size:.85rem;
+  color:var(--muted);background:transparent;transition:border-color .2s var(--ease),color .2s var(--ease),transform .1s}
+.years label:hover{border-color:rgba(140,124,255,.45);color:var(--ink)}
 .years label:active{transform:scale(.97)}
-.years input:checked + label{border-color:transparent;color:var(--bg);background:linear-gradient(135deg,var(--violet),var(--amber));font-weight:700;box-shadow:0 8px 20px -6px rgba(140,124,255,.5)}
+.years input:checked + label{border-color:transparent;color:var(--bg);font-weight:700}
+.years input:focus-visible + label{outline:2px solid var(--violet);outline-offset:2px}
 .field-label{display:block;font-size:.83rem;color:var(--muted);margin-bottom:8px;font-weight:500}
 
 .submit{width:100%;margin-top:8px;border:none;border-radius:14px;padding:17px;font-family:var(--ff-body);font-weight:700;
   font-size:1rem;color:var(--bg);background:linear-gradient(135deg,var(--violet),var(--amber));cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:9px;position:relative;overflow:hidden;
-  transition:transform .12s var(--ease),box-shadow .12s var(--ease),background .3s var(--ease)}
+  transition:transform .14s var(--ease),box-shadow .2s var(--ease),background .3s var(--ease)}
 .submit::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
-  transform:translateX(-120%);transition:transform .6s var(--ease)}
+  transform:translateX(-120%);transition:transform .6s var(--ease);pointer-events:none}
 .submit:hover::after{transform:translateX(120%)}
 .submit:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(140,124,255,.55)}
+.submit.ready{animation:readyGlow 2.4s ease-in-out infinite}
+@keyframes readyGlow{0%,100%{box-shadow:0 10px 26px -12px rgba(140,124,255,.45)}50%{box-shadow:0 14px 40px -8px rgba(255,180,84,.6)}}
 .submit:disabled{opacity:.75;cursor:not-allowed;transform:none}
 .submit .spin{width:17px;height:17px;border-radius:50%;border:2.5px solid rgba(10,12,23,.3);border-top-color:var(--bg);
   animation:spin .7s linear infinite;display:none}
 .submit .okico{width:19px;height:19px;display:none;transform:scale(0)}
 .submit.loading .spin{display:inline-block}
 .submit.loading .btxt{display:none}
-.submit.success{background:linear-gradient(135deg,#20c96b,#8c7cff)}
+.submit.success{background:linear-gradient(135deg,#20c96b,#8c7cff);animation:none}
 .submit.success .btxt,.submit.success .spin{display:none}
 .submit.success .okico{display:inline-block;animation:popIn .4s var(--spring) forwards}
+.submit .rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);pointer-events:none;animation:ripple .7s ease-out forwards}
+@keyframes ripple{to{transform:scale(1);opacity:0}}
 @keyframes popIn{to{transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -216,27 +292,21 @@ footer a{color:var(--muted);text-decoration:none;display:inline-flex;align-items
 footer a svg{width:14px;height:14px;fill:var(--wa)}
 footer a:hover{color:var(--ink)}
 
-/* ══════════════════════════ SUCCESS OVERLAY — pro sequence ══════════════════════════ */
-.overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;
-  opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
-.overlay.show{opacity:1;pointer-events:auto}
-.overlay-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 35%,#1b1f46 0%,#04050c 75%);backdrop-filter:blur(0px);
-  transition:backdrop-filter .6s var(--ease)}
-.overlay.show .overlay-bg{backdrop-filter:blur(10px)}
-.burst{position:absolute;left:50%;top:38%;width:0;height:0;pointer-events:none}
-.burst i{position:absolute;left:0;top:0;display:block;opacity:0;
-  animation:burstOut var(--dur,1.6s) var(--del,0s) cubic-bezier(.16,.84,.44,1) forwards}
-@keyframes burstOut{
-  0%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:1}
-  55%{opacity:1}
-  100%{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(1) rotate(var(--rot));opacity:0}
-}
+/* ══════════════════════════ SUCCESS OVERLAY ══════════════════════════ */
+.overlay{position:fixed;inset:0;z-index:50;display:flex;padding:20px;overflow-y:auto;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s var(--ease),visibility 0s linear .5s}
+.overlay.show{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .5s var(--ease),visibility 0s}
+.overlay-bg{position:fixed;inset:0;background:radial-gradient(circle at 50% 35%,#1b1f46 0%,#04050c 78%);
+  -webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:backdrop-filter .6s var(--ease),-webkit-backdrop-filter .6s var(--ease)}
+.overlay.show .overlay-bg{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 
-.oc-card{position:relative;max-width:452px;width:100%;text-align:center;padding:50px 32px 36px;border-radius:26px;
-  background:var(--glass-2);border:1px solid var(--glass-border);backdrop-filter:blur(20px);
+.oc-card{position:relative;margin:auto;max-width:480px;width:100%;text-align:center;padding:50px 30px 32px;border-radius:26px;
+  background:var(--glass-2);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
   transform:scale(.8) translateY(24px);opacity:0;transition:transform .55s var(--spring),opacity .4s var(--ease);
   box-shadow:0 50px 100px -30px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.05)}
 .overlay.show .oc-card{transform:scale(1) translateY(0);opacity:1}
+@media (max-width:420px){.oc-card{padding:46px 18px 26px}}
 
 .rings{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:150px;height:150px;pointer-events:none}
 .rings i{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--amber);opacity:0}
@@ -255,13 +325,39 @@ footer a:hover{color:var(--ink)}
 @keyframes ring{to{stroke-dashoffset:0}}
 @keyframes check{to{stroke-dashoffset:0}}
 
-.oc-reveal{opacity:0;transform:translateY(10px);animation:revealUp .5s var(--ease) forwards}
-.overlay.show .oc-reveal{animation-play-state:running}
-.oc-card h2{font-family:var(--ff-head);font-size:1.5rem;font-weight:700;margin:0 0 10px;animation-delay:.85s}
-.oc-card p{color:var(--muted);font-size:.92rem;max-width:33ch;margin:0 auto 26px;line-height:1.6;animation-delay:.95s}
-.oc-card .oc-cta-wrap{animation-delay:1.08s}
-@keyframes revealUp{to{opacity:1;transform:translateY(0)}}
+/* staggered reveal only plays while the overlay is open */
+.overlay.show .oc-reveal{animation:revealUp .6s var(--ease) var(--d,0s) backwards}
+@keyframes revealUp{from{opacity:0;transform:translateY(12px)}}
+.oc-card h2{font-family:var(--ff-head);font-size:1.5rem;font-weight:700;margin:0 0 10px;overflow-wrap:anywhere}
+.oc-card > p{color:var(--muted);font-size:.92rem;max-width:36ch;margin:0 auto 24px;line-height:1.6}
 .oc-card .name-hl{color:var(--violet-2)}
+
+/* registration pass */
+.pass-tilt{max-width:380px;margin:0 auto 26px;filter:drop-shadow(0 22px 28px rgba(0,0,0,.5));
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s var(--ease)}
+.pass{--stub:66px;position:relative;text-align:left;border-radius:18px;transform-origin:50% 0;
+  background:linear-gradient(150deg,rgba(140,124,255,.3),rgba(20,23,48,.94) 46%,rgba(255,180,84,.16));
+  -webkit-mask:radial-gradient(circle 9px at 0 calc(100% - var(--stub)),#0000 97%,#000) left/51% 100% no-repeat,
+               radial-gradient(circle 9px at 100% calc(100% - var(--stub)),#0000 97%,#000) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 9px at 0 calc(100% - var(--stub)),#0000 97%,#000) left/51% 100% no-repeat,
+       radial-gradient(circle 9px at 100% calc(100% - var(--stub)),#0000 97%,#000) right/51% 100% no-repeat}
+.overlay.show .pass{animation:passIn .95s var(--spring) 1.1s backwards}
+@keyframes passIn{from{opacity:0;transform:perspective(900px) rotateX(-90deg)}}
+.pass::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.2) 50%,transparent 65%);transform:translateX(-120%)}
+.overlay.show .pass::after{animation:shine 1.3s var(--ease) 2s 1 forwards}
+@keyframes shine{to{transform:translateX(120%)}}
+.pass-main{padding:20px 22px 18px}
+.pass-brand{display:flex;align-items:center;gap:10px;font-size:.8rem;color:var(--muted);margin-bottom:14px}
+.pass-brand img{width:24px;height:24px;border-radius:7px}
+.pass-title{font-family:var(--ff-head);font-weight:700;font-size:1.15rem;margin-bottom:16px;line-height:1.25}
+.pass-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin:0}
+.pass-grid > div{min-width:0}
+.pass-grid .full{grid-column:1/-1}
+.pass-grid dt{font-size:.72rem;color:var(--muted-2);margin-bottom:2px}
+.pass-grid dd{margin:0;font-size:.9rem;font-weight:600;overflow-wrap:anywhere}
+.pass-stub{height:var(--stub);border-top:2px dashed rgba(255,255,255,.16);display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:0 22px;font-size:.8rem;color:var(--muted)}
+.pass-stub strong{color:var(--amber);font-family:var(--ff-mono);font-weight:500;font-size:.78rem}
 
 .wa-btn{position:relative;display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#1fae63,#20c96b);
   color:#04170c;font-weight:700;padding:15px 26px;border-radius:14px;text-decoration:none;font-size:.94rem;
@@ -277,17 +373,17 @@ footer a:hover{color:var(--ink)}
 .oc-timer{margin-top:24px;display:flex;align-items:center;justify-content:center;gap:8px}
 .oc-track{flex:1;max-width:150px;height:3px;border-radius:3px;background:var(--line-soft);overflow:hidden}
 .oc-fill{height:100%;width:100%;background:var(--muted-2);transform-origin:left;animation:none}
-.oc-fill.run{animation:drain 8s linear forwards}
+.oc-fill.run{animation:drain 12s linear forwards}
 @keyframes drain{to{transform:scaleX(0)}}
-.oc-close{background:none;border:none;color:var(--muted-2);font-size:.76rem;cursor:pointer;text-decoration:underline;
-  padding:0;font-family:var(--ff-body)}
+.oc-close{background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline;
+  padding:4px 2px;font-family:var(--ff-body)}
 
 /* ── accessibility / reduced motion ────────────────────────────── */
 @media (prefers-reduced-motion:reduce){
-  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
-  .aurora{display:none}
-  h1 .word span{transform:none;opacity:1;animation:none}
-  .oc-reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+  *{animation-duration:.001ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .aurora,#net{display:none}
+  h1.decrypt{opacity:1}
 }
 :focus-visible{outline:2px solid var(--violet);outline-offset:2px}
 </style>
@@ -295,7 +391,9 @@ footer a:hover{color:var(--ink)}
 <body>
 
 <div class="aurora"><i></i><i></i><i></i></div>
+<canvas id="net" aria-hidden="true"></canvas>
 <div class="grid-tex"></div>
+<div class="grid-glow"></div>
 
 <div class="wrap">
   <header class="top">
@@ -304,8 +402,7 @@ footer a:hover{color:var(--ink)}
       <div><div class="name">Cyber Buddy Academy</div><div class="tag">Practical, beginner-friendly security training</div></div>
     </div>
     <div class="status">
-      <span class="pill"><span class="pulse-dot"></span>Registration open</span>
-      <span class="pill">Starts in <strong id="countdown">—</strong></span>
+      <span class="pill"><span class="pulse-dot" id="statusDot"></span><span id="statusText">Registration open</span></span>
       <a class="pill wa-pill" href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.06 16.9L2 22l5.24-1.02A8.86 8.86 0 0 0 12.14 22 8.87 8.87 0 0 0 17.6 6.32ZM12.14 20.3a7.28 7.28 0 0 1-3.7-1.02l-.27-.16-2.83.75.76-2.76-.18-.28a7.32 7.32 0 1 1 6.22 3.47Z"/></svg>
         Community
@@ -315,27 +412,41 @@ footer a:hover{color:var(--ink)}
 
   <main>
     <section class="hero">
-      <span class="badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/></svg>
-        Introduction to Cybersecurity
-      </span>
-      <h1 id="heroHead"></h1>
-      <p class="lede">A live, beginner-friendly session from Cyber Buddy Academy on cybersecurity and ethical hacking fundamentals — real tools, real demonstrations, and time for your questions.</p>
+      <div class="hero-copy">
+        <span class="badge rise" style="--d:.05s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/></svg>
+          Introduction to Cybersecurity
+        </span>
+        <h1 id="heroHead" class="decrypt">Where beginners learn to think like attackers.</h1>
+        <p class="lede rise" style="--d:.95s">A live, beginner-friendly session from Cyber Buddy Academy on cybersecurity and ethical hacking fundamentals — real tools, real demonstrations, and time for your questions.</p>
 
-      <div class="meta-row">
-        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="mono">12 Sep 2026 · 8:00 PM IST</span></span>
-        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/></svg>Microsoft Teams</span>
-        <span class="chip accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Free</span>
-        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 1 3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-6.4L2.5 8l6.5-1Z"/></svg>Beginner friendly</span>
+        <div class="meta-row">
+          <span class="chip rise" style="--d:1.1s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="mono" data-date-short>26 Sep 2026, 8:00 PM IST</span></span>
+          <span class="chip rise" style="--d:1.18s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/></svg>Microsoft Teams</span>
+          <span class="chip accent rise" style="--d:1.26s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Free</span>
+          <span class="chip rise" style="--d:1.34s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 1 3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-6.4L2.5 8l6.5-1Z"/></svg>Beginner friendly</span>
+        </div>
+
+        <a class="hero-cta rise" style="--d:1.5s" href="#formCard">
+          Reserve your seat
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </a>
       </div>
 
-      <a class="hero-cta" href="#formCard">
-        Reserve your seat
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      </a>
+      <aside class="panel clock rise" id="clock" style="--d:.55s" aria-label="Countdown to the session">
+        <div class="clock-top"><span class="live-dot"></span><span id="clockLabel">Session starts in</span></div>
+        <div class="units" role="timer" aria-live="off">
+          <div class="unit"><div class="num" id="u-d"></div><div class="lab">days</div></div>
+          <span class="sep" aria-hidden="true">:</span>
+          <div class="unit"><div class="num" id="u-h"></div><div class="lab">hours</div></div>
+          <span class="sep" aria-hidden="true">:</span>
+          <div class="unit"><div class="num" id="u-m"></div><div class="lab">minutes</div></div>
+          <span class="sep" aria-hidden="true">:</span>
+          <div class="unit sec"><div class="num" id="u-s"></div><div class="lab">seconds</div></div>
+        </div>
+        <div class="clock-date"><span data-date-long>Saturday, 26 September 2026, 8:00 PM IST</span><span>Live on Microsoft Teams</span></div>
+      </aside>
     </section>
-
-    <div class="wrap" style="padding:0"></div>
 
     <section class="content">
       <div class="grid">
@@ -344,12 +455,12 @@ footer a:hover{color:var(--ink)}
         <div class="info-col">
           <section class="panel info-card">
             <div class="section-h">How the session runs</div>
-            <div class="agenda">
-              <div class="item"><div class="num">1</div>
+            <div class="agenda" id="agenda">
+              <div class="item"><div class="node">1</div>
                 <div><div class="t">Basics of cybersecurity &amp; its domains</div><div class="d">Fundamentals across network security, application security, cloud security, digital forensics, SOC, and ethical hacking.</div></div></div>
-              <div class="item"><div class="num">2</div>
+              <div class="item"><div class="node">2</div>
                 <div><div class="t">Ethical hacking skills &amp; career path</div><div class="d">Key technical skills, tools, certifications, and career opportunities to start your ethical hacking journey.</div></div></div>
-              <div class="item"><div class="num">3</div>
+              <div class="item"><div class="node">3</div>
                 <div><div class="t">Live tools demonstration</div><div class="d">A practical, beginner-friendly walkthrough of cybersecurity tools and techniques in action.</div></div></div>
             </div>
 
@@ -379,6 +490,9 @@ footer a:hover{color:var(--ink)}
           <h2>Reserve your seat</h2>
           <p class="sub">Fill in your details — a confirmation email lands in your inbox right after.</p>
 
+          <div class="progress" aria-hidden="true"><i id="progFill"></i></div>
+          <div class="prog-txt" id="progTxt" aria-live="polite">0 of 5 required details filled</div>
+
           <form id="regForm" novalidate>
             <div class="field" id="f-name">
               <div class="inp-wrap">
@@ -407,8 +521,9 @@ footer a:hover{color:var(--ink)}
               <div class="err" id="err-degree"></div>
             </div>
             <div class="field">
-              <label class="field-label">Year of studying</label>
-              <div class="years">
+              <span class="field-label" id="yearLabel">Year of studying</span>
+              <div class="years" id="years" role="radiogroup" aria-labelledby="yearLabel">
+                <span class="thumb" id="thumb"></span>
                 <input type="radio" name="year" id="y1" value="1st Year" required><label for="y1">1st Year</label>
                 <input type="radio" name="year" id="y2" value="2nd Year"><label for="y2">2nd Year</label>
                 <input type="radio" name="year" id="y3" value="3rd Year"><label for="y3">3rd Year</label>
@@ -419,7 +534,7 @@ footer a:hover{color:var(--ink)}
             <div class="field" id="f-contact">
               <div class="inp-wrap">
                 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.99.36 1.96.68 2.9a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.18-1.25a2 2 0 0 1 2.11-.45c.94.32 1.91.55 2.9.68A2 2 0 0 1 22 16.92Z"/></svg>
-                <input id="contact" name="contact" type="tel" placeholder=" " autocomplete="tel" required>
+                <input id="contact" name="contact" type="tel" inputmode="numeric" placeholder=" " autocomplete="tel" required>
                 <label for="contact">Contact number</label>
                 <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
               </div>
@@ -440,7 +555,7 @@ footer a:hover{color:var(--ink)}
               <span class="spin"></span>
               <svg class="okico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg>
             </button>
-            <div class="formmsg" id="formMsg"></div>
+            <div class="formmsg" id="formMsg" role="alert"></div>
             <p class="privacy">Your details are stored securely and used only for this webinar and Cyber Buddy Academy updates.</p>
           </form>
         </section>
@@ -459,63 +574,319 @@ footer a:hover{color:var(--ink)}
 </div>
 
 <!-- Full-screen success overlay -->
-<div class="overlay" id="overlay">
-  <div class="overlay-bg"></div>
-  <div class="burst" id="burst"></div>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ocTitle" aria-hidden="true">
+  <div class="overlay-bg" id="ocBg"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
   <div class="oc-card">
     <div class="rings"><i></i><i></i><i></i></div>
-    <div class="tick"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-15"/></svg></div>
-    <h2 class="oc-reveal">Congrats, <span class="name-hl" id="successName">Friend</span>! 🎉</h2>
-    <p class="oc-reveal">You've successfully registered for the Introduction to Cybersecurity webinar. A confirmation email is on its way to your inbox.</p>
-    <div class="oc-cta-wrap oc-reveal">
-      <a class="wa-btn" href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">
+    <div class="tick" id="tick"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-15"/></svg></div>
+    <h2 class="oc-reveal" id="ocTitle" style="--d:.85s">Congrats, <span class="name-hl" id="successName">Friend</span>! 🎉</h2>
+    <p class="oc-reveal" style="--d:.95s">You've successfully registered for the Introduction to Cybersecurity webinar. A confirmation email is on its way to your inbox.</p>
+
+    <div class="pass-tilt" id="passTilt">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-brand">
+            <img src="https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png" alt="">
+            Cyber Buddy Academy
+          </div>
+          <div class="pass-title">Introduction to Cybersecurity</div>
+          <dl class="pass-grid">
+            <div><dt>Name</dt><dd id="passName"></dd></div>
+            <div><dt>Year</dt><dd id="passYear"></dd></div>
+            <div class="full"><dt>College</dt><dd id="passCollege"></dd></div>
+            <div class="full" id="passDegreeRow"><dt>Degree</dt><dd id="passDegree"></dd></div>
+          </dl>
+        </div>
+        <div class="pass-stub"><strong data-date-short>26 Sep 2026, 8:00 PM IST</strong><span>Microsoft Teams</span></div>
+      </div>
+    </div>
+
+    <div class="oc-cta-wrap oc-reveal" style="--d:1.6s">
+      <a class="wa-btn" id="waBtn" href="https://chat.whatsapp.com/Kb4JD6aFli9LJeh3lLxqFK?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.06 16.9L2 22l5.24-1.02A8.86 8.86 0 0 0 12.14 22 8.87 8.87 0 0 0 17.6 6.32ZM12.14 20.3a7.28 7.28 0 0 1-3.7-1.02l-.27-.16-2.83.75.76-2.76-.18-.28a7.32 7.32 0 1 1 6.22 3.47Zm4-5.47c-.22-.11-1.3-.64-1.5-.72s-.35-.11-.5.11-.57.72-.7.87-.26.17-.48.06a5.97 5.97 0 0 1-1.76-1.09 6.6 6.6 0 0 1-1.22-1.52c-.13-.22 0-.34.1-.45s.22-.26.33-.39.14-.22.22-.37a.4.4 0 0 0 0-.39c-.06-.11-.5-1.2-.68-1.65s-.36-.37-.5-.38h-.43a.82.82 0 0 0-.6.28 2.5 2.5 0 0 0-.78 1.86 4.35 4.35 0 0 0 .91 2.3 9.96 9.96 0 0 0 3.81 3.37c.53.23.95.37 1.27.47.53.17 1.02.15 1.4.09.43-.06 1.3-.53 1.48-1.04s.18-.95.13-1.04-.2-.15-.42-.26Z"/></svg>
         Join the WhatsApp group <span class="arrow">→</span>
       </a>
     </div>
     <div class="oc-timer">
-      <button class="oc-close" id="ocClose">Close now</button>
+      <button class="oc-close" id="ocClose" type="button">Close now</button>
       <div class="oc-track"><div class="oc-fill" id="ocFill"></div></div>
     </div>
   </div>
 </div>
 
 <script type="module">
-import { saveRegistration } from './firebase.js';
+/* firebase.js is loaded up-front but isolated, so if it fails the animations
+   still run and the form shows a clear error on submit instead of breaking the page. */
+const fbReady = import('./firebase.js').catch(err => { console.error('firebase.js failed to load', err); return null; });
 
-/* ── orchestrated hero load: headline rises in word by word ── */
-(function heroReveal(){
-  const el = document.getElementById('heroHead');
-  const text = "Where beginners learn to think like attackers.";
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const words = text.split(' ');
-  el.innerHTML = words.map((w, i) => {
-    const delay = reduced ? 0 : (i * 0.06).toFixed(3);
-    return `<span class="word"><span style="animation-delay:${delay}s">${w}</span></span>`;
-  }).join(' ');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+const root = document.documentElement;
+const $ = id => document.getElementById(id);
+
+/* ═════════════════════════ WEBINAR DATE — change it here only ═════════════════════════ */
+const WEBINAR_START = new Date('2026-09-26T20:00:00+05:30');
+const WEBINAR_LENGTH_MS = 2.5 * 3600 * 1000;   // how long the session counts as "live" after it starts
+
+(function fillDates(){
+  const p = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Kolkata', weekday:'long', day:'numeric', month:'numeric', year:'numeric',
+    hour:'numeric', minute:'2-digit', hour12:true}).formatToParts(WEBINAR_START).reduce((a, x) => (a[x.type] = x.value, a), {});
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const month = MONTHS[+p.month - 1];
+  const time = `${p.hour}:${p.minute} ${String(p.dayPeriod || '').toUpperCase()} IST`;
+  document.querySelectorAll('[data-date-short]').forEach(el => el.textContent = `${p.day} ${month.slice(0,3)} ${p.year}, ${time}`);
+  document.querySelectorAll('[data-date-long]').forEach(el => el.textContent = `${p.weekday}, ${p.day} ${month} ${p.year}, ${time}`);
 })();
 
-/* ── live countdown to the webinar ───────────────────────────────── */
+/* ═════════════════════════ shared pointer position ═════════════════════════ */
+const pointer = { x: -9999, y: -9999 };
+(function trackPointer(){
+  if (!finePointer) return;
+  const panels = document.querySelectorAll('.panel');
+  let queued = false;
+  function apply(){
+    queued = false;
+    const off = pointer.x < -1000;
+    root.style.setProperty('--mx', off ? '-500px' : pointer.x + 'px');
+    root.style.setProperty('--my', off ? '-500px' : pointer.y + 'px');
+    if (off) return;
+    panels.forEach(p => {
+      const r = p.getBoundingClientRect();
+      p.style.setProperty('--px', (pointer.x - r.left) + 'px');
+      p.style.setProperty('--py', (pointer.y - r.top) + 'px');
+    });
+  }
+  addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    pointer.x = e.clientX; pointer.y = e.clientY;
+    if (!queued){ queued = true; requestAnimationFrame(apply); }
+  }, { passive: true });
+  root.addEventListener('pointerleave', () => { pointer.x = pointer.y = -9999; if (!queued){ queued = true; requestAnimationFrame(apply); } });
+})();
+
+/* ═════════════════════════ live network background ═════════════════════════ */
+(function network(){
+  const c = $('net');
+  if (!c) return;
+  if (reduced){ c.remove(); return; }
+  const ctx = c.getContext('2d');
+  const LINK = 135, MOUSE_R = 180, TAU = Math.PI * 2;
+  let W = 0, H = 0, nodes = [], packets = [], running = true, last = performance.now(), spawnT = 1;
+
+  const target = () => Math.round(Math.min(78, Math.max(26, (W * H) / 21000)));
+  const mk = () => ({ x: Math.random() * W, y: Math.random() * H, bx: (Math.random() - .5) * .28, by: (Math.random() - .5) * .28, px: 0, py: 0, r: 1 + Math.random() * 1.3 });
+
+  function resize(){
+    if (innerWidth === W && Math.abs(innerHeight - H) < 120 && W) return;   // ignore mobile address-bar jiggle
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = target();
+    while (nodes.length < n) nodes.push(mk());
+    nodes.length = Math.min(nodes.length, n);
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  function frame(t){
+    if (!running) return;
+    const dt = Math.min(.05, (t - last) / 1000); last = t;
+    const k = dt * 60, mx = pointer.x, my = pointer.y;
+    ctx.clearRect(0, 0, W, H);
+
+    for (const n of nodes){
+      const dx = mx - n.x, dy = my - n.y, d2 = dx * dx + dy * dy;
+      if (d2 < MOUSE_R * MOUSE_R && d2 > 1){
+        const d = Math.sqrt(d2);
+        let f = (1 - d / MOUSE_R) * .05;                 // reach toward the cursor…
+        if (d < 60) f -= (1 - d / 60) * .14;             // …but keep a small ring open around it
+        n.px += dx / d * f * k; n.py += dy / d * f * k;
+      }
+      const damp = Math.pow(.94, k);
+      n.px *= damp; n.py *= damp;
+      n.x += (n.bx + n.px) * k; n.y += (n.by + n.py) * k;
+      if (n.x < -10) n.x = W + 10; else if (n.x > W + 10) n.x = -10;
+      if (n.y < -10) n.y = H + 10; else if (n.y > H + 10) n.y = -10;
+    }
+
+    ctx.lineWidth = 1;
+    for (let i = 0; i < nodes.length; i++){
+      const a = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++){
+        const b = nodes[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+        if (d2 < LINK * LINK){
+          ctx.strokeStyle = `rgba(140,124,255,${((1 - Math.sqrt(d2) / LINK) * .24).toFixed(3)})`;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+      const mdx = mx - a.x, mdy = my - a.y, md2 = mdx * mdx + mdy * mdy;
+      const near = md2 < MOUSE_R * MOUSE_R;
+      if (near){
+        const w = 1 - Math.sqrt(md2) / MOUSE_R;
+        ctx.strokeStyle = `rgba(255,180,84,${(w * .55).toFixed(3)})`;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke();
+        ctx.fillStyle = `rgba(255,205,140,${(.5 + w * .5).toFixed(3)})`;
+      } else {
+        ctx.fillStyle = 'rgba(182,172,255,.5)';
+      }
+      ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill();
+    }
+
+    /* data packets hopping along links */
+    spawnT -= dt;
+    if (spawnT <= 0 && packets.length < 4){
+      spawnT = .9 + Math.random() * 1.2;
+      const a = nodes[(Math.random() * nodes.length) | 0];
+      const near = nodes.filter(b => b !== a && (b.x - a.x) ** 2 + (b.y - a.y) ** 2 < LINK * LINK);
+      if (near.length) packets.push({ a, b: near[(Math.random() * near.length) | 0], t: 0, sp: .7 + Math.random() * .6 });
+    }
+    for (let i = packets.length - 1; i >= 0; i--){
+      const p = packets[i];
+      p.t += dt * p.sp;
+      const far = (p.b.x - p.a.x) ** 2 + (p.b.y - p.a.y) ** 2 > (LINK * 1.4) ** 2;
+      if (p.t >= 1 || far){ packets.splice(i, 1); continue; }
+      const x = p.a.x + (p.b.x - p.a.x) * p.t, y = p.a.y + (p.b.y - p.a.y) * p.t;
+      ctx.fillStyle = 'rgba(255,180,84,.22)'; ctx.beginPath(); ctx.arc(x, y, 6, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#ffb454';               ctx.beginPath(); ctx.arc(x, y, 2, 0, TAU); ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  document.addEventListener('visibilitychange', () => {
+    running = !document.hidden;
+    if (running){ last = performance.now(); requestAnimationFrame(frame); }
+  });
+})();
+
+/* ═════════════════════════ headline: decrypts into place ═════════════════════════ */
+(function decrypt(){
+  const h = $('heroHead');
+  if (!h) return;
+  const show = () => h.classList.add('go');
+  if (reduced){ show(); return; }
+  try{
+    const text = h.textContent.trim();
+    const GLYPHS = '01<>/\\{}[]#$%&*+=?!';
+    const rnd = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
+    h.textContent = '';
+    const sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = text; h.appendChild(sr);
+    const vis = document.createElement('span'); vis.setAttribute('aria-hidden', 'true'); h.appendChild(vis);
+    const chars = [];
+    text.split(' ').forEach((word, wi, arr) => {
+      const w = document.createElement('span'); w.className = 'w';
+      [...word].forEach(ch => {
+        const c = document.createElement('span'); c.className = 'c'; c.textContent = ch; c.dataset.ch = ch;
+        w.appendChild(c); chars.push(c);
+      });
+      vis.appendChild(w);
+      if (wi < arr.length - 1) vis.appendChild(document.createTextNode(' '));
+    });
+
+    let busy = false;
+    function run(fast){
+      busy = true;
+      const t0 = performance.now(), per = fast ? 14 : 30;
+      chars.forEach((c, i) => { c._at = (fast ? 0 : 160) + i * per + Math.random() * (fast ? 60 : 140); c._done = false; c.classList.add('scr'); c.textContent = rnd(); });
+      show();
+      (function step(t){
+        const el = t - t0; let left = 0;
+        for (const c of chars){
+          if (c._done) continue;
+          if (el >= c._at){
+            c._done = true; c.textContent = c.dataset.ch;
+            c.classList.remove('scr'); c.classList.add('hot');
+            setTimeout(() => c.classList.remove('hot'), 220);
+          } else {
+            left++;
+            if (Math.random() < .35) c.textContent = rnd();
+          }
+        }
+        if (left) requestAnimationFrame(step); else busy = false;
+      })(t0);
+    }
+
+    // lock each character to its final width so the line never jitters while it scrambles
+    const fontReady = document.fonts && document.fonts.load ? document.fonts.load('700 1em Sora') : Promise.resolve();
+    Promise.race([fontReady, new Promise(r => setTimeout(r, 1500))]).then(() => {
+      chars.forEach(c => { c.style.width = c.getBoundingClientRect().width + 'px'; });
+      run(false);
+      if (finePointer) h.addEventListener('pointerenter', () => { if (!busy) run(true); });
+    });
+  } catch(e){ console.error(e); show(); }
+})();
+
+/* ═════════════════════════ countdown with rolling digits ═════════════════════════ */
 (function countdown(){
-  const target = new Date('2026-09-12T20:00:00+05:30').getTime();
-  const out = document.getElementById('countdown');
+  const clock = $('clock'), label = $('clockLabel');
+  const statusDot = $('statusDot'), statusText = $('statusText');
+  const units = { d: $('u-d'), h: $('u-h'), m: $('u-m'), s: $('u-s') };
+
+  function setUnit(el, val){
+    const s = String(val).padStart(2, '0');
+    if (el.dataset.v === s) return;
+    el.dataset.v = s;
+    const old = el.firstElementChild;
+    const nu = document.createElement('span'); nu.textContent = s;
+    el.appendChild(nu);
+    if (!old) return;
+    if (reduced || !old.animate){ old.remove(); return; }
+    const opts = { duration: 460, easing: 'cubic-bezier(.22,.85,.32,1)', fill: 'forwards' };
+    old.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-80%)', opacity: 0 }], opts).onfinish = () => old.remove();
+    nu.animate([{ transform: 'translateY(80%)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], opts);
+  }
+
+  let lastState = '';
   function tick(){
-    const diff = target - Date.now();
-    if (diff <= 0){ out.textContent = 'now'; return; }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    out.textContent = d > 0 ? `${d}d ${h}h` : (h > 0 ? `${h}h ${m}m` : `${m}m`);
+    const diff = WEBINAR_START - Date.now();
+    const state = diff > 0 ? 'upcoming' : (-diff < WEBINAR_LENGTH_MS ? 'live' : 'ended');
+    if (state !== lastState){
+      lastState = state;
+      clock.classList.toggle('ended', state === 'ended');
+      label.textContent = state === 'upcoming' ? 'Session starts in' : state === 'live' ? 'The session is live now' : 'This session has ended';
+      statusText.textContent = state === 'upcoming' ? 'Registration open' : state === 'live' ? 'Live now' : 'Session ended';
+      statusDot.classList.toggle('off', state === 'ended');
+    }
+    const t = Math.max(0, diff);
+    setUnit(units.d, Math.floor(t / 86400000));
+    setUnit(units.h, Math.floor((t % 86400000) / 3600000));
+    setUnit(units.m, Math.floor((t % 3600000) / 60000));
+    setUnit(units.s, Math.floor((t % 60000) / 1000));
   }
   tick();
-  setInterval(tick, 60000);
+  setInterval(tick, 250);
 })();
 
-/* ── form logic ───────────────────────────────────────────────────── */
-const form = document.getElementById('regForm');
-const btn = document.getElementById('submitBtn');
-const msg = document.getElementById('formMsg');
-const errs = id => document.getElementById('err-' + id);
+/* ═════════════════════════ agenda rail — fills as you scroll ═════════════════════════ */
+(function agenda(){
+  const items = [...document.querySelectorAll('#agenda .item')];
+  if (!items.length) return;
+  let queued = false;
+  function update(){
+    queued = false;
+    const line = innerHeight * .68;
+    const nodes = items.map(i => i.querySelector('.node').getBoundingClientRect());
+    items.forEach((it, i) => {
+      const r = nodes[i];
+      it.classList.toggle('on', line >= r.top + r.height / 2);
+      if (i < items.length - 1){
+        const a = r.bottom, b = nodes[i + 1].top;
+        it.style.setProperty('--seg', Math.min(1, Math.max(0, (line - a) / (b - a))).toFixed(3));
+      }
+    });
+  }
+  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', queue);
+  update();
+})();
+
+/* ═════════════════════════ form logic ═════════════════════════ */
+const form = $('regForm');
+const btn = $('submitBtn');
+const msg = $('formMsg');
+const errs = id => $('err-' + id);
 const CONTACT_RE = /^[6-9]\d{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -525,11 +896,9 @@ function setErr(id, text){
   el.classList.toggle('show', !!text);
 }
 
-// Clears the error the moment the field becomes valid again, and toggles
-// the checkmark — previously the red error text stayed on screen even
-// after the person had already fixed the value.
+// Clears the error the moment the field becomes valid again and toggles the checkmark.
 function liveValidate(fieldWrapId, ok, errId){
-  const wrap = document.getElementById(fieldWrapId);
+  const wrap = $(fieldWrapId);
   if (wrap){
     wrap.classList.toggle('valid', ok);
     if (ok) wrap.classList.remove('shake');
@@ -538,24 +907,66 @@ function liveValidate(fieldWrapId, ok, errId){
 }
 
 ['name','college'].forEach(id => {
-  document.getElementById(id).addEventListener('input', e => {
+  $(id).addEventListener('input', e => {
     liveValidate('f-'+id, e.target.value.trim().length >= 2, id);
   });
 });
-document.getElementById('contact').addEventListener('input', e => {
-  // keep it digits-only and capped at 10 chars as the person types
+$('contact').addEventListener('input', e => {
   e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
   liveValidate('f-contact', CONTACT_RE.test(e.target.value.trim()), 'contact');
 });
-document.getElementById('email').addEventListener('input', e => {
+$('email').addEventListener('input', e => {
   liveValidate('f-email', EMAIL_RE.test(e.target.value.trim()), 'email');
 });
 document.querySelectorAll('input[name="year"]').forEach(r => {
   r.addEventListener('change', () => setErr('year',''));
 });
 
+/* completion meter */
+const progFill = $('progFill'), progTxt = $('progTxt');
+let lastCount = -1;
+function updateProgress(){
+  const n = [
+    $('name').value.trim().length >= 2,
+    $('college').value.trim().length >= 2,
+    !!form.querySelector('input[name="year"]:checked'),
+    CONTACT_RE.test($('contact').value.trim()),
+    EMAIL_RE.test($('email').value.trim())
+  ].filter(Boolean).length;
+  progFill.style.transform = `scaleX(${n / 5})`;
+  btn.classList.toggle('ready', n === 5 && !btn.classList.contains('loading') && !btn.classList.contains('success'));
+  if (n === lastCount) return;
+  lastCount = n;
+  progTxt.textContent = n === 5 ? 'All set. You can register now.' : `${n} of 5 required details filled`;
+  progTxt.classList.toggle('done', n === 5);
+}
+form.addEventListener('input', updateProgress);
+form.addEventListener('change', updateProgress);
+updateProgress();
+
+/* year selector: one gradient highlight glides between options */
+const years = $('years'), thumb = $('thumb');
+let thumbPlaced = false;
+function placeThumb(){
+  const chk = years.querySelector('input:checked');
+  if (!chk){ thumb.classList.remove('vis'); thumbPlaced = false; return; }
+  const lab = years.querySelector(`label[for="${chk.id}"]`);
+  thumb.style.width = lab.offsetWidth + 'px';
+  thumb.style.height = lab.offsetHeight + 'px';
+  thumb.style.transform = `translate(${lab.offsetLeft}px, ${lab.offsetTop}px)`;
+  if (!thumbPlaced){
+    thumb.style.transition = 'opacity .25s cubic-bezier(.22,.85,.32,1)';   // fade in on first pick, don't fly in from the corner
+    thumb.classList.add('vis');
+    void thumb.offsetWidth;
+    thumb.style.transition = '';
+    thumbPlaced = true;
+  }
+}
+years.addEventListener('change', placeThumb);
+if ('ResizeObserver' in window) new ResizeObserver(placeThumb).observe(years);
+
 function markInvalid(wrapId, focusEl){
-  const wrap = document.getElementById(wrapId);
+  const wrap = $(wrapId);
   if (!wrap) return focusEl;
   wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake');
   return focusEl || wrap.querySelector('input');
@@ -570,72 +981,160 @@ function validate(v){
   if(!CONTACT_RE.test(v.contact)){ setErr('contact','Enter a valid 10-digit number'); ok=false; firstInvalid = firstInvalid || markInvalid('f-contact'); }
   if(!EMAIL_RE.test(v.email)){ setErr('email','Enter a valid email address'); ok=false; firstInvalid = firstInvalid || markInvalid('f-email'); }
   if(!ok && firstInvalid){
-    firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
-    setTimeout(() => firstInvalid.focus(), 250);
+    firstInvalid.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'center'});
+    setTimeout(() => firstInvalid.focus({preventScroll:true}), 250);
   }
   return ok;
 }
 
-/* ── pro-level radial confetti burst ─────────────────────────────── */
-function fireBurst(){
-  const burst = document.getElementById('burst');
-  burst.innerHTML = '';
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const colors = ['#8c7cff','#ffb454','#f5f6fc','#20c96b','#b6acff'];
-  const shapes = ['circle','rect'];
-  const count = 46;
-  for(let i=0;i<count;i++){
-    const s = document.createElement('i');
-    const angle = (Math.PI * 2 * i / count) + (Math.random()*0.5 - 0.25);
-    const dist = 90 + Math.random()*170;
-    const tx = Math.cos(angle) * dist;
-    const ty = Math.sin(angle) * dist - 40; // slight upward bias
-    const size = 6 + Math.random()*7;
-    const shape = shapes[Math.floor(Math.random()*shapes.length)];
-    s.style.setProperty('--tx', tx.toFixed(0) + 'px');
-    s.style.setProperty('--ty', ty.toFixed(0) + 'px');
-    s.style.setProperty('--rot', (Math.random()*720 - 360).toFixed(0) + 'deg');
-    s.style.setProperty('--dur', (1.1 + Math.random()*0.7).toFixed(2) + 's');
-    s.style.setProperty('--del', (Math.random()*0.25).toFixed(2) + 's');
-    s.style.width = size + 'px';
-    s.style.height = (shape === 'rect' ? size * 1.7 : size) + 'px';
-    s.style.background = colors[i % colors.length];
-    s.style.borderRadius = shape === 'circle' ? '50%' : '3px';
-    burst.appendChild(s);
+/* magnetic submit button + ripple */
+if (finePointer){
+  btn.addEventListener('pointermove', e => {
+    if (btn.disabled) return;
+    const r = btn.getBoundingClientRect();
+    const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+    const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
+    btn.style.transform = `translate(${(dx * 10).toFixed(1)}px, ${(dy * 8 - 2).toFixed(1)}px)`;
+  });
+  btn.addEventListener('pointerleave', () => { btn.style.transform = ''; });
+}
+btn.addEventListener('click', e => {
+  if (reduced || btn.disabled) return;
+  const r = btn.getBoundingClientRect();
+  const d = Math.max(r.width, r.height) * 2;
+  const x = e.detail === 0 ? r.width / 2 : e.clientX - r.left;
+  const y = e.detail === 0 ? r.height / 2 : e.clientY - r.top;
+  const rip = document.createElement('span');
+  rip.className = 'rip';
+  rip.style.cssText = `width:${d}px;height:${d}px;left:${x - d / 2}px;top:${y - d / 2}px`;
+  btn.appendChild(rip);
+  setTimeout(() => rip.remove(), 750);
+});
+
+/* ═════════════════════════ confetti (canvas, with gravity) ═════════════════════════ */
+const cv = $('confetti'), cctx = cv.getContext('2d');
+let bits = [], cRaf = 0, cLast = 0, cW = 0, cH = 0;
+const CONF_COLORS = ['#8c7cff','#b6acff','#ffb454','#ffd9a0','#f5f6fc','#20c96b'];
+function sizeConfetti(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  cW = innerWidth; cH = innerHeight;
+  cv.width = Math.round(cW * dpr); cv.height = Math.round(cH * dpr);
+  cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function spawn(x, y, n, { angle = 0, spread = Math.PI * 2, speed = [5, 14], lift = 0 } = {}){
+  for (let i = 0; i < n; i++){
+    const a = angle + (Math.random() - .5) * spread, sp = speed[0] + Math.random() * (speed[1] - speed[0]);
+    bits.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - lift,
+      w: 6 + Math.random() * 7, h: 4 + Math.random() * 6, rot: Math.random() * 6.28, vr: (Math.random() - .5) * .35,
+      tilt: Math.random() * 6.28, vt: .1 + Math.random() * .2, life: 0, max: 2.4 + Math.random() * 1.4,
+      color: CONF_COLORS[(Math.random() * CONF_COLORS.length) | 0], round: Math.random() < .35 });
   }
+  if (!cRaf){ cLast = performance.now(); cRaf = requestAnimationFrame(stepConfetti); }
+}
+function stepConfetti(t){
+  const dt = Math.min(.034, (t - cLast) / 1000); cLast = t;
+  const k = dt * 60;
+  cctx.clearRect(0, 0, cW, cH);
+  bits = bits.filter(p => p.life < p.max && p.y < cH + 40);
+  for (const p of bits){
+    p.life += dt;
+    p.vx *= Math.pow(.985, k); p.vy = p.vy * Math.pow(.985, k) + .32 * k;
+    p.x += p.vx * k; p.y += p.vy * k; p.rot += p.vr * k; p.tilt += p.vt * k;
+    cctx.save();
+    cctx.globalAlpha = Math.max(0, Math.min(1, (p.max - p.life) / .7));
+    cctx.translate(p.x, p.y); cctx.rotate(p.rot); cctx.scale(1, Math.cos(p.tilt));
+    cctx.fillStyle = p.color;
+    if (p.round){ cctx.beginPath(); cctx.arc(0, 0, p.w / 2.4, 0, 6.283); cctx.fill(); }
+    else cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    cctx.restore();
+  }
+  if (bits.length) cRaf = requestAnimationFrame(stepConfetti);
+  else { cRaf = 0; cctx.clearRect(0, 0, cW, cH); }
 }
 
-function openOverlay(firstName){
-  document.getElementById('successName').textContent = firstName;
+/* ═════════════════════════ success overlay ═════════════════════════ */
+const overlay = $('overlay'), ocFill = $('ocFill'), ocClose = $('ocClose'), waBtn = $('waBtn'), passTilt = $('passTilt');
+let vanishTimer = null, fxTimers = [], lastFocus = null;
+
+function fillPass(d){
+  $('passName').textContent = d.name;
+  $('passYear').textContent = d.year;
+  $('passCollege').textContent = d.college;
+  const has = d.degree && d.degree !== 'Not specified';
+  $('passDegreeRow').style.display = has ? '' : 'none';
+  $('passDegree').textContent = has ? d.degree : '';
+}
+
+function openOverlay(d){
+  $('successName').textContent = d.name.split(' ')[0];
+  fillPass(d);
+  lastFocus = document.activeElement;
+  overlay.setAttribute('aria-hidden', 'false');
   overlay.classList.add('show');
-  fireBurst();
   document.body.style.overflow = 'hidden';
+  if (!reduced){
+    sizeConfetti();
+    fxTimers.push(setTimeout(() => {
+      const r = $('tick').getBoundingClientRect();
+      spawn(r.left + r.width / 2, r.top + r.height / 2, 90, { speed: [5, 15], lift: 3 });
+    }, 380));
+    fxTimers.push(setTimeout(() => {
+      spawn(0, cH, 45, { angle: -Math.PI * .36, spread: .5, speed: [14, 25] });
+      spawn(cW, cH, 45, { angle: -Math.PI * .64, spread: .5, speed: [14, 25] });
+    }, 900));
+  }
   restartTimer();
+  setTimeout(() => ocClose.focus({ preventScroll: true }), 60);
 }
 function closeOverlay(){
   overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   clearTimeout(vanishTimer);
+  fxTimers.forEach(clearTimeout); fxTimers = [];
   ocFill.classList.remove('run');
-  setTimeout(() => { document.getElementById('burst').innerHTML = ''; }, 500);
+  setTimeout(() => { bits = []; cctx.clearRect(0, 0, cW, cH); }, 500);
+  passTilt.style.removeProperty('--rx'); passTilt.style.removeProperty('--ry');
   form.reset();
   document.querySelectorAll('.field.valid').forEach(f => f.classList.remove('valid'));
   document.querySelectorAll('.field.shake').forEach(f => f.classList.remove('shake'));
   document.querySelectorAll('.field .err.show').forEach(e => { e.classList.remove('show'); e.textContent = ''; });
   btn.classList.remove('success');
+  placeThumb(); updateProgress();
+  if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 }
 function restartTimer(){
   clearTimeout(vanishTimer);
   ocFill.classList.remove('run'); void ocFill.offsetWidth; ocFill.classList.add('run');
-  vanishTimer = setTimeout(closeOverlay, 8000);
+  vanishTimer = setTimeout(closeOverlay, 12000);
 }
-const overlay = document.getElementById('overlay');
-const ocFill = document.getElementById('ocFill');
-const ocClose = document.getElementById('ocClose');
-let vanishTimer = null;
-overlay.addEventListener('mouseenter', () => { clearTimeout(vanishTimer); ocFill.classList.remove('run'); });
-overlay.addEventListener('mouseleave', () => { if (overlay.classList.contains('show')) restartTimer(); });
+const ocCard = overlay.querySelector('.oc-card');
+// pause auto-close only while the card itself is hovered (the overlay is full-screen, so hovering it would always pause)
+ocCard.addEventListener('mouseenter', () => { clearTimeout(vanishTimer); ocFill.classList.remove('run'); });
+ocCard.addEventListener('mouseleave', () => { if (overlay.classList.contains('show')) restartTimer(); });
 ocClose.addEventListener('click', closeOverlay);
+overlay.addEventListener('click', e => { if (e.target === overlay || e.target.id === 'ocBg') closeOverlay(); });
+document.addEventListener('keydown', e => {
+  if (!overlay.classList.contains('show')) return;
+  if (e.key === 'Escape'){ closeOverlay(); return; }
+  if (e.key === 'Tab'){                               // keep focus inside the dialog
+    const first = waBtn, lastEl = ocClose;
+    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); lastEl.focus(); }
+    else if (!e.shiftKey && document.activeElement === lastEl){ e.preventDefault(); first.focus(); }
+  }
+});
+// pass follows the pointer
+if (finePointer && !reduced){
+  const clamp = v => Math.max(-.9, Math.min(.9, v));
+  overlay.addEventListener('pointermove', e => {
+    if (!overlay.classList.contains('show')) return;
+    const r = passTilt.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    passTilt.style.setProperty('--rx', (-clamp(y) * 12).toFixed(2) + 'deg');
+    passTilt.style.setProperty('--ry', (clamp(x) * 14).toFixed(2) + 'deg');
+  });
+  overlay.addEventListener('pointerleave', () => { passTilt.style.removeProperty('--rx'); passTilt.style.removeProperty('--ry'); });
+}
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -645,20 +1144,25 @@ form.addEventListener('submit', async (e) => {
 
   if(!validate(v)) return;
 
-  btn.classList.add('loading'); btn.disabled = true; msg.textContent = '';
+  btn.classList.remove('ready'); btn.classList.add('loading'); btn.disabled = true; msg.textContent = '';
+  btn.style.transform = '';
   try{
-    await saveRegistration({
+    const fb = await fbReady;
+    if (!fb || typeof fb.saveRegistration !== 'function') throw new Error('firebase.js is unavailable');
+    const payload = {
       name: v.name, college: v.college, degree: v.degree || 'Not specified',
       year: v.year, contact: v.contact, email: v.email
-    });
+    };
+    await fb.saveRegistration(payload);
     // button morphs to a success checkmark for a beat before the overlay takes over
     btn.classList.remove('loading');
     btn.classList.add('success');
-    setTimeout(() => openOverlay(v.name.split(' ')[0]), 420);
+    setTimeout(() => openOverlay(payload), 420);
   }catch(err){
     console.error(err);
     msg.textContent = 'Something went wrong. Please check your connection and try again.';
     btn.classList.remove('loading');
+    updateProgress();
   }finally{
     btn.disabled = false;
   }
