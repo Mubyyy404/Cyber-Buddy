@@ -1,0 +1,275 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One More Look</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #020406;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Animated pixel background */
+        .pixels {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .pixel {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #00ffff;
+            opacity: 0;
+            animation: pixelMove linear infinite;
+        }
+
+        @keyframes pixelMove {
+            0% {
+                transform: translateY(110vh);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.7;
+            }
+
+            85% {
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateY(-10vh);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .box {
+            max-width: 650px;
+            padding: 45px 35px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 18px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.08);
+            animation: reveal 1.5s ease;
+        }
+
+        h1 {
+            font-size: clamp(40px, 8vw, 68px);
+            margin-bottom: 22px;
+            letter-spacing: 4px;
+            background: linear-gradient(
+                90deg,
+                #00ffff,
+                #ffffff,
+                #00ffff
+            );
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .hint {
+            margin-top: 28px;
+            padding: 14px;
+            border-left: 2px solid #00ffff;
+            color: #777;
+            font-size: 14px;
+            font-style: italic;
+            text-align: left;
+        }
+
+        .hint span {
+            color: #999;
+        }
+
+        button {
+            margin-top: 32px;
+            padding: 15px 32px;
+            border: none;
+            border-radius: 30px;
+            background: #00ffff;
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.08);
+            box-shadow:
+                0 0 15px #00ffff,
+                0 0 35px rgba(0, 255, 255, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        @keyframes reveal {
+            from {
+                opacity: 0;
+                transform: translateY(35px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: 200%;
+            }
+
+            100% {
+                background-position: -200%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .box {
+                padding: 35px 22px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated pixels -->
+    <div class="pixels" id="pixels"></div>
+
+    <div class="container">
+
+        <div class="box">
+
+            <h1>One More Look.</h1>
+
+            <p>
+                What you see isn't always everything that's there.
+            </p>
+
+            <p>
+                Sometimes, the smallest details carry the biggest secrets.
+            </p>
+
+            <div class="hint">
+                Hint: Don't judge a picture only by its pixels.<br><br>
+                <span>
+                    And when you find something strange,
+                    remember — the secret may speak in another language.
+                </span>
+            </div>
+
+            <button onclick="downloadImage()">
+                ⬇ Get the Image
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+        /* Create animated pixels */
+        const pixelContainer = document.getElementById("pixels");
+
+        for (let i = 0; i < 90; i++) {
+
+            const pixel = document.createElement("div");
+
+            pixel.className = "pixel";
+
+            pixel.style.left = Math.random() * 100 + "%";
+
+            pixel.style.animationDuration =
+                (5 + Math.random() * 10) + "s";
+
+            pixel.style.animationDelay =
+                Math.random() * 8 + "s";
+
+            pixelContainer.appendChild(pixel);
+        }
+
+
+        /* Download image */
+        function downloadImage() {
+
+            const imageURL =
+                "https://raw.githubusercontent.com/Mubyyy404/My-Portfolio/refs/heads/main/stego.jpg";
+
+            fetch(imageURL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Image download failed");
+                    }
+
+                    return response.blob();
+                })
+                .then(blob => {
+
+                    const url = URL.createObjectURL(blob);
+
+                    const link = document.createElement("a");
+
+                    link.href = url;
+                    link.download = "stego.jpg";
+
+                    document.body.appendChild(link);
+
+                    link.click();
+
+                    document.body.removeChild(link);
+
+                    URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("Something went wrong.");
+                });
+        }
+    </script>
+
+</body>
+</html>
+```
