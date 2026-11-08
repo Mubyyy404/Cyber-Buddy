@@ -320,20 +320,17 @@ onAuthStateChanged(auth, async user => {
   if (data.status === "pending")  { showPending(); return; }
   if (data.status === "rejected") { alert_("Your access was rejected. Contact admin.","err"); await signOut(auth); return; }
 
-  // 2FA gate (manual accounts only)
-  if (data.twoFA && !isGoogle) {
+ // 2FA gate (all authentication providers)
+if (data.twoFA === true) {
     twoFAUser = user;
-    await send2FACode(user.email, data.name||user.displayName||"User");
+    await send2FACode(
+        user.email,
+        data.name || user.displayName || "User"
+    );
     return;
-  }
-
-  doRedirect("dashboard.html");
-});
-
-function doRedirect(page) {
-  if (redirecting) return; redirecting = true;
-  window.location.href = page;
 }
+
+doRedirect("dashboard.html");
 
 // ── 2FA ───────────────────────────────────────────────────────
 async function send2FACode(email, name) {
