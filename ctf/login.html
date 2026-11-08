@@ -115,7 +115,8 @@ body.loading{visibility:hidden;}
 .twofa-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,.12);}
 .twofa-err{font-size:.75rem;color:var(--danger);min-height:18px;margin-bottom:12px;font-family:'Fira Code',monospace;}
 .twofa-resend{background:none;border:none;font-family:'Inter',sans-serif;font-size:.75rem;color:var(--text-muted);cursor:pointer;transition:color .15s;margin-top:8px;display:block;width:100%;}
-.twofa-resend:hover{color:var(--accent);}
+.twofa-resend:hover:not(:disabled){color:var(--accent);}
+.twofa-resend:disabled{cursor:not-allowed;opacity:.6;}
 .twofa-cancel{color:var(--danger);margin-top:4px;}
 
 @keyframes spin{to{transform:rotate(360deg);}}.spin{animation:spin .7s linear infinite;}
@@ -123,6 +124,10 @@ body.loading{visibility:hidden;}
 </style>
 </head>
 <body class="loading">
+<script>
+// Safety net: never leave the page invisible if the module fails to load
+setTimeout(function(){document.body.classList.remove("loading");},4000);
+</script>
 <div class="bg-wrap"><div class="bg-grid"></div><div class="bg-glow g1"></div><div class="bg-glow g2"></div></div>
 
 <!-- 2FA overlay -->
@@ -133,9 +138,9 @@ body.loading{visibility:hidden;}
     <div class="twofa-sub" id="twofa-sub">Enter the 6-digit code sent to your email.</div>
     <input class="twofa-input" type="tel" id="twofa-code" maxlength="6" placeholder="000000" inputmode="numeric" autocomplete="one-time-code">
     <div class="twofa-err" id="twofa-err"></div>
-    <button class="btn-main" id="twofa-btn" onclick="verify2FA()"><i class="fas fa-shield-check"></i> Verify</button>
+    <button class="btn-main" id="twofa-btn" onclick="verify2FA()"><i class="fas fa-shield-halved"></i> Verify</button>
     <button class="twofa-resend" id="twofa-resend" onclick="resend2FA()">Didn't receive it? Resend code</button>
-    <button class="twofa-resend twofa-cancel" onclick="cancel2FA()">Cancel & sign out</button>
+    <button class="twofa-resend twofa-cancel" onclick="cancel2FA()">Cancel &amp; sign out</button>
   </div>
 </div>
 
@@ -254,240 +259,361 @@ import {
   doc, getDoc, setDoc, updateDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ── EMAILJS (fill in your keys from emailjs.com) ─────────────
+// ── CONFIG ────────────────────────────────────────────────────
 const EJS_KEY      = "CK7zbJF2o5SK4lApU";
 const EJS_SERVICE  = "service_2ma0yfp";
 const EJS_TEMPLATE = "template_owhkozj";
+
+const OTP_TTL_MS      = 10 * 60 * 1000; // code validity
+const OTP_MAX_TRIES   = 5;              // wrong attempts before code is invalidated
+const RESEND_COOLDOWN = 30;             // seconds
+const DEV_SHOW_CODE   = false;          // true ONLY for local testing (shows OTP on screen)
+const SESSION_KEY     = "ctf_2fa_ok";   // dashboard/admin pages should check this == auth.currentUser.uid
+
 let ejsReady = false;
 try {
-  if (typeof emailjs !== "undefined" && !EJS_KEY.startsWith("YOUR")) {
+  if (typeof emailjs !== "undefined" && EJS_KEY && !EJS_KEY.startsWith("YOUR")) {
     emailjs.init({ publicKey: EJS_KEY });
     ejsReady = true;
   }
-} catch(e) {}
+} catch (e) { console.warn("EmailJS init failed", e); }
 
 // ── STATE ─────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-let redirecting = false, twoFAUser = null, twoFACode = null, twoFAExpiry = 0, resendLock = false;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+let redirecting = false;   // set once we navigate away
+let handling    = false;   // guards against overlapping auth-state runs
+let verifying   = false;   // guards against double verify (auto-submit + Enter)
+let resendLock  = false;
+let resendTimer = null;
+let twoFAUser = null, twoFAName = "User", twoFARole = "player";
+let otp = null;            // { hash, salt, expiry, attempts } — plain code is never kept
 
 // ── UI HELPERS ────────────────────────────────────────────────
-function alert_(msg, type="err") {
+function alert_(msg, type = "err") {
   const b = $("alert-box");
-  const icons={err:"fa-circle-exclamation",ok:"fa-circle-check",info:"fa-circle-info"};
-  b.innerHTML = `<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  const icons = { err: "fa-circle-exclamation", ok: "fa-circle-check", info: "fa-circle-info" };
+  b.innerHTML = `<i class="fas ${icons[type]}"></i><span>${esc(msg)}</span>`;
   b.className = `alert show ${type}`;
 }
-function clearAlert() { $("alert-box").className="alert"; }
-window.togglePw = (id,btn) => {
-  const el=$(id); el.type=el.type==="text"?"password":"text";
-  btn.innerHTML=`<i class="fas fa-eye${el.type==="password"?"":"-slash"}"></i>`;
+function clearAlert() { $("alert-box").className = "alert"; }
+function resetButtons() {
+  const l = $("login-btn"), r = $("reg-btn");
+  l.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In'; l.disabled = false;
+  r.innerHTML = '<i class="fas fa-user-plus"></i> Create Account'; r.disabled = false;
+}
+window.togglePw = (id, btn) => {
+  const el = $(id); el.type = el.type === "text" ? "password" : "text";
+  btn.innerHTML = `<i class="fas fa-eye${el.type === "password" ? "" : "-slash"}"></i>`;
 };
 function hideAll() {
-  ["form-login","form-register"].forEach(id=>$(id).style.display="none");
-  ["screen-verify","screen-pending"].forEach(id=>$(id).classList.remove("show"));
-  $("tab-bar").style.display="none";
+  ["form-login", "form-register"].forEach(id => $(id).style.display = "none");
+  ["screen-verify", "screen-pending"].forEach(id => $(id).classList.remove("show"));
+  $("tab-bar").style.display = "none";
 }
-function showVerify(email) { hideAll(); $("verify-email").textContent=email||""; $("screen-verify").classList.add("show"); }
-function showPending()      { hideAll(); $("screen-pending").classList.add("show"); }
-window.backToLogin = function() { $("tab-bar").style.display="flex"; switchTab("login"); };
-window.doLogout = async () => { await signOut(auth); location.reload(); };
+function showVerify(email) { hideAll(); $("verify-email").textContent = email || ""; $("screen-verify").classList.add("show"); }
+function showPending()     { hideAll(); $("screen-pending").classList.add("show"); }
+function doRedirect(url)   { redirecting = true; location.href = url; }
+
+window.backToLogin = function () { $("tab-bar").style.display = "flex"; switchTab("login"); };
+window.doLogout = async () => {
+  sessionStorage.removeItem(SESSION_KEY);
+  await signOut(auth);
+  location.reload();
+};
+
+// ── CRYPTO HELPERS ────────────────────────────────────────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+// Cryptographically secure 6-digit code (rejection sampling → no modulo bias)
+function genOTP() {
+  const a = new Uint32Array(1); let n;
+  do { crypto.getRandomValues(a); n = a[0]; } while (n >= 4294000000);
+  return String(n % 1000000).padStart(6, "0");
+}
+function genSalt() {
+  const a = new Uint8Array(16); crypto.getRandomValues(a);
+  return [...a].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ── USER DOC ──────────────────────────────────────────────────
+// Creates the doc if missing; always returns the user data.
+async function ensureUserDoc(user, extras = {}) {
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    const fresh = {
+      uid: user.uid, name: extras.name || user.displayName || user.email.split("@")[0],
+      email: user.email, mobile: extras.mobile || user.phoneNumber || "", photo: extras.photo || user.photoURL || "",
+      role: "player", status: "pending",
+      score: 0, solves: 0, solvedIds: [], twoFA: false, bio: "", github: "",
+      joinedAt: serverTimestamp(), lastLogin: serverTimestamp()
+    };
+    await setDoc(ref, fresh);
+    return fresh;
+  }
+  updateDoc(ref, { lastLogin: serverTimestamp() }).catch(() => {});
+  return snap.data() || {};
+}
 
 // ── AUTH STATE ────────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
   document.body.classList.remove("loading");
-  if (!user || redirecting) return;
+  if (!user || redirecting || handling) return;
+  handling = true;
+  try { await handleUser(user); }
+  finally { handling = false; }
+});
 
-  const isGoogle = user.providerData?.some(p=>p.providerId==="google.com");
+async function handleUser(user) {
+  const isGoogle = user.providerData?.some(p => p.providerId === "google.com");
 
   // Email verification gate (non-Google only)
-  if (!isGoogle && !user.emailVerified) { showVerify(user.email); return; }
+  if (!isGoogle && !user.emailVerified) { resetButtons(); showVerify(user.email); return; }
 
   // Load or create Firestore doc
-  let data = {};
-  try {
-    let snap = await getDoc(doc(db,"users",user.uid));
-    if (!snap.exists()) {
-      await ensureUserDoc(user, { name: user.displayName||user.email.split("@")[0], mobile: user.phoneNumber||"", photo: user.photoURL||"" });
-      snap = await getDoc(doc(db,"users",user.uid));
-    }
-    data = snap.data()||{};
-  } catch(e) { alert_("Connection error. Check your internet.","err"); return; }
-
-  // ADMIN → skip approval gate entirely and redirect straight to admin
-  if (data.role === "admin") { doRedirect("admin.html"); return; }
-
-  // Non-admin: check approval
-  if (data.status === "pending")  { showPending(); return; }
-  if (data.status === "rejected") { alert_("Your access was rejected. Contact admin.","err"); await signOut(auth); return; }
-
- // 2FA gate (all authentication providers)
-if (data.twoFA === true) {
-    twoFAUser = user;
-    await send2FACode(
-        user.email,
-        data.name || user.displayName || "User"
-    );
+  let data;
+  try { data = await ensureUserDoc(user); }
+  catch (e) {
+    console.error(e);
+    resetButtons();
+    alert_("Connection error. Check your internet.", "err");
     return;
-}
+  }
 
-doRedirect("dashboard.html");
+  const isAdmin = data.role === "admin";
+
+  // Approval gate (admins bypass)
+  if (!isAdmin) {
+    if (data.status === "pending")  { resetButtons(); showPending(); return; }
+    if (data.status === "rejected") {
+      resetButtons();
+      await signOut(auth);
+      alert_("Your access was rejected. Contact admin.", "err");
+      return;
+    }
+  }
+
+  const target = isAdmin ? "admin.html" : "dashboard.html";
+
+  // 2FA gate — applies to every provider AND admins
+  if (data.twoFA === true && sessionStorage.getItem(SESSION_KEY) !== user.uid) {
+    twoFAUser = user;
+    twoFAName = data.name || user.displayName || "User";
+    twoFARole = data.role || "player";
+    await send2FACode(user.email, twoFAName);
+    return;
+  }
+
+  doRedirect(target);
+}
 
 // ── 2FA ───────────────────────────────────────────────────────
 async function send2FACode(email, name) {
-  twoFACode = String(Math.floor(100000 + Math.random()*900000));
-  twoFAExpiry = Date.now() + 600000;
-  $("twofa-err").textContent = "";
+  const errEl = $("twofa-err"), sub = $("twofa-sub");
+  errEl.textContent = "";
   $("twofa-code").value = "";
-
-  if (ejsReady) {
-    try {
-      await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, { to_email:email, to_name:name, otp_code:twoFACode, expiry_min:"10" });
-      $("twofa-sub").innerHTML = `Code sent to <strong>${email}</strong>. Valid for 10 minutes.`;
-    } catch(e) {
-      $("twofa-sub").innerHTML = `<span style="color:var(--warn)">EmailJS not configured — dev code: <strong style="font-family:'Fira Code';color:var(--success);font-size:1.1rem">${twoFACode}</strong></span>`;
-    }
-  } else {
-    $("twofa-sub").innerHTML = `<span style="color:var(--warn)">EmailJS not set up yet. Dev code: <strong style="font-family:'Fira Code';color:var(--success);font-size:1.2rem;letter-spacing:4px">${twoFACode}</strong></span>`;
-  }
   $("twofa-bg").classList.add("show");
-  setTimeout(()=>$("twofa-code").focus(),100);
+  setTimeout(() => $("twofa-code").focus(), 100);
+
+  const code = genOTP();
+  const salt = genSalt();
+  otp = { salt, hash: await sha256(salt + code), expiry: Date.now() + OTP_TTL_MS, attempts: 0 };
+
+  if (!ejsReady) {
+    if (DEV_SHOW_CODE) {
+      sub.innerHTML = `<span style="color:var(--warn)">DEV MODE — code: <strong style="font-family:'Fira Code';color:var(--success);font-size:1.2rem;letter-spacing:4px">${code}</strong></span>`;
+    } else {
+      otp = null;
+      sub.textContent = "Enter the 6-digit code sent to your email.";
+      errEl.textContent = "Email service unavailable. Contact admin.";
+    }
+    return;
+  }
+
+  try {
+    await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+      to_email: email, to_name: name, otp_code: code, expiry_min: String(OTP_TTL_MS / 60000)
+    });
+    sub.innerHTML = `Code sent to <strong>${esc(email)}</strong>. Valid for ${OTP_TTL_MS / 60000} minutes.`;
+  } catch (e) {
+    console.error("EmailJS send failed", e);
+    otp = null; // never leave a usable code that the user could not receive
+    sub.textContent = "Enter the 6-digit code sent to your email.";
+    errEl.textContent = "Could not send code. Tap resend to try again.";
+  }
 }
 
-window.verify2FA = async function() {
-  const entered=$("twofa-code").value.trim(), errEl=$("twofa-err"), btn=$("twofa-btn");
-  if (!twoFACode)               { errEl.textContent="Session expired. Log in again."; return; }
-  if (Date.now()>twoFAExpiry)   { errEl.textContent="Code expired. Request a new one."; return; }
-  if (entered.length!==6)       { errEl.textContent="Enter the full 6-digit code."; return; }
-  if (entered!==twoFACode)      { errEl.textContent="Incorrect code. Try again."; $("twofa-code").value=""; $("twofa-code").focus(); return; }
-  btn.innerHTML='<i class="fas fa-spinner spin"></i> Verifying…'; btn.disabled=true; errEl.textContent="";
-  try { doRedirect("dashboard.html"); } catch(e) { btn.innerHTML='<i class="fas fa-shield-check"></i> Verify'; btn.disabled=false; errEl.textContent="Error. Try again."; }
+window.verify2FA = async function () {
+  if (verifying) return;
+  const errEl = $("twofa-err"), btn = $("twofa-btn");
+  const entered = $("twofa-code").value.trim();
+
+  if (!twoFAUser)             { errEl.textContent = "Session expired. Log in again."; return; }
+  if (!otp)                   { errEl.textContent = "No active code. Tap resend."; return; }
+  if (Date.now() > otp.expiry){ otp = null; errEl.textContent = "Code expired. Request a new one."; return; }
+  if (entered.length !== 6)   { errEl.textContent = "Enter the full 6-digit code."; return; }
+
+  verifying = true;
+  btn.innerHTML = '<i class="fas fa-spinner spin"></i> Verifying…'; btn.disabled = true; errEl.textContent = "";
+
+  try {
+    const hash = await sha256(otp.salt + entered);
+    if (hash !== otp.hash) {
+      otp.attempts++;
+      if (otp.attempts >= OTP_MAX_TRIES) {
+        otp = null;
+        errEl.textContent = "Too many attempts. Request a new code.";
+      } else {
+        errEl.textContent = `Incorrect code. ${OTP_MAX_TRIES - otp.attempts} tries left.`;
+      }
+      $("twofa-code").value = ""; $("twofa-code").focus();
+      return;
+    }
+    // ✔ success
+    otp = null;
+    sessionStorage.setItem(SESSION_KEY, twoFAUser.uid);
+    doRedirect(twoFARole === "admin" ? "admin.html" : "dashboard.html");
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = "Error. Try again.";
+  } finally {
+    verifying = false;
+    if (!redirecting) { btn.innerHTML = '<i class="fas fa-shield-halved"></i> Verify'; btn.disabled = false; }
+  }
 };
-window.resend2FA = async function() {
-  if (resendLock) return; resendLock=true;
-  const btn=$("twofa-resend"); btn.textContent="Sending…";
-  try { const snap=await getDoc(doc(db,"users",twoFAUser.uid)); await send2FACode(twoFAUser.email, snap.data()?.name||"User"); } catch(e){}
-  setTimeout(()=>{ resendLock=false; btn.textContent="Didn't receive it? Resend code"; }, 30000);
+
+window.resend2FA = async function () {
+  if (resendLock || !twoFAUser) return;
+  resendLock = true;
+  const btn = $("twofa-resend");
+  btn.disabled = true; btn.textContent = "Sending…";
+  await send2FACode(twoFAUser.email, twoFAName);
+
+  let left = RESEND_COOLDOWN;
+  clearInterval(resendTimer);
+  resendTimer = setInterval(() => {
+    left--;
+    if (left <= 0) {
+      clearInterval(resendTimer);
+      resendLock = false; btn.disabled = false;
+      btn.textContent = "Didn't receive it? Resend code";
+    } else btn.textContent = `Resend available in ${left}s`;
+  }, 1000);
+  btn.textContent = `Resend available in ${left}s`;
 };
-window.cancel2FA = async function() { twoFAUser=null; twoFACode=null; $("twofa-bg").classList.remove("show"); await signOut(auth); };
-$("twofa-code").addEventListener("input", function() {
-  this.value=this.value.replace(/\D/g,"");
-  if (this.value.length===6) verify2FA();
+
+window.cancel2FA = async function () {
+  otp = null; twoFAUser = null;
+  clearInterval(resendTimer); resendLock = false;
+  $("twofa-resend").disabled = false;
+  $("twofa-resend").textContent = "Didn't receive it? Resend code";
+  $("twofa-bg").classList.remove("show");
+  sessionStorage.removeItem(SESSION_KEY);
+  resetButtons();
+  await signOut(auth);
+};
+
+$("twofa-code").addEventListener("input", function () {
+  this.value = this.value.replace(/\D/g, "");
+  if (this.value.length === 6) verify2FA();
 });
 
-// ── ENSURE USER DOC ───────────────────────────────────────────
-async function ensureUserDoc(user, extras={}) {
-  const ref=doc(db,"users",user.uid);
-  let snap; try { snap=await getDoc(ref); } catch(e){ return; }
-  if (!snap.exists()) {
-    try {
-      await setDoc(ref,{
-        uid:user.uid, name:extras.name||user.email.split("@")[0],
-        email:user.email, mobile:extras.mobile||"", photo:extras.photo||"",
-        role:"player", status:"pending",
-        score:0, solves:0, solvedIds:[], twoFA:false, bio:"", github:"",
-        joinedAt:serverTimestamp(), lastLogin:serverTimestamp()
-      });
-    } catch(e){ console.error("setDoc failed:",e); }
-  } else {
-    await updateDoc(ref,{lastLogin:serverTimestamp()}).catch(()=>{});
-  }
-}
-
 // ── TAB SWITCH ────────────────────────────────────────────────
-window.switchTab = function(tab) {
-  $("form-login").style.display    = tab==="login"    ? "block" : "none";
-  $("form-register").style.display = tab==="register" ? "block" : "none";
-  $("tab-login").classList.toggle("active",    tab==="login");
-  $("tab-register").classList.toggle("active", tab==="register");
-  $("tab-bar").style.display="flex";
-  ["screen-verify","screen-pending"].forEach(id=>$(id).classList.remove("show"));
+window.switchTab = function (tab) {
+  $("form-login").style.display    = tab === "login"    ? "block" : "none";
+  $("form-register").style.display = tab === "register" ? "block" : "none";
+  $("tab-login").classList.toggle("active",    tab === "login");
+  $("tab-register").classList.toggle("active", tab === "register");
+  $("tab-bar").style.display = "flex";
+  ["screen-verify", "screen-pending"].forEach(id => $(id).classList.remove("show"));
   clearAlert();
 };
-$("form-login").style.display="block";
+$("form-login").style.display = "block";
 
 // ── LOGIN ─────────────────────────────────────────────────────
-window.doLogin = async function() {
+window.doLogin = async function () {
   clearAlert();
-  const email=$("l-email").value.trim(), pass=$("l-pass").value;
-  if (!email||!pass) return alert_("Please fill in all fields.");
-  const btn=$("login-btn"); btn.innerHTML='<i class="fas fa-spinner spin"></i> Signing in…'; btn.disabled=true;
+  const email = $("l-email").value.trim(), pass = $("l-pass").value;
+  if (!email || !pass) return alert_("Please fill in all fields.");
+  const btn = $("login-btn"); btn.innerHTML = '<i class="fas fa-spinner spin"></i> Signing in…'; btn.disabled = true;
   try {
-    const cred=await signInWithEmailAndPassword(auth,email,pass);
-    await ensureUserDoc(cred.user);
-  } catch(e) {
-    btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In'; btn.disabled=false;
+    // onAuthStateChanged handles the doc, approval and 2FA from here
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    resetButtons();
     alert_(friendlyError(e.code));
   }
 };
 
 // ── REGISTER ─────────────────────────────────────────────────
-window.doRegister = async function() {
+window.doRegister = async function () {
   clearAlert();
-  const name=$("r-name").value.trim(), email=$("r-email").value.trim();
-  const code=$("r-code").value, phone=$("r-phone").value.trim();
-  const pass=$("r-pass").value, pass2=$("r-pass2").value;
-  if (!name)            return alert_("Display name is required.");
-  if (!email)           return alert_("Email is required.");
-  if (!phone)           return alert_("Mobile number is required.");
-  if (pass.length<8)    return alert_("Password must be at least 8 characters.");
-  if (!/\d/.test(pass)) return alert_("Password must include at least one number.");
-  if (pass!==pass2)     return alert_("Passwords do not match.");
-  const btn=$("reg-btn"); btn.innerHTML='<i class="fas fa-spinner spin"></i> Creating…'; btn.disabled=true;
+  const name = $("r-name").value.trim(), email = $("r-email").value.trim();
+  const code = $("r-code").value, phone = $("r-phone").value.replace(/[\s-]/g, "");
+  const pass = $("r-pass").value, pass2 = $("r-pass2").value;
+  if (!name)               return alert_("Display name is required.");
+  if (!email)              return alert_("Email is required.");
+  if (!phone)              return alert_("Mobile number is required.");
+  if (!/^\d{6,14}$/.test(phone)) return alert_("Enter a valid mobile number (digits only).");
+  if (pass.length < 8)     return alert_("Password must be at least 8 characters.");
+  if (!/\d/.test(pass))    return alert_("Password must include at least one number.");
+  if (pass !== pass2)      return alert_("Passwords do not match.");
+  const btn = $("reg-btn"); btn.innerHTML = '<i class="fas fa-spinner spin"></i> Creating…'; btn.disabled = true;
   try {
-    const cred=await createUserWithEmailAndPassword(auth,email,pass);
-    await updateProfile(cred.user,{displayName:name});
-    await ensureUserDoc(cred.user,{name,mobile:code+phone,photo:""});
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+    await ensureUserDoc(cred.user, { name, mobile: code + phone, photo: "" });
     await sendEmailVerification(cred.user);
     await signOut(auth);
+    resetButtons();
     showVerify(email);
-  } catch(e) {
-    btn.innerHTML='<i class="fas fa-user-plus"></i> Create Account'; btn.disabled=false;
+  } catch (e) {
+    resetButtons();
     alert_(friendlyError(e.code));
   }
 };
 
 // ── GOOGLE ────────────────────────────────────────────────────
-window.doGoogle = async function() {
+window.doGoogle = async function () {
   clearAlert();
   try {
-    const provider=new GoogleAuthProvider(); provider.addScope("profile");
-    const cred=await signInWithPopup(auth,provider);
-    await ensureUserDoc(cred.user,{
-      name:cred.user.displayName||cred.user.email.split("@")[0],
-      mobile:cred.user.phoneNumber||"",
-      photo:cred.user.photoURL||""
-    });
-  } catch(e) { alert_(friendlyError(e.code)); }
+    const provider = new GoogleAuthProvider(); provider.addScope("profile");
+    await signInWithPopup(auth, provider); // onAuthStateChanged does the rest
+  } catch (e) { alert_(friendlyError(e.code)); }
 };
 
 // ── FORGOT PW ─────────────────────────────────────────────────
-window.doForgot = async function() {
-  const email=$("l-email").value.trim();
-  if (!email) return alert_("Enter your email above first.","info");
-  try { await sendPasswordResetEmail(auth,email); alert_(`Reset email sent to ${email}`,"ok"); }
-  catch(e) { alert_(friendlyError(e.code)); }
+window.doForgot = async function () {
+  const email = $("l-email").value.trim();
+  if (!email) return alert_("Enter your email above first.", "info");
+  try { await sendPasswordResetEmail(auth, email); alert_(`Reset email sent to ${email}`, "ok"); }
+  catch (e) { alert_(friendlyError(e.code)); }
 };
 
 function friendlyError(code) {
   return ({
-    "auth/user-not-found":"No account found with that email.",
-    "auth/wrong-password":"Incorrect password.",
-    "auth/invalid-credential":"Invalid email or password.",
-    "auth/email-already-in-use":"That email is already registered.",
-    "auth/invalid-email":"Please enter a valid email address.",
-    "auth/weak-password":"Password too weak — try something stronger.",
-    "auth/too-many-requests":"Too many attempts. Please wait and try again.",
-    "auth/popup-closed-by-user":"Google sign-in was cancelled.",
-    "auth/network-request-failed":"Network error. Check your connection.",
-    "auth/user-disabled":"This account has been disabled.",
+    "auth/user-not-found": "No account found with that email.",
+    "auth/wrong-password": "Incorrect password.",
+    "auth/invalid-credential": "Invalid email or password.",
+    "auth/email-already-in-use": "That email is already registered.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/weak-password": "Password too weak — try something stronger.",
+    "auth/too-many-requests": "Too many attempts. Please wait and try again.",
+    "auth/popup-closed-by-user": "Google sign-in was cancelled.",
+    "auth/network-request-failed": "Network error. Check your connection.",
+    "auth/user-disabled": "This account has been disabled.",
   })[code] || "Something went wrong. Please try again.";
 }
 
-document.addEventListener("keydown",e=>{
-  if(e.key!=="Enter") return;
-  if($("twofa-bg").classList.contains("show")) { verify2FA(); return; }
-  if($("form-login").style.display!=="none") doLogin();
-  else if($("form-register").style.display!=="none") doRegister();
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  if ($("twofa-bg").classList.contains("show")) { verify2FA(); return; }
+  if ($("form-login").style.display !== "none") doLogin();
+  else if ($("form-register").style.display !== "none") doRegister();
 });
 </script>
 </body>
